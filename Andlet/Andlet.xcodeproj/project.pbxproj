@@ -7,6 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		37C0E28C2C9E58F500099A90 /* FiltersSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E28B2C9E58F500099A90 /* FiltersSearchView.swift */; };
+		37C0E28F2C9E591F00099A90 /* Heading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E28E2C9E591F00099A90 /* Heading.swift */; };
+		37C0E2942C9E592800099A90 /* MainTabLandlordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E2902C9E592800099A90 /* MainTabLandlordView.swift */; };
+		37C0E2952C9E592800099A90 /* SearchAndFilterBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E2932C9E592800099A90 /* SearchAndFilterBar.swift */; };
+		37C0E2962C9E592800099A90 /* OfferImageCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E2922C9E592800099A90 /* OfferImageCarouselView.swift */; };
+		37C0E2972C9E592800099A90 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E2912C9E592800099A90 /* MainTabView.swift */; };
+		37C0E29A2C9E596700099A90 /* HomepageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E2992C9E596700099A90 /* HomepageView.swift */; };
+		37C0E29E2C9E598000099A90 /* CreateMoreButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E29C2C9E598000099A90 /* CreateMoreButton.swift */; };
+		37C0E29F2C9E598000099A90 /* HomepageRentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E29D2C9E598000099A90 /* HomepageRentView.swift */; };
+		37C0E2A42C9E59BA00099A90 /* OfferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E2A32C9E59BA00099A90 /* OfferView.swift */; };
+		37C0E2A52C9E59BA00099A90 /* OfferRentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E2A22C9E59BA00099A90 /* OfferRentView.swift */; };
+		37C0E2A62C9E59BA00099A90 /* OfferDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E2A12C9E59BA00099A90 /* OfferDetailView.swift */; };
 		9C1369652C9E30A10000B55C /* AndletApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1369642C9E30A10000B55C /* AndletApp.swift */; };
 		9C1369672C9E30A10000B55C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1369662C9E30A10000B55C /* ContentView.swift */; };
 		9C1369692C9E30A20000B55C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C1369682C9E30A20000B55C /* Assets.xcassets */; };
@@ -65,6 +77,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		37C0E28B2C9E58F500099A90 /* FiltersSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersSearchView.swift; sourceTree = "<group>"; };
+		37C0E28E2C9E591F00099A90 /* Heading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Heading.swift; sourceTree = "<group>"; };
+		37C0E2902C9E592800099A90 /* MainTabLandlordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabLandlordView.swift; sourceTree = "<group>"; };
+		37C0E2912C9E592800099A90 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		37C0E2922C9E592800099A90 /* OfferImageCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferImageCarouselView.swift; sourceTree = "<group>"; };
+		37C0E2932C9E592800099A90 /* SearchAndFilterBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchAndFilterBar.swift; sourceTree = "<group>"; };
+		37C0E2992C9E596700099A90 /* HomepageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomepageView.swift; sourceTree = "<group>"; };
+		37C0E29C2C9E598000099A90 /* CreateMoreButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateMoreButton.swift; sourceTree = "<group>"; };
+		37C0E29D2C9E598000099A90 /* HomepageRentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomepageRentView.swift; sourceTree = "<group>"; };
+		37C0E2A12C9E59BA00099A90 /* OfferDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferDetailView.swift; sourceTree = "<group>"; };
+		37C0E2A22C9E59BA00099A90 /* OfferRentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferRentView.swift; sourceTree = "<group>"; };
+		37C0E2A32C9E59BA00099A90 /* OfferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferView.swift; sourceTree = "<group>"; };
 		9C1369612C9E30A10000B55C /* Andlet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Andlet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C1369642C9E30A10000B55C /* AndletApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AndletApp.swift; sourceTree = "<group>"; };
 		9C1369662C9E30A10000B55C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -135,6 +159,53 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		37C0E28A2C9E58D400099A90 /* Filters */ = {
+			isa = PBXGroup;
+			children = (
+				37C0E28B2C9E58F500099A90 /* FiltersSearchView.swift */,
+			);
+			path = Filters;
+			sourceTree = "<group>";
+		};
+		37C0E28D2C9E590D00099A90 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				37C0E28E2C9E591F00099A90 /* Heading.swift */,
+				37C0E2902C9E592800099A90 /* MainTabLandlordView.swift */,
+				37C0E2912C9E592800099A90 /* MainTabView.swift */,
+				37C0E2922C9E592800099A90 /* OfferImageCarouselView.swift */,
+				37C0E2932C9E592800099A90 /* SearchAndFilterBar.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		37C0E2982C9E595B00099A90 /* Homepage */ = {
+			isa = PBXGroup;
+			children = (
+				37C0E2992C9E596700099A90 /* HomepageView.swift */,
+			);
+			path = Homepage;
+			sourceTree = "<group>";
+		};
+		37C0E29B2C9E596C00099A90 /* HomepageRent */ = {
+			isa = PBXGroup;
+			children = (
+				37C0E29C2C9E598000099A90 /* CreateMoreButton.swift */,
+				37C0E29D2C9E598000099A90 /* HomepageRentView.swift */,
+			);
+			path = HomepageRent;
+			sourceTree = "<group>";
+		};
+		37C0E2A02C9E59AC00099A90 /* Offers */ = {
+			isa = PBXGroup;
+			children = (
+				37C0E2A12C9E59BA00099A90 /* OfferDetailView.swift */,
+				37C0E2A22C9E59BA00099A90 /* OfferRentView.swift */,
+				37C0E2A32C9E59BA00099A90 /* OfferView.swift */,
+			);
+			path = Offers;
+			sourceTree = "<group>";
+		};
 		9C1369582C9E30A10000B55C = {
 			isa = PBXGroup;
 			children = (
@@ -203,6 +274,11 @@
 		9C13698F2C9E31680000B55C /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				37C0E2A02C9E59AC00099A90 /* Offers */,
+				37C0E29B2C9E596C00099A90 /* HomepageRent */,
+				37C0E2982C9E595B00099A90 /* Homepage */,
+				37C0E28D2C9E590D00099A90 /* Helpers */,
+				37C0E28A2C9E58D400099A90 /* Filters */,
 				9C1369C42C9E35400000B55C /* WelcomeViews */,
 			);
 			path = Views;
@@ -431,10 +507,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				9C1369EF2C9E422C0000B55C /* AuthenticationViewModel.swift in Sources */,
+				37C0E2A42C9E59BA00099A90 /* OfferView.swift in Sources */,
+				37C0E2A52C9E59BA00099A90 /* OfferRentView.swift in Sources */,
+				37C0E2A62C9E59BA00099A90 /* OfferDetailView.swift in Sources */,
 				9C1369CB2C9E35BE0000B55C /* CircularArrowButton.swift in Sources */,
 				9C1369ED2C9E421E0000B55C /* WelcomePageModel.swift in Sources */,
+				37C0E2942C9E592800099A90 /* MainTabLandlordView.swift in Sources */,
+				37C0E2952C9E592800099A90 /* SearchAndFilterBar.swift in Sources */,
+				37C0E2962C9E592800099A90 /* OfferImageCarouselView.swift in Sources */,
+				37C0E29A2C9E596700099A90 /* HomepageView.swift in Sources */,
+				37C0E2972C9E592800099A90 /* MainTabView.swift in Sources */,
 				9C1369CE2C9E35BE0000B55C /* WelcomeIndividualPageView.swift in Sources */,
+				37C0E28C2C9E58F500099A90 /* FiltersSearchView.swift in Sources */,
 				9C1369672C9E30A10000B55C /* ContentView.swift in Sources */,
+				37C0E28F2C9E591F00099A90 /* Heading.swift in Sources */,
 				9C1369CC2C9E35BE0000B55C /* AuthenticationView.swift in Sources */,
 				9C1369CD2C9E35BE0000B55C /* ProfilePickerView.swift in Sources */,
 				9C1369D52C9E3B3D0000B55C /* ColorExtensions.swift in Sources */,
@@ -442,6 +528,8 @@
 				9C1369CF2C9E35BE0000B55C /* WelcomePageView.swift in Sources */,
 				9C1369652C9E30A10000B55C /* AndletApp.swift in Sources */,
 				9C1369D02C9E35BE0000B55C /* CustomIndicatorView.swift in Sources */,
+				37C0E29E2C9E598000099A90 /* CreateMoreButton.swift in Sources */,
+				37C0E29F2C9E598000099A90 /* HomepageRentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
