@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		373DF6122C9F377D00C9EDBD /* OfferModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373DF6112C9F376900C9EDBD /* OfferModel.swift */; };
+		373DF6142C9F37B800C9EDBD /* PropertieModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373DF6132C9F378400C9EDBD /* PropertieModel.swift */; };
+		373DF6162C9F37D400C9EDBD /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373DF6152C9F37CF00C9EDBD /* UserModel.swift */; };
 		37C0E28C2C9E58F500099A90 /* FiltersSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E28B2C9E58F500099A90 /* FiltersSearchView.swift */; };
 		37C0E28F2C9E591F00099A90 /* Heading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E28E2C9E591F00099A90 /* Heading.swift */; };
 		37C0E2942C9E592800099A90 /* MainTabLandlordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E2902C9E592800099A90 /* MainTabLandlordView.swift */; };
@@ -77,6 +80,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		373DF6112C9F376900C9EDBD /* OfferModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferModel.swift; sourceTree = "<group>"; };
+		373DF6132C9F378400C9EDBD /* PropertieModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertieModel.swift; sourceTree = "<group>"; };
+		373DF6152C9F37CF00C9EDBD /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		37C0E28B2C9E58F500099A90 /* FiltersSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersSearchView.swift; sourceTree = "<group>"; };
 		37C0E28E2C9E591F00099A90 /* Heading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Heading.swift; sourceTree = "<group>"; };
 		37C0E2902C9E592800099A90 /* MainTabLandlordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabLandlordView.swift; sourceTree = "<group>"; };
@@ -287,6 +293,9 @@
 		9C1369902C9E31710000B55C /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				373DF6152C9F37CF00C9EDBD /* UserModel.swift */,
+				373DF6132C9F378400C9EDBD /* PropertieModel.swift */,
+				373DF6112C9F376900C9EDBD /* OfferModel.swift */,
 				9C1369EC2C9E421E0000B55C /* WelcomePageModel.swift */,
 				9C1369EA2C9E42140000B55C /* AuthenticationResultModel.swift */,
 			);
@@ -522,12 +531,15 @@
 				9C1369672C9E30A10000B55C /* ContentView.swift in Sources */,
 				37C0E28F2C9E591F00099A90 /* Heading.swift in Sources */,
 				9C1369CC2C9E35BE0000B55C /* AuthenticationView.swift in Sources */,
+				373DF6162C9F37D400C9EDBD /* UserModel.swift in Sources */,
+				373DF6142C9F37B800C9EDBD /* PropertieModel.swift in Sources */,
 				9C1369CD2C9E35BE0000B55C /* ProfilePickerView.swift in Sources */,
 				9C1369D52C9E3B3D0000B55C /* ColorExtensions.swift in Sources */,
 				9C1369EB2C9E42140000B55C /* AuthenticationResultModel.swift in Sources */,
 				9C1369CF2C9E35BE0000B55C /* WelcomePageView.swift in Sources */,
 				9C1369652C9E30A10000B55C /* AndletApp.swift in Sources */,
 				9C1369D02C9E35BE0000B55C /* CustomIndicatorView.swift in Sources */,
+				373DF6122C9F377D00C9EDBD /* OfferModel.swift in Sources */,
 				37C0E29E2C9E598000099A90 /* CreateMoreButton.swift in Sources */,
 				37C0E29F2C9E598000099A90 /* HomepageRentView.swift in Sources */,
 			);
