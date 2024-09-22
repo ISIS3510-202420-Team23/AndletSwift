@@ -46,11 +46,11 @@ struct HomepageRentView: View {
                         //                    }
                     }
                 }
-            }
+            } .navigationBarHidden(true)
         } else {
             // Fallback on earlier versions
         }
-    }
+    } 
 }
 #Preview {
     HomepageRentView()
