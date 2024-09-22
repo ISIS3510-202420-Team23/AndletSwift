@@ -42,10 +42,10 @@ struct ProfilePickerView: View {
                             .cornerRadius(25) // Rounded button
                     }
                     
-                    // List Button
-                    Button(action: {
-                        // Action for "I want to list my place"
-                    }) {
+                    // Rent Button
+                    NavigationLink(destination: FormView()
+                        .navigationBarBackButtonHidden()
+                        .ignoresSafeArea(.all)) {
                         Text("I want to list my place!")
                             .font(.headline)
                             .foregroundColor(.white)
@@ -68,8 +68,7 @@ struct ProfilePickerView: View {
             .padding()
             .background(Color(hex: "#C5DDFF")) // Light blue background
             .edgesIgnoringSafeArea(.all) // Full screen background
-            .navigationBarHidden(true)
-        }
+        } .navigationBarHidden(true)
     }
 }
 
