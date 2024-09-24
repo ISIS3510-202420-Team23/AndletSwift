@@ -48,6 +48,12 @@ struct OfferView: View {
                     Text("\(1) 🛁")
                         .font(.custom("LeagueSpartan-SemiBold", size: 16))
                         .foregroundColor(Color(hex: "000000"))
+                    Text("|")
+                        .font(.custom("LeagueSpartan-SemiBold", size: 16))
+                            .foregroundColor(Color(hex: "000000"))
+                    Text("\(3) 🧑‍🤝‍🧑")
+                        .font(.custom("LeagueSpartan-SemiBold", size: 16))
+                        .foregroundColor(Color(hex: "000000"))
                     Spacer() // Este Spacer empuja el precio hacia la derecha
                     Text("$1.500.000,00")
                         .font(.custom("LeagueSpartan-SemiBold", size: 17))

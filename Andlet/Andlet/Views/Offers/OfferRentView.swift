@@ -9,7 +9,7 @@ import SwiftUI
 
 struct OfferRentView: View {
 //    var images = []
-    
+    @State private var isSold = false
     var body: some View{
         VStack(spacing: 8){
 //            images
@@ -48,6 +48,12 @@ struct OfferRentView: View {
                     Text("\(1) 🛁")
                         .font(.custom("LeagueSpartan-SemiBold", size: 16))
                         .foregroundColor(Color(hex: "000000"))
+                    Text("|")
+                        .font(.custom("LeagueSpartan-SemiBold", size: 16))
+                            .foregroundColor(Color(hex: "000000"))
+                    Text("\(3) 🧑‍🤝‍🧑")
+                        .font(.custom("LeagueSpartan-SemiBold", size: 16))
+                        .foregroundColor(Color(hex: "000000"))
                     Spacer() // Este Spacer empuja el precio hacia la derecha
                     Text("$1.500.000,00")
                         .font(.custom("LeagueSpartan-SemiBold", size: 17))
@@ -75,16 +81,22 @@ struct OfferRentView: View {
                     
                     // Sold status
                     HStack(spacing: 4) {
+                        // Circle changes based on sold status
                         Circle()
-                            .stroke(lineWidth: 1)
+                            .stroke(isSold ? Color.clear : Color.black, lineWidth: 1) // Outline when available
+                            .background(isSold ? Circle().foregroundColor(.black) : nil) // Filled when sold
                             .frame(width: 16, height: 16)
-                            .foregroundColor(.black)
-                        
-                        Text("Sold")
-                            .font(.custom("LeagueSpartan-Medium", size: 16))
-                            .foregroundColor(.black)
+
+                        // Button to toggle between "Available" and "Sold"
+                        Button(action: {
+                            isSold.toggle() // Toggle the state
+                        }) {
+                            Text(isSold ? "Sold" : "Available") // Change label based on state
+                                .font(.custom("LeagueSpartan-Medium", size: 16))
+                                .foregroundColor(.black)
+                        }
                     }
-                }
+}
                 .padding(.top, -5)
                 
                
