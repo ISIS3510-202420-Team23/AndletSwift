@@ -6,6 +6,8 @@
 //
 import SwiftUI
 import FirebaseCore
+import FirebaseDatabase // For Realtime Database
+import FirebaseStorage // For Firebase Storage
 
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,

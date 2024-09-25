@@ -64,7 +64,7 @@ struct Step3View: View {
 
                     Spacer()
 
-                    NavigationLink(destination: HomepageRentView(), isActive: $navigateSave) {
+                    NavigationLink(destination: MainTabLandlordView(), isActive: $navigateSave) {
                         EmptyView()
                     }
                     .hidden()
