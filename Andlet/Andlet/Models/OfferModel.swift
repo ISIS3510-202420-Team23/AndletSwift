@@ -5,15 +5,20 @@
 //  Created by Sofía Torres Ramírez on 23/09/24.
 //
 
-import FirebaseDatabase
 import Foundation
+import FirebaseFirestore
 
-// MARK: - OfferModel
-struct OfferModel: Identifiable {
-    let id: String
-    let finalDate: String
+// Enum to restrict the type to "entire_place" or "shared_place"
+enum OfferType: String, Codable {
+    case entirePlace = "entire_place"
+    case sharedPlace = "shared_place"
+}
+
+struct OfferModel: Identifiable, Codable {
+    @DocumentID var id: String?  // Optional, document ID auto-handled by Firestore
+    let finalDate: Date
     let idProperty: Int
-    let initialDate: String
+    let initialDate: Date
     let isActive: Bool
     let numBaths: Int
     let numBeds: Int
@@ -21,30 +26,12 @@ struct OfferModel: Identifiable {
     let onlyAndes: Bool
     let pricePerMonth: Double
     let roommates: Int
-    let type: String
+    let type: OfferType  // Enforce restriction using the OfferType enum
     let userId: String
 
-    // Initialize from a Firebase Data Snapshot
-    init?(snapshot: DataSnapshot) {
-        guard
-            let value = snapshot.value as? [String: Any],
-            let finalDate = value["final_date"] as? String,
-            let idProperty = value["id_property"] as? Int,
-            let initialDate = value["initial_date"] as? String,
-            let isActive = value["is_active"] as? Bool,
-            let numBaths = value["num_baths"] as? Int,
-            let numBeds = value["num_beds"] as? Int,
-            let numRooms = value["num_rooms"] as? Int,
-            let onlyAndes = value["only_andes"] as? Bool,
-            let pricePerMonth = value["price_per_month"] as? Double,
-            let roommates = value["roommates"] as? Int,
-            let type = value["type"] as? String,
-            let userId = value["user_id"] as? String
-        else {
-            return nil
-        }
-
-        self.id = snapshot.key // Firebase key
+    // A convenience initializer to manually create an OfferModel
+    init(id: String? = nil, finalDate: Date, idProperty: Int, initialDate: Date, isActive: Bool, numBaths: Int, numBeds: Int, numRooms: Int, onlyAndes: Bool, pricePerMonth: Double, roommates: Int, type: OfferType, userId: String) {
+        self.id = id
         self.finalDate = finalDate
         self.idProperty = idProperty
         self.initialDate = initialDate
@@ -55,25 +42,7 @@ struct OfferModel: Identifiable {
         self.onlyAndes = onlyAndes
         self.pricePerMonth = pricePerMonth
         self.roommates = roommates
-        self.type = type
+        self.type = type  // Restriction enforced here
         self.userId = userId
-    }
-
-    // Convert to dictionary to save in Firebase
-    func toDictionary() -> [String: Any] {
-        return [
-            "final_date": finalDate,
-            "id_property": idProperty,
-            "initial_date": initialDate,
-            "is_active": isActive,
-            "num_baths": numBaths,
-            "num_beds": numBeds,
-            "num_rooms": numRooms,
-            "only_andes": onlyAndes,
-            "price_per_month": pricePerMonth,
-            "roommates": roommates,
-            "type": type,
-            "user_id": userId
-        ]
     }
 }
