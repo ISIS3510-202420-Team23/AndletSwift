@@ -9,12 +9,12 @@ import SwiftUI
 
 struct HomepageView: View {
     @State private var showFilterSearchView = false
-    var body: some View{
-        
-        
+    @StateObject private var offerViewModel = OfferViewModel()
+
+    var body: some View {
         if #available(iOS 16.0, *) {
             NavigationStack {
-                if showFilterSearchView{
+                if showFilterSearchView {
                     FilterSearchView(show: $showFilterSearchView)
                 } else {
                     ScrollView {
@@ -22,37 +22,39 @@ struct HomepageView: View {
                             Heading()
                             SearchAndFilterBar()
                                 .onTapGesture {
-                                    withAnimation(.snappy){
+                                    withAnimation(.snappy) {
                                         showFilterSearchView.toggle()
                                     }
                                 }
-                            LazyVStack (spacing: 32){
-                                ForEach(0 ... 10, id: \.self) { listing in
-                                    NavigationLink(value: listing){
-                                        OfferView()
-                                            .frame(height: 330)
-                                            .clipShape(RoundedRectangle(cornerRadius: 30))
+                            
+                            if offerViewModel.offersWithProperties.isEmpty {
+                                Text("No offers available")
+                                    .font(.headline)
+                                    .foregroundColor(.gray)
+                                    .padding()
+                            } else {
+                                LazyVStack(spacing: 32) {
+                                    ForEach(offerViewModel.offersWithProperties) { offerWithProperty in
+                                        NavigationLink(value: offerWithProperty) {  // Aquí pasamos OfferWithProperty
+                                            OfferView(offer: offerWithProperty.offer, property: offerWithProperty.property)
+                                                .frame(height: 330)
+                                                .clipShape(RoundedRectangle(cornerRadius: 30))
+                                        }
                                     }
-                                    
                                 }
+                                .padding()
                             }
-                            .padding()
                         }
-                        .navigationDestination(for: Int.self) { listing in
-                            OfferDetailView()
+                        // Cambia el tipo que pasas al `navigationDestination` a `OfferWithProperty`
+                        .navigationDestination(for: OfferWithProperty.self) { offerWithProperty in
+                            OfferDetailView(offer: offerWithProperty.offer, property: offerWithProperty.property)
                                 .navigationBarBackButtonHidden()
                         }
-                }
-                
+                    }
                 }
             }
         } else {
-            // Fallback on earlier versions
-            
+            Text("Versión de iOS no soportada")
         }
-           
     }
-}
-#Preview {
-    HomepageView()
 }
