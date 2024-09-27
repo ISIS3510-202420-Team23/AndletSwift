@@ -16,9 +16,10 @@ struct CreateMoreButton: View {
                     .fontWeight(.bold)
             Spacer()
             // Imagen de perfil
-            Button {
-                
-            } label:{
+            NavigationLink(destination: FormView()
+                .navigationBarBackButtonHidden()
+                .toolbar(.hidden, for: .tabBar)
+                .ignoresSafeArea(.all)) {
                 Text("+ Create more")
                     .foregroundStyle(.white)
                     .font(.subheadline)

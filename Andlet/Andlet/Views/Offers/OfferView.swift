@@ -40,7 +40,7 @@ struct OfferView: View {
                
                 
                 HStack {
-                    Text("\("\(offer.numBeds)") 🛏 ")
+                    Text("\(offer.numBeds) 🛏 ")
                         .foregroundColor(Color(hex: "000000"))
                         .font(.custom("LeagueSpartan-SemiBold", size: 16))
                     Text("|")

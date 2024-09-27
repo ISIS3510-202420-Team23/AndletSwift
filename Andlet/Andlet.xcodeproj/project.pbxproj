@@ -16,6 +16,8 @@
 		3781A9C12CA3D479000E0B86 /* OfferViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3781A9C02CA3D46F000E0B86 /* OfferViewModel.swift */; };
 		3781A9C32CA3E123000E0B86 /* TestFirestoreConnectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3781A9C22CA3E119000E0B86 /* TestFirestoreConnectionView.swift */; };
 		3781D2622CA530AD00C43924 /* OfferDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3781D2612CA530A300C43924 /* OfferDetailViewModel.swift */; };
+		3781D2642CA64C5400C43924 /* OfferRentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3781D2632CA64C4B00C43924 /* OfferRentViewModel.swift */; };
+		3781D2662CA650D900C43924 /* OfferWithProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3781D2652CA650CC00C43924 /* OfferWithProperty.swift */; };
 		37C0E28C2C9E58F500099A90 /* FiltersSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E28B2C9E58F500099A90 /* FiltersSearchView.swift */; };
 		37C0E28F2C9E591F00099A90 /* Heading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E28E2C9E591F00099A90 /* Heading.swift */; };
 		37C0E2942C9E592800099A90 /* MainTabLandlordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E2902C9E592800099A90 /* MainTabLandlordView.swift */; };
@@ -107,6 +109,8 @@
 		3781A9C02CA3D46F000E0B86 /* OfferViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferViewModel.swift; sourceTree = "<group>"; };
 		3781A9C22CA3E119000E0B86 /* TestFirestoreConnectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFirestoreConnectionView.swift; sourceTree = "<group>"; };
 		3781D2612CA530A300C43924 /* OfferDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferDetailViewModel.swift; sourceTree = "<group>"; };
+		3781D2632CA64C4B00C43924 /* OfferRentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferRentViewModel.swift; sourceTree = "<group>"; };
+		3781D2652CA650CC00C43924 /* OfferWithProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferWithProperty.swift; sourceTree = "<group>"; };
 		37C0E28B2C9E58F500099A90 /* FiltersSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersSearchView.swift; sourceTree = "<group>"; };
 		37C0E28E2C9E591F00099A90 /* Heading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Heading.swift; sourceTree = "<group>"; };
 		37C0E2902C9E592800099A90 /* MainTabLandlordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabLandlordView.swift; sourceTree = "<group>"; };
@@ -210,6 +214,8 @@
 		3781D25E2CA4F55600C43924 /* Offers */ = {
 			isa = PBXGroup;
 			children = (
+				3781D2652CA650CC00C43924 /* OfferWithProperty.swift */,
+				3781D2632CA64C4B00C43924 /* OfferRentViewModel.swift */,
 				3781D2612CA530A300C43924 /* OfferDetailViewModel.swift */,
 				3781A9C02CA3D46F000E0B86 /* OfferViewModel.swift */,
 			);
@@ -622,6 +628,7 @@
 				3781A9A82CA26EA9000E0B86 /* OfferModel.swift in Sources */,
 				A968E3DD2C9F92CC00EE98F8 /* LocationInputField.swift in Sources */,
 				9C1369672C9E30A10000B55C /* ContentView.swift in Sources */,
+				3781D2662CA650D900C43924 /* OfferWithProperty.swift in Sources */,
 				37C0E28F2C9E591F00099A90 /* Heading.swift in Sources */,
 				9C1369CC2C9E35BE0000B55C /* AuthenticationView.swift in Sources */,
 				A968E3E62C9F92CC00EE98F8 /* CustomInputField.swift in Sources */,
@@ -638,6 +645,7 @@
 				9C1369D02C9E35BE0000B55C /* CustomIndicatorView.swift in Sources */,
 				37C0E29E2C9E598000099A90 /* CreateMoreButton.swift in Sources */,
 				37C0E29F2C9E598000099A90 /* HomepageRentView.swift in Sources */,
+				3781D2642CA64C5400C43924 /* OfferRentViewModel.swift in Sources */,
 				A968E3E02C9F92CC00EE98F8 /* DateRangePickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

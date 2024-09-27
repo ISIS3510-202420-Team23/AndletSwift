@@ -1,15 +1,24 @@
 //
-//  HomepageTestsView.swift
+//  OfferRentView.swift
 //  SwiftApp
 //
 //  Created by Sofía Torres Ramírez on 17/09/24.
-//
 
 import SwiftUI
 
 struct OfferRentView: View {
-//    var images = []
+    let offer: OfferModel
+    let property: PropertyModel
+    
     @State private var isSold = false
+    
+    // Iniciamos el estado con el valor de is_active (disponible o vendido)
+    init(offer: OfferModel, property: PropertyModel) {
+        self.offer = offer
+        self.property = property
+        _isSold = State(initialValue: !offer.isActive)  // Si no está activo, se considera vendido
+    }
+    
     var body: some View{
         VStack(spacing: 8){
 //            images
@@ -22,7 +31,7 @@ struct OfferRentView: View {
             VStack(alignment: .leading) {
                 
                 // Información de la propiedad
-                Text("Apartment - T2 - 1102")
+                Text(property.title)
                     .font(.custom("LeagueSpartan-SemiBold", size: 16))
                     .padding(.top, 5)
                     .foregroundStyle(.black)
@@ -30,7 +39,7 @@ struct OfferRentView: View {
                 HStack {
                     Image(systemName: "mappin.and.ellipse")
                         .foregroundColor(Color(hex: "000000"))
-                    Text("Ac. 19 #2a - 10, Bogotá")
+                    Text(property.address)
                         .font(.custom("LeagueSpartan-ExtraLight", size: 16))
                         .foregroundColor(Color(hex: "000000"))
                 }
@@ -39,23 +48,23 @@ struct OfferRentView: View {
                
                 
                 HStack {
-                    Text("\(4) 🛏 ")
+                    Text("\(offer.numBeds) 🛏 ")
                         .foregroundColor(Color(hex: "000000"))
                         .font(.custom("LeagueSpartan-SemiBold", size: 16))
                     Text("|")
                         .font(.custom("LeagueSpartan-SemiBold", size: 16))
                             .foregroundColor(Color(hex: "000000"))
-                    Text("\(1) 🛁")
+                    Text("\(offer.numBaths) 🛁")
                         .font(.custom("LeagueSpartan-SemiBold", size: 16))
                         .foregroundColor(Color(hex: "000000"))
                     Text("|")
                         .font(.custom("LeagueSpartan-SemiBold", size: 16))
                             .foregroundColor(Color(hex: "000000"))
-                    Text("\(3) 🧑‍🤝‍🧑")
+                    Text("\(offer.roommates) 🧑‍🤝‍🧑")
                         .font(.custom("LeagueSpartan-SemiBold", size: 16))
                         .foregroundColor(Color(hex: "000000"))
                     Spacer() // Este Spacer empuja el precio hacia la derecha
-                    Text("$1.500.000,00")
+                    Text("$\(offer.pricePerMonth, specifier: "%.0f")")
                         .font(.custom("LeagueSpartan-SemiBold", size: 17))
                         .foregroundColor(Color(hex: "000000"))
                 }
@@ -71,7 +80,7 @@ struct OfferRentView: View {
 //                    Text("•")
 //                        .font(.custom("LeagueSpartan-Light", size: 16))
 //                        .foregroundColor(.black)
-//                    
+//
 //                    Text("2 bookmarks")
 //                        .font(.custom("LeagueSpartan-Light", size: 16))
 //                        .foregroundColor(.black)
@@ -108,6 +117,29 @@ struct OfferRentView: View {
         
     }
 }
-#Preview {
-    OfferRentView()
-}
+//#Preview {
+//    OfferRentView(
+//        offer: OfferModel(
+//            finalDate: Date(),
+//            idProperty: "1",
+//            initialDate: Date(),
+//            isActive: true,
+//            numBaths: 1,
+//            numBeds: 4,
+//            numRooms: 4,
+//            onlyAndes: true,
+//            pricePerMonth: 1500000,
+//            roommates: 0,
+//            type: .entirePlace,
+//            userId: "tamaiothais@gmail.com"
+//        ),
+//        property: PropertyModel(
+//            address: "Ac. 19 #2a - 10, Bogotá",
+//            complexName: "City U",
+//            description: "Spacious apartment with modern amenities.",
+//            location: [4.6037, -74.0683],
+//            photos: [],
+//            title: "Apartment - T2 - 1102"
+//        )
+//    )
+//}

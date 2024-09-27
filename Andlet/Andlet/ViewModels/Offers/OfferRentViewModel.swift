@@ -1,19 +1,19 @@
+//
+//  OfferRentViewModel.swift
+//  Andlet
+//
+//  Created by Sofía Torres Ramírez on 26/09/24.
+//
+
 import FirebaseFirestore
 import SwiftUI
 
-
-
-class OfferViewModel: ObservableObject {
+class OfferRentViewModel: ObservableObject {
     @Published var offersWithProperties: [OfferWithProperty] = []
-
     private var db = Firestore.firestore()
 
-    init() {
-        fetchOffers()
-    }
-
-    // Obtener ofertas y asegurarse de que tienen una propiedad asociada
-    func fetchOffers() {
+    // Función para buscar las ofertas del landlord
+    func fetchOffers(for userId: String) {
         db.collection("offers").getDocuments { snapshot, error in
             if let error = error {
                 print("Error al obtener las ofertas: \(error)")
@@ -31,18 +31,12 @@ class OfferViewModel: ObservableObject {
             for document in documents {
                 let data = document.data()
 
-                print("Documento de oferta completo: \(data)")
-
-                // Iterar sobre las claves dentro del documento de ofertas
+                // Iterar sobre las claves dentro del documento de ofertas (1, 2, etc.)
                 for (key, value) in data {
-                    print("Clave: \(key), Valor: \(value)")  // Imprimir cada clave y valor
-
                     if let offerData = value as? [String: Any] {
-                        print("Datos de la oferta bajo la clave '\(key)': \(offerData)")
-
-                        // Filtrar por is_active == true dentro de los campos anidados
-                        if let isActive = offerData["is_active"] as? Bool, isActive == true {
-                            // Extraer el id_property como Int y convertirlo a String si es necesario
+                        // Filtrar por user_id dentro de los campos anidados
+                        if let offerUserId = offerData["user_id"] as? String, offerUserId == userId {
+                            // Extraer el id_property como Int y convertirlo a String
                             if let idProperty = offerData["id_property"] as? Int {
                                 let idPropertyString = "\(idProperty)"
 
@@ -72,46 +66,13 @@ class OfferViewModel: ObservableObject {
                                 print("id_property no encontrado o no es un número en la oferta bajo la clave '\(key)'")
                             }
                         } else {
-                            print("La oferta bajo la clave '\(key)' no está activa y no se incluirá.")
+                            print("La oferta bajo la clave '\(key)' no pertenece al user_id '\(userId)' y no se incluirá.")
                         }
                     } else {
                         print("Los datos de la oferta bajo la clave '\(key)' no están en el formato esperado.")
                     }
                 }
             }
-        }
-    }
-
-
-
-    // Obtener la propiedad asociada usando el id_property
-    func fetchPropertyForOffer(idProperty: String, completion: @escaping (PropertyModel?) -> Void) {
-        db.collection("properties").getDocuments { snapshot, error in
-            if let error = error {
-                print("Error al obtener las propiedades: \(error)")
-                completion(nil)
-                return
-            }
-
-            guard let documents = snapshot?.documents else {
-                print("No se encontraron documentos en la colección 'properties'")
-                completion(nil)
-                return
-            }
-
-            // Iteramos sobre el documento de propiedades
-            for document in documents {
-                let propertyData = document.data()
-
-                // Buscamos la propiedad usando el id_property como clave
-                if let propertyDetails = propertyData["\(idProperty)"] as? [String: Any] {
-                    let property = self.mapPropertyDataToModel(data: propertyDetails)
-                    completion(property)  // Llamamos al completion con la propiedad encontrada
-                    return
-                }
-            }
-
-            completion(nil)  // Si no se encuentra la propiedad, devolvemos nil
         }
     }
 
@@ -147,7 +108,38 @@ class OfferViewModel: ObservableObject {
         )
     }
 
-    // Función para mapear datos de la propiedad al modelo PropertyModel
+    // Función para obtener la propiedad asociada usando id_property
+    func fetchPropertyForOffer(idProperty: String, completion: @escaping (PropertyModel?) -> Void) {
+        db.collection("properties").getDocuments { snapshot, error in
+            if let error = error {
+                print("Error al obtener las propiedades: \(error)")
+                completion(nil)
+                return
+            }
+
+            guard let documents = snapshot?.documents else {
+                print("No se encontraron documentos en la colección 'properties'")
+                completion(nil)
+                return
+            }
+
+            // Iteramos sobre el documento de propiedades
+            for document in documents {
+                let propertyData = document.data()
+
+                // Buscamos la propiedad usando el id_property como clave
+                if let propertyDetails = propertyData[idProperty] as? [String: Any] {
+                    let property = self.mapPropertyDataToModel(data: propertyDetails)
+                    completion(property)
+                    return
+                }
+            }
+
+            completion(nil)  // Si no se encuentra la propiedad, devolvemos nil
+        }
+    }
+
+    // Función para mapear datos de Firestore al modelo PropertyModel
     private func mapPropertyDataToModel(data: [String: Any]) -> PropertyModel {
         let address = data["address"] as? String ?? "Dirección desconocida"
         let complexName = data["complex_name"] as? String ?? "Complejo desconocido"
