@@ -14,7 +14,7 @@ struct ProfilePickerView: View {
                 // Top Section: Title
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Let's start!\nFirst...")
-                        .font(.system(size: 40, weight: .bold))
+                        .font(.custom("LeagueSpartan-ExtraBold", size: 45))
                         .foregroundColor(Color(hex: "#1B3A68"))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -26,7 +26,7 @@ struct ProfilePickerView: View {
                 // Middle Section: Question and Buttons
                 VStack(spacing: 20) {
                     Text("What are you\nlooking for?")
-                        .font(.title2)
+                        .font(.custom("Montserrat-Light", size: 22))
                         .foregroundColor(Color(hex: "#1B3A68"))
                         .multilineTextAlignment(.center)
                     

@@ -11,13 +11,12 @@ import GoogleSignInSwift
 
 @MainActor
 struct AuthenticationView: View {
-    @State private var viewModel = AuthenticationViewModel()
-    var totalPages: Int
-    var page: Page
+    var pages: [Page]
     var onLogginSuccess: () ->Void
+    @ObservedObject var authViewModel: AuthenticationViewModel
     private func signInWithGoogle() {
         Task {
-          if await viewModel.signInWithGoogle() == true {
+          if await authViewModel.signInWithGoogle() == true {
             onLogginSuccess()
           }
         }
@@ -26,16 +25,16 @@ struct AuthenticationView: View {
         VStack(spacing: 20) {
             Spacer(minLength: 50)
             // Title
-            Text(page.title)
-                .font(.custom("LeagueSpartan-ExtraBold", size: 40).bold())
+            Text(pages[1].title)
+                .font(.custom("LeagueSpartan-ExtraBold", size: 48).bold())
                 .foregroundColor(Color(hex: "#1B3A68"))
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .leading)
                 .padding(.leading, 27)
             
                     
-            Text(page.subTitle)
-                .font(.custom("Montserrat-Regular", size: 25))
+            Text(pages[1].subTitle)
+                .font(.custom("Montserrat-Light", size: 18))
                 .foregroundColor(Color(hex: "#1B3A68"))
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -50,11 +49,11 @@ struct AuthenticationView: View {
                     // TODO: Fuente
                     Text("New Member?")
                         .foregroundColor(Color(hex: "#0C356A"))
-                        .font(.custom("Montserrat-Regular", size: 15))
+                        .font(.custom("Montserrat-Medium", size: 15))
                     // TODO: Fuente bold
                     Text("Register now")
                         .foregroundColor(Color(hex: "#0C356A"))
-                        .font(.custom("Montserrat-Regular", size: 15))
+                        .font(.custom("Montserrat-Bold", size: 15))
                         .underline()
                             
                 }
@@ -80,10 +79,11 @@ struct AuthenticationView: View {
                     Rectangle()
                         .frame(height: 1)
                         .foregroundColor(Color.black)
-                    // TODO: FUENTE
+                    
                     Text("Or log in with Email")
-                        .font(.footnote)
+                        .font(.custom("Montserrat-Regular", size: 15))
                         .foregroundColor(.black)
+                    
                     Rectangle()
                         .frame(height: 1)
                         .foregroundColor(.black)
@@ -113,7 +113,7 @@ struct AuthenticationView: View {
                 Spacer()
                 
                 HStack{
-                    CustomIndicatorView(totalPages: totalPages, currentPage: page.tag)
+                    CustomIndicatorView(totalPages: pages.count, currentPage: pages[1].tag)
                     
                     Spacer()
                 
@@ -129,6 +129,7 @@ struct AuthenticationView: View {
         .padding()
         .background(Color(hex: "#C5DDFF"))
         .edgesIgnoringSafeArea(.all)
+        .navigationBarHidden(true)
     }
 }
 

@@ -13,7 +13,19 @@ import FirebaseCore
 
 @MainActor
 final class AuthenticationViewModel: ObservableObject{
+    @Published var isAuthenticated: Bool = false
     @Published var errorMessage: String = ""
+    
+    init() {
+        checkIfUserIsLoggedIn()
+    }
+    
+    func checkIfUserIsLoggedIn() {
+        if let currentUser = Auth.auth().currentUser{
+            isAuthenticated = true
+            print("User \(currentUser.displayName ?? "Unknown") is already logged in.")
+        }
+    }
     
     func signInWithGoogle() async -> Bool {
         guard let clientID = FirebaseApp.app()?.options.clientID else {
@@ -42,7 +54,8 @@ final class AuthenticationViewModel: ObservableObject{
             let result = try await Auth.auth().signIn(with: credential)
             let firebaseUser = result.user
               print("User \(String(describing: firebaseUser.displayName)) signed in with email \(firebaseUser.email ?? "unknown")")
-             return true
+             isAuthenticated = true
+              return true
           }
           catch {
             print(error.localizedDescription)
