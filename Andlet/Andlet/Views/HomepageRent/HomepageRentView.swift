@@ -28,17 +28,7 @@ struct HomepageRentView: View {
                                     }
                                 }
                             CreateMoreButton()
-                            //                            LazyVStack (spacing: 32){
-                            //                                ForEach(0 ... 10, id: \.self) { listing in
-                            //                                    NavigationLink(value: listing){
-                            //                                        OfferRentView()
-                            //                                            .frame(height: 360)
-                            //                                            .clipShape(RoundedRectangle(cornerRadius: 30))
-                            //                                    }
-                            //
-                            //                                }
-                            //                            }
-                            // Comprobar si hay ofertas del landlord disponibles
+                        
                             if viewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
                                     .font(.headline)

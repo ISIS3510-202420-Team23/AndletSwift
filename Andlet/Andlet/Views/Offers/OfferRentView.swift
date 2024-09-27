@@ -5,12 +5,13 @@
 //  Created by Sofía Torres Ramírez on 17/09/24.
 
 import SwiftUI
+import FirebaseFirestore
 
 struct OfferRentView: View {
     let offer: OfferModel
     let property: PropertyModel
     
-    @State private var isSold = false
+    @State private var isSold: Bool
     
     // Iniciamos el estado con el valor de is_active (disponible o vendido)
     init(offer: OfferModel, property: PropertyModel) {
@@ -44,8 +45,6 @@ struct OfferRentView: View {
                         .foregroundColor(Color(hex: "000000"))
                 }
                 .foregroundColor(.gray)
-                
-               
                 
                 HStack {
                     Text("\(offer.numBeds) 🛏 ")
@@ -98,7 +97,8 @@ struct OfferRentView: View {
 
                         // Button to toggle between "Available" and "Sold"
                         Button(action: {
-                            isSold.toggle() // Toggle the state
+//                            isSold.toggle() // Toggle the state
+                            toggleOfferStatus()
                         }) {
                             Text(isSold ? "Sold" : "Available") // Change label based on state
                                 .font(.custom("LeagueSpartan-Medium", size: 16))
@@ -116,6 +116,22 @@ struct OfferRentView: View {
         .padding()
         
     }
+    private func toggleOfferStatus() {
+            let db = Firestore.firestore()
+            // Obtener el ID del documento de la oferta en Firestore
+            let offerDocumentId = offer.id ?? "" // Asegúrate de que el ID de la oferta esté presente
+            
+            // Actualizar el campo "is_active" en Firestore
+            db.collection("offers")
+                .document(offerDocumentId)
+                .updateData(["is_active": !isSold]) { error in
+                    if let error = error {
+                        print("Error al actualizar el estado de la oferta: \(error)")
+                    } else {
+                        print("Estado de la oferta actualizado correctamente.")
+                    }
+                }
+        }
 }
 //#Preview {
 //    OfferRentView(

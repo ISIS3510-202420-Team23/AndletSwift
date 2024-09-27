@@ -11,11 +11,11 @@ import FirebaseFirestore
 // Enum to restrict the type to "entire_place" or "shared_place"
 enum OfferType: String, Codable, Hashable, Equatable  {
     case entirePlace = "entire_place"
-    case sharedPlace = "shared_place"
+    case aRoom = "a_room"
 }
 
 struct OfferModel: Identifiable, Codable, Hashable, Equatable {
-    @DocumentID var id: String?  // Optional, document ID auto-handled by Firestore
+    @DocumentID var id: String?  
     let finalDate: Date
     let idProperty: String
     let initialDate: Date
