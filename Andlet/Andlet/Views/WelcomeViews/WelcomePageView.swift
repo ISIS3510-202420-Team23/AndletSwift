@@ -10,16 +10,12 @@ import SwiftUI
 struct WelcomePageView: View {
     @State private var pageIndex = 0
     private let WelcomePages: [Page] = Page.pages
+    @StateObject private var authViewModel = AuthenticationViewModel()
     var body: some View {
-        TabView(selection: $pageIndex) {
-            WelcomeIndividualPageView(pageIndex: $pageIndex, totalPages:WelcomePages.count , page: WelcomePages[0])
-                .tag(WelcomePages[0].tag)
-            AuthenticationView(totalPages: WelcomePages.count, page: WelcomePages[1]){
-                pageIndex = 2
+        NavigationView{
+            VStack{
+                WelcomeIndividualPageView(pageIndex: $pageIndex, authViewModel: authViewModel, pages: WelcomePages)
             }
-                .tag(WelcomePages[1].tag)
-            ProfilePickerView()
-                .tag(WelcomePages[2].tag)
         }
             
             
