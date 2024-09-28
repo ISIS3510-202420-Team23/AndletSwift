@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct HomepageRentView: View {
     @State private var showFilterSearchView = false
     @StateObject private var viewModel = OfferRentViewModel()
+    let currentUser = Auth.auth().currentUser
     var body: some View{
         
         if #available(iOS 16.0, *) {
@@ -42,6 +44,10 @@ struct HomepageRentView: View {
                                                 .frame(height: 360)
                                                 .clipShape(RoundedRectangle(cornerRadius: 30))
                                         }
+                                        .onAppear {
+                                                    print("Oferta: \(offerWithProperty.offer)")
+                                                    print("Propiedad: \(offerWithProperty.property)")
+                                                }
                                     }
                                 }
                                 .padding()
@@ -51,10 +57,12 @@ struct HomepageRentView: View {
                 }
             }
             .onAppear {
-                print("HomepageRentView appeared - Fetching offers for tamaiothais@gmail.com")
-                viewModel.fetchOffers(for: "tamaiothais@gmail.com")
+                print("HomepageRentView appeared - Fetching offers for \(currentUser?.email ?? "Unknown") ...")
+                viewModel.fetchOffers(for: "\(currentUser?.email ?? "Unknown")")
+                
             }
             .navigationBarHidden(true)
+            
         } else {
             // Fallback en versiones anteriores
         }
