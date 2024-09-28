@@ -11,7 +11,7 @@ struct OfferRentView: View {
     let offer: OfferModel
     let property: PropertyModel
     
-    @State private var isSold: Bool
+    @State private var isSold = false
     
     // Iniciamos el estado con el valor de is_active (disponible o vendido)
     init(offer: OfferModel, property: PropertyModel) {
@@ -97,8 +97,8 @@ struct OfferRentView: View {
 
                         // Button to toggle between "Available" and "Sold"
                         Button(action: {
-//                            isSold.toggle() // Toggle the state
-                            toggleOfferStatus()
+                            isSold.toggle() // Toggle the state
+                            updateOfferStatusInFirestore()
                         }) {
                             Text(isSold ? "Sold" : "Available") // Change label based on state
                                 .font(.custom("LeagueSpartan-Medium", size: 16))
@@ -116,23 +116,38 @@ struct OfferRentView: View {
         .padding()
         
     }
-    private func toggleOfferStatus() {
-            let db = Firestore.firestore()
-            // Obtener el ID del documento de la oferta en Firestore
-            let offerDocumentId = offer.id ?? "" // Asegúrate de que el ID de la oferta esté presente
+    // Función para actualizar el campo is_active en Firestore
+        func updateOfferStatusInFirestore() {
+            print(offer.id)
+            guard let offerId = offer.id else {
+                print("No se encontró el id de la oferta")
+                return
+            }
             
-            // Actualizar el campo "is_active" en Firestore
-            db.collection("offers")
-                .document(offerDocumentId)
-                .updateData(["is_active": !isSold]) { error in
+            // Aquí separamos el document ID y el campo de la oferta
+            let parts = offerId.split(separator: "_")
+            if parts.count == 2 {
+                let documentId = String(parts[0])
+                let fieldId = String(parts[1])
+                
+                let db = Firestore.firestore()
+                
+                // Cambiar el campo is_active a su valor opuesto
+                print(offer.id)
+                db.collection("offers").document(documentId).updateData([
+                    "\(fieldId).is_active": !offer.isActive  // Cambia el valor
+                ]) { error in
                     if let error = error {
                         print("Error al actualizar el estado de la oferta: \(error)")
                     } else {
-                        print("Estado de la oferta actualizado correctamente.")
+                        print("El estado de la oferta ha sido actualizado con éxito.")
                     }
                 }
+            } else {
+                print("El ID de la oferta no está en el formato esperado")
+            }
         }
-}
+    }
 //#Preview {
 //    OfferRentView(
 //        offer: OfferModel(

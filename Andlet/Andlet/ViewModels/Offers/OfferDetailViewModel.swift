@@ -3,8 +3,7 @@ import FirebaseFirestore
 
 class OfferDetailViewModel: ObservableObject {
     @Published var user: UserModel = UserModel(
-        id: "loading_id",
-        email: "loading@example.com",
+        id: "loading@example.com",
         favoriteOffers: [],
         isAndes: false,
         name: "Loading...",
@@ -50,7 +49,6 @@ class OfferDetailViewModel: ObservableObject {
 
     // Función para mapear los datos de Firestore al modelo UserModel
     private func mapUserDataToModel(data: [String: Any], userEmail: String) -> UserModel {
-        let email = userEmail
         let isAndes = data["is_andes"] as? Bool ?? false
         let name = data["name"] as? String ?? "Unknown"
         let phone = data["phone"] as? String ?? "0000000000"
@@ -59,8 +57,7 @@ class OfferDetailViewModel: ObservableObject {
         let favoriteOffers = data["favorite_offers"] as? [Int] ?? []
 
         return UserModel(
-            id: userEmail,  // Usamos el email como el ID
-            email: email,
+            id: userEmail,
             favoriteOffers: favoriteOffers,
             isAndes: isAndes,
             name: name,
