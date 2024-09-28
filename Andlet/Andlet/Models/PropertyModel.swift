@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 // Hacer que PropertyModel conforme a Hashable y Equatable
 struct PropertyModel: Identifiable, Codable, Hashable, Equatable {
-    @DocumentID var id: String?
+    var id: String?
     let address: String
     let complexName: String
     let description: String

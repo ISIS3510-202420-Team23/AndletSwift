@@ -4,6 +4,8 @@
 //
 //  Created by Sofía Torres Ramírez on 26/09/24.
 //
+//
+
 
 import FirebaseFirestore
 import SwiftUI
@@ -11,6 +13,32 @@ import SwiftUI
 class OfferRentViewModel: ObservableObject {
     @Published var offersWithProperties: [OfferWithProperty] = []
     private var db = Firestore.firestore()
+    
+    func toggleOfferAvailability(documentId: String, offerKey: String, newStatus: Bool) {
+        guard !documentId.isEmpty else {
+            print("Error: documentId está vacío, no se puede actualizar la oferta.")
+            return
+        }
+        guard !offerKey.isEmpty else {
+            print("Error: offerKey está vacío, no se puede actualizar la oferta.")
+            return
+        }
+
+        // Referencia al documento en la colección "offers"
+        let offerRef = db.collection("offers").document(documentId)
+
+        // Actualizamos el campo 'is_active' usando la clave interna de la oferta
+        offerRef.updateData([
+            "\(offerKey).is_active": newStatus
+        ]) { error in
+            if let error = error {
+                print("Error al actualizar la oferta: \(error)")
+            } else {
+                print("Estado de la oferta actualizado con éxito")
+            }
+        }
+    }
+
 
     // Función para buscar las ofertas del landlord
     func fetchOffers(for userId: String) {
@@ -41,7 +69,7 @@ class OfferRentViewModel: ObservableObject {
                                 let idPropertyString = "\(idProperty)"
 
                                 // Mapeamos los datos de la oferta al modelo OfferModel
-                                let offer = self.mapOfferDataToModel(data: offerData)
+                                let offer = self.mapOfferDataToModel(key: key, data: offerData)  // Aquí pasamos la clave interna como 'key'
                                 let offerId = "\(document.documentID)_\(key)"  // ID único para la oferta
 
                                 // Buscar la propiedad asociada
@@ -76,11 +104,22 @@ class OfferRentViewModel: ObservableObject {
         }
     }
 
+
     // Función para mapear datos de la oferta al modelo OfferModel
-    private func mapOfferDataToModel(data: [String: Any]) -> OfferModel {
+    private func mapOfferDataToModel(key: String, data: [String: Any]) -> OfferModel {
         let finalDate = (data["final_date"] as? Timestamp)?.dateValue() ?? Date()
         let initialDate = (data["initial_date"] as? Timestamp)?.dateValue() ?? Date()
-        let idProperty = data["id_property"] as? String ?? ""
+
+        // Asegúrate de manejar el id_property como antes.
+        let idProperty: String
+        if let idPropertyInt = data["id_property"] as? Int {
+            idProperty = "\(idPropertyInt)"
+        } else if let idPropertyString = data["id_property"] as? String {
+            idProperty = idPropertyString
+        } else {
+            idProperty = ""
+        }
+
         let isActive = data["is_active"] as? Bool ?? false
         let numBaths = data["num_baths"] as? Int ?? 0
         let numBeds = data["num_beds"] as? Int ?? 0
@@ -88,11 +127,12 @@ class OfferRentViewModel: ObservableObject {
         let onlyAndes = data["only_andes"] as? Bool ?? false
         let pricePerMonth = data["price_per_month"] as? Double ?? 0.0
         let roommates = data["roommates"] as? Int ?? 0
-        let typeString = data["type"] as? String ?? "shared_place"
+        let typeString = data["type"] as? String ?? "a_room"
         let type = OfferType(rawValue: typeString) ?? .aRoom
         let userId = data["user_id"] as? String ?? ""
 
         return OfferModel(
+            id: key,  // Aquí asignamos la clave como ID de la oferta
             finalDate: finalDate,
             idProperty: idProperty,
             initialDate: initialDate,
@@ -107,6 +147,7 @@ class OfferRentViewModel: ObservableObject {
             userId: userId
         )
     }
+
 
     // Función para obtener la propiedad asociada usando id_property
     func fetchPropertyForOffer(idProperty: String, completion: @escaping (PropertyModel?) -> Void) {
