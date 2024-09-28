@@ -15,7 +15,7 @@ enum OfferType: String, Codable, Hashable, Equatable  {
 }
 
 struct OfferModel: Identifiable, Codable, Hashable, Equatable {
-    @DocumentID var id: String?  
+    var id: String?  
     let finalDate: Date
     let idProperty: String
     let initialDate: Date

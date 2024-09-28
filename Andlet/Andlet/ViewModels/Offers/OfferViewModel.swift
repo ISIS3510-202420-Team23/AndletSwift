@@ -119,7 +119,15 @@ class OfferViewModel: ObservableObject {
     private func mapOfferDataToModel(data: [String: Any]) -> OfferModel {
         let finalDate = (data["final_date"] as? Timestamp)?.dateValue() ?? Date()
         let initialDate = (data["initial_date"] as? Timestamp)?.dateValue() ?? Date()
-        let idProperty = data["id_property"] as? String ?? ""
+
+        // Modificar la extracción de id_property para soportar tanto Int como String
+        let idProperty: String
+        if let idPropertyInt = data["id_property"] as? Int {
+            idProperty = "\(idPropertyInt)"  // Convertir Int a String
+        } else {
+            idProperty = data["id_property"] as? String ?? ""  // Asignar el valor si es String o vacío si no se encuentra
+        }
+
         let isActive = data["is_active"] as? Bool ?? false
         let numBaths = data["num_baths"] as? Int ?? 0
         let numBeds = data["num_beds"] as? Int ?? 0
@@ -127,13 +135,13 @@ class OfferViewModel: ObservableObject {
         let onlyAndes = data["only_andes"] as? Bool ?? false
         let pricePerMonth = data["price_per_month"] as? Double ?? 0.0
         let roommates = data["roommates"] as? Int ?? 0
-        let typeString = data["type"] as? String ?? "shared_place"
+        let typeString = data["type"] as? String ?? "a_room"
         let type = OfferType(rawValue: typeString) ?? .aRoom
         let userId = data["user_id"] as? String ?? ""
 
         return OfferModel(
             finalDate: finalDate,
-            idProperty: idProperty,
+            idProperty: idProperty,  // Ahora este campo siempre tendrá un valor String válido
             initialDate: initialDate,
             isActive: isActive,
             numBaths: numBaths,
@@ -146,6 +154,7 @@ class OfferViewModel: ObservableObject {
             userId: userId
         )
     }
+
 
     // Función para mapear datos de la propiedad al modelo PropertyModel
     private func mapPropertyDataToModel(data: [String: Any]) -> PropertyModel {
