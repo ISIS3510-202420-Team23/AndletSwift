@@ -1,11 +1,14 @@
 //
-//  HomepageTestsView.swift
+//  OfferDetailView.swift
 //  SwiftApp
 //
 //  Created by Sofía Torres Ramírez on 17/09/24.
 //
 
 import SwiftUI
+import FirebaseFirestore
+import FirebaseAuth
+
 
 struct OfferDetailView: View {
     
@@ -21,7 +24,7 @@ struct OfferDetailView: View {
         if #available(iOS 16.0, *) {
             ScrollView{
                 ZStack (alignment: .topLeading){
-                    OfferImageCarouselView()
+                    OfferImageCarouselView(property: property)
                         .frame(height: 370)
                         .tabViewStyle(.page)
                     Button {
@@ -195,14 +198,63 @@ struct OfferDetailView: View {
                 
             }
             .onAppear {
-                viewModel.fetchUser(userEmail: offer.userId)  // Buscar el usuario cuando aparece la vista
+                viewModel.fetchUser(userEmail: offer.userId)
+                updateUserViewCount()
             }
         } else {
             
         }
-        
     }
-}
+        func updateUserViewCount() {
+            let db = Firestore.firestore()
+            guard let userEmail = Auth.auth().currentUser?.email else {
+                print("Error: No hay usuario logueado")
+                return
+            }
+            
+            // Documento en Firestore para las vistas del usuario
+            let userViewsRef = db.collection("user_views").document(userEmail)
+            
+            userViewsRef.getDocument { document, error in
+                if let document = document, document.exists {
+                    // Si el documento ya existe, actualizamos el contador correspondiente
+                    if offer.roommates > 0 {
+                        userViewsRef.updateData([
+                            "roommates_views": FieldValue.increment(Int64(1))
+                        ]) { error in
+                            if let error = error {
+                                print("Error al actualizar roommates_views: \(error)")
+                            } else {
+                                print("roommates_views actualizado correctamente")
+                            }
+                        }
+                    } else {
+                        userViewsRef.updateData([
+                            "no_roommates_views": FieldValue.increment(Int64(1))
+                        ]) { error in
+                            if let error = error {
+                                print("Error al actualizar no_roommates_views: \(error)")
+                            } else {
+                                print("no_roommates_views actualizado correctamente")
+                            }
+                        }
+                    }
+                } else {
+                    // Si el documento no existe, lo creamos con los valores iniciales
+                    userViewsRef.setData([
+                        "roommates_views": offer.roommates > 0 ? 1 : 0,
+                        "no_roommates_views": offer.roommates > 0 ? 0 : 1
+                    ]) { error in
+                        if let error = error {
+                            print("Error al crear el documento de vistas del usuario: \(error)")
+                        } else {
+                            print("Documento de vistas del usuario creado correctamente")
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 //#Preview{
 //    OfferDetailView()

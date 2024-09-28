@@ -21,9 +21,9 @@ struct Heading: View {
                     .font(.custom("LeagueSpartan-ExtraBold", size: 32))
                     .foregroundColor(Color(hex: "FFB900"))
                     .fontWeight(.bold)
+                
             }
             Spacer()
-            
             // Imagen de perfil
             if let photoURL = currentUser?.photoURL {
     
@@ -52,19 +52,23 @@ struct Heading: View {
         .padding(.bottom, 3)
         .padding(.top, 5)
         .onAppear {
-                    // Si quieres ver el photoURL, lo puedes imprimir aquí
-                    if let photoURL = currentUser?.photoURL {
-                        print("AQUI ESTA LA FOTO")
-                        print(photoURL)
+            printUserDetails()
                     }
-                    if let user = currentUser {
-                            print("Información completa del usuario:")
-                            print(user)
-                        }
                 }
-    }
-}
-
+                
+                // Función para imprimir detalles del usuario
+                func printUserDetails() {
+                    if let currentUser = currentUser {
+                        print("Nombre de usuario: \(currentUser.displayName ?? "Desconocido")")
+                        print("URL de la foto: \(currentUser.photoURL?.absoluteString ?? "No hay foto disponible")")
+                        
+                        // Verifica si puedes acceder a más detalles
+                        print("Información completa del usuario: \(currentUser)")
+                    } else {
+                        print("No hay un usuario autenticado.")
+                    }
+                }
+            }
 #Preview {
     Heading()
 }
