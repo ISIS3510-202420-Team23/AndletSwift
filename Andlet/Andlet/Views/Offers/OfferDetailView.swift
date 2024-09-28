@@ -11,6 +11,12 @@ struct OfferDetailView: View {
     
     @Environment(\.dismiss) var dismiss
     @State private var showContactDetails = false
+    
+    let offer: OfferModel
+    let property: PropertyModel
+    
+    @StateObject private var viewModel = OfferDetailViewModel()
+    
     var body: some View {
         if #available(iOS 16.0, *) {
             ScrollView{
@@ -35,14 +41,14 @@ struct OfferDetailView: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 8){
-                    Text("Apartment - T2 - 1102")
+                    Text(property.title)
                         .font(.custom("LeagueSpartan-SemiBold", size: 28))
                         .fontWeight(.semibold)
                     
                     HStack {
                         Image(systemName: "mappin.and.ellipse")
                             .foregroundColor(Color(hex: "000000"))
-                        Text("Ac. 19 #2a - 10, Bogotá")
+                        Text(property.address)
                             .font(.custom("LeagueSpartan-ExtraLight", size: 17))
                             .foregroundColor(Color(hex: "000000"))
                     }
@@ -61,7 +67,7 @@ struct OfferDetailView: View {
                         HStack(spacing: 16) {
                             VStack{
                                 Image(systemName: "bed.double")
-                                Text("4 Bedroom")
+                                Text("\(offer.numBeds) Bedrooms")
                                     .font(.custom("LeagueSpartan-Regular", size: 19))
                             }
                             .frame(width: 130, height: 80)
@@ -73,7 +79,7 @@ struct OfferDetailView: View {
                             
                             VStack {
                                 Image(systemName: "shower")
-                                Text("1 Bathroom")
+                                Text("\(offer.numBaths) Bathrooms")
                                     .font(.custom("LeagueSpartan-Regular", size: 19))
                             }
                             .frame(width: 132, height: 85)
@@ -85,7 +91,7 @@ struct OfferDetailView: View {
                             
                             VStack {
                                 Image(systemName: "person.2")
-                                Text("3 Roommates")
+                                Text("\(offer.roommates) Roommates")
                                     .font(.custom("LeagueSpartan-Regular", size: 19))
                             }
                             .frame(width: 132, height: 85)
@@ -106,10 +112,10 @@ struct OfferDetailView: View {
                         .font(.custom("LeagueSpartan-SemiBold", size: 22))
                         .frame(width: 250, alignment: .leading )
                     
-                    Text ("This spacious apartment in City U is shared with three other tenants and offers access to top-tier amenities, including a gym and study rooms. Enjoy modern living in a vibrant community with everything you need just steps away.")
+                    Text (property.description)
                         .font(.custom("LeagueSpartan-Light", size: 17))
                         .padding(.top, 1)
-
+                    
                 }
                 .padding(.top)
                 .padding(.leading)
@@ -131,24 +137,30 @@ struct OfferDetailView: View {
                         
                         VStack (alignment: .leading)
                         {
-                            Text ("Paula Daza")
-                                .font(.custom("LeagueSpartan-SemiBold", size: 18))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(hex: "0C356A"))
+                            if viewModel.isLoading {
+                                Text("Loading...")
+                                    .font(.custom("LeagueSpartan-SemiBold", size: 18))
+                                    .foregroundColor(Color(hex: "0C356A"))
+                            } else {
+                                
+                                Text(viewModel.user.name)
+                                    .font(.custom("LeagueSpartan-SemiBold", size: 18))
+                                    .foregroundColor(Color(hex: "0C356A"))
+                            }
                             Text ("Property agent")
                                 .font(.custom("LeagueSpartan-SemiBold", size: 18))
                                 .foregroundColor(Color(hex: "3D4D62"))
-                            Text ("$ 1.500.000,00")
+                            Text ("$\(offer.pricePerMonth, specifier: "%.0f")")
                                 .font(.custom("LeagueSpartan-Regular", size: 18))
                                 .padding(.top, 4)
-                        
+                            
                         }
                         Spacer ()
                         
                         Button {
                             withAnimation {
-                                    showContactDetails.toggle()
-                                                        }
+                                showContactDetails.toggle()
+                            }
                         } label:{
                             Text("Contact")
                                 .foregroundStyle(.white)
@@ -162,33 +174,36 @@ struct OfferDetailView: View {
                     }
                     .padding(.horizontal,18)
                     VStack {
-                            if showContactDetails {
-                                Text("Email: paula.daza@example.com")
-                                    .font(.custom("LeagueSpartan-Regular", size: 18))
-                                    .padding(.top, 15)
-                                    .padding(.horizontal, 18)
-                                    
-                            }
+                        if showContactDetails {
+                            Text(offer.userId)
+                                .font(.custom("LeagueSpartan-Regular", size: 18))
+                                .padding(.top, 15)
+                                .padding(.horizontal, 18)
                             
                         }
-
-                        .transition(.move(edge: .bottom))
-              }
+                        
+                    }
+                    
+                    .transition(.move(edge: .bottom))
+                }
                 .background(Color(hex: "FFF4CF"))
-           
-                    
-                    .frame(maxHeight: showContactDetails ? nil : 50)
-                  
-                    
-
+                
+                
+                .frame(maxHeight: showContactDetails ? nil : 50)
+                
+                
+                
+            }
+            .onAppear {
+                viewModel.fetchUser(userEmail: offer.userId)  // Buscar el usuario cuando aparece la vista
             }
         } else {
-   
+            
         }
         
     }
 }
 
-#Preview{
-    OfferDetailView()
-}
+//#Preview{
+//    OfferDetailView()
+//}

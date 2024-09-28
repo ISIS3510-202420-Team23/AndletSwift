@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct OfferView: View {
-
+    let offer: OfferModel
+    let property: PropertyModel
     
     var body: some View{
         VStack(spacing: 8){
@@ -22,7 +23,7 @@ struct OfferView: View {
             VStack(alignment: .leading) {
                 
                 // Información de la propiedad
-                Text("Apartment - T2 - 1102")
+                Text(property.title)
                     .font(.custom("LeagueSpartan-SemiBold", size: 16))
                     .padding(.top, 5)
                     .foregroundStyle(.black)
@@ -30,7 +31,7 @@ struct OfferView: View {
                 HStack {
                     Image(systemName: "mappin.and.ellipse")
                         .foregroundColor(Color(hex: "000000"))
-                    Text("Ac. 19 #2a - 10, Bogotá")
+                    Text(property.address)
                         .font(.custom("LeagueSpartan-ExtraLight", size: 16))
                         .foregroundColor(Color(hex: "000000"))
                 }
@@ -39,23 +40,23 @@ struct OfferView: View {
                
                 
                 HStack {
-                    Text("\(4) 🛏 ")
+                    Text("\(offer.numBeds) 🛏 ")
                         .foregroundColor(Color(hex: "000000"))
                         .font(.custom("LeagueSpartan-SemiBold", size: 16))
                     Text("|")
                         .font(.custom("LeagueSpartan-SemiBold", size: 16))
                             .foregroundColor(Color(hex: "000000"))
-                    Text("\(1) 🛁")
+                    Text("\(offer.numBaths) 🛁")
                         .font(.custom("LeagueSpartan-SemiBold", size: 16))
                         .foregroundColor(Color(hex: "000000"))
                     Text("|")
                         .font(.custom("LeagueSpartan-SemiBold", size: 16))
                             .foregroundColor(Color(hex: "000000"))
-                    Text("\(3) 🧑‍🤝‍🧑")
+                    Text("\(offer.roommates) 🧑‍🤝‍🧑")
                         .font(.custom("LeagueSpartan-SemiBold", size: 16))
                         .foregroundColor(Color(hex: "000000"))
                     Spacer() // Este Spacer empuja el precio hacia la derecha
-                    Text("$1.500.000,00")
+                    Text("$\(offer.pricePerMonth, specifier: "%.0f")")
                         .font(.custom("LeagueSpartan-SemiBold", size: 17))
                         .foregroundColor(Color(hex: "000000"))
                 }
@@ -69,6 +70,6 @@ struct OfferView: View {
         .padding()
     }
 }
-#Preview {
-    OfferView()
-}
+//#Preview {
+//    OfferView()
+//}
