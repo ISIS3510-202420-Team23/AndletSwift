@@ -41,9 +41,11 @@ struct Heading: View {
                 }
             } else {
                 // Placeholder si no hay imagen disponible
-                Circle()
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(width: 67, height: 67)
+                Image("Icon")
+                                    .resizable()
+                                    .frame(width: 67, height: 67)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 5)
             }
         }
         .padding(.horizontal)

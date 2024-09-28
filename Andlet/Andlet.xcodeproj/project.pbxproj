@@ -29,6 +29,7 @@
 		37C0E2A42C9E59BA00099A90 /* OfferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E2A32C9E59BA00099A90 /* OfferView.swift */; };
 		37C0E2A52C9E59BA00099A90 /* OfferRentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E2A22C9E59BA00099A90 /* OfferRentView.swift */; };
 		37C0E2A62C9E59BA00099A90 /* OfferDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E2A12C9E59BA00099A90 /* OfferDetailView.swift */; };
+		37ECCB112CA7D5AD007BBE02 /* UserViewsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37ECCB102CA7D597007BBE02 /* UserViewsViewModel.swift */; };
 		9C1369652C9E30A10000B55C /* AndletApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1369642C9E30A10000B55C /* AndletApp.swift */; };
 		9C1369672C9E30A10000B55C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1369662C9E30A10000B55C /* ContentView.swift */; };
 		9C1369692C9E30A20000B55C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C1369682C9E30A20000B55C /* Assets.xcassets */; };
@@ -121,6 +122,7 @@
 		37C0E2A12C9E59BA00099A90 /* OfferDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferDetailView.swift; sourceTree = "<group>"; };
 		37C0E2A22C9E59BA00099A90 /* OfferRentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferRentView.swift; sourceTree = "<group>"; };
 		37C0E2A32C9E59BA00099A90 /* OfferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferView.swift; sourceTree = "<group>"; };
+		37ECCB102CA7D597007BBE02 /* UserViewsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewsViewModel.swift; sourceTree = "<group>"; };
 		9C1369612C9E30A10000B55C /* Andlet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Andlet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C1369642C9E30A10000B55C /* AndletApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AndletApp.swift; sourceTree = "<group>"; };
 		9C1369662C9E30A10000B55C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -278,6 +280,14 @@
 			path = Offers;
 			sourceTree = "<group>";
 		};
+		37ECCB0F2CA7D580007BBE02 /* UserRelated */ = {
+			isa = PBXGroup;
+			children = (
+				37ECCB102CA7D597007BBE02 /* UserViewsViewModel.swift */,
+			);
+			path = UserRelated;
+			sourceTree = "<group>";
+		};
 		9C1369582C9E30A10000B55C = {
 			isa = PBXGroup;
 			children = (
@@ -372,6 +382,7 @@
 		9C1369912C9E31800000B55C /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				37ECCB0F2CA7D580007BBE02 /* UserRelated */,
 				3781D25E2CA4F55600C43924 /* Offers */,
 				9C1369EE2C9E422C0000B55C /* AuthenticationViewModel.swift */,
 			);
@@ -605,6 +616,7 @@
 				A968E3CE2C9F92A100EE98F8 /* Step3View.swift in Sources */,
 				A968E3E22C9F92CC00EE98F8 /* ImagePickerView.swift in Sources */,
 				A968E3CC2C9F92A100EE98F8 /* Step1View.swift in Sources */,
+				37ECCB112CA7D5AD007BBE02 /* UserViewsViewModel.swift in Sources */,
 				37C0E2A52C9E59BA00099A90 /* OfferRentView.swift in Sources */,
 				37C0E2A62C9E59BA00099A90 /* OfferDetailView.swift in Sources */,
 				A968E3E32C9F92CC00EE98F8 /* CustomTextField.swift in Sources */,
