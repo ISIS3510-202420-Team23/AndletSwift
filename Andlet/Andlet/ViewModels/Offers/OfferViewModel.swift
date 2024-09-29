@@ -138,6 +138,7 @@ class OfferViewModel: ObservableObject {
         let typeString = data["type"] as? String ?? "a_room"
         let type = OfferType(rawValue: typeString) ?? .aRoom
         let userId = data["user_id"] as? String ?? ""
+        let views = data["views"] as? Int ?? 0
 
         return OfferModel(
             finalDate: finalDate,
@@ -151,7 +152,8 @@ class OfferViewModel: ObservableObject {
             pricePerMonth: pricePerMonth,
             roommates: roommates,
             type: type,
-            userId: userId
+            userId: userId,
+            views: views
         )
     }
 

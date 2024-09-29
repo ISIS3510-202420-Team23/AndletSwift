@@ -98,7 +98,7 @@ struct OfferRentView: View {
                                 newStatus: !isSold
                             )
                         }) {
-                            Text(isSold ? "Sold" : "Available")
+                            Text(isSold ? "Leased" : "Available")
                                 .font(.custom("LeagueSpartan-Medium", size: 16))
                                 .foregroundColor(.black)
                         }

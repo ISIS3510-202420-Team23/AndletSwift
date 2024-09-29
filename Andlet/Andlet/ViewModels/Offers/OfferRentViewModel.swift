@@ -130,6 +130,7 @@ class OfferRentViewModel: ObservableObject {
         let typeString = data["type"] as? String ?? "a_room"
         let type = OfferType(rawValue: typeString) ?? .aRoom
         let userId = data["user_id"] as? String ?? ""
+        let views = data["views"] as? Int ?? 0
 
         return OfferModel(
             id: key,  // Aquí asignamos la clave como ID de la oferta
@@ -144,7 +145,8 @@ class OfferRentViewModel: ObservableObject {
             pricePerMonth: pricePerMonth,
             roommates: roommates,
             type: type,
-            userId: userId
+            userId: userId,
+            views: views
         )
     }
 
