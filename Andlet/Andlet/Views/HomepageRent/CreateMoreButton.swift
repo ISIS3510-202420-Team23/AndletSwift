@@ -16,7 +16,7 @@ struct CreateMoreButton: View {
                     .fontWeight(.bold)
             Spacer()
             // Imagen de perfil
-            NavigationLink(destination: FormView()
+            NavigationLink(destination: Step1View()
                 .navigationBarBackButtonHidden()
                 .toolbar(.hidden, for: .tabBar)
                 .ignoresSafeArea(.all)) {
