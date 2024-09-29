@@ -2,8 +2,6 @@ import SwiftUI
 import PhotosUI
 
 struct Step1View: View {
-    @ObservedObject var navigationState: NavigationState
-
     @State private var placeTitle = ""
     @State private var placeDescription = ""
     @State private var placeAddress = ""
@@ -15,17 +13,19 @@ struct Step1View: View {
     let maxTitleCharacters = 32
     let maxAddressCharacters = 48
     let maxDescriptionCharacters = 500
+    
+    // Estado para controlar la navegación
+    @State private var navigateToStep2 = false
+    @State private var navigateBack = false
 
     var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
 
-            VStack {
-                VStack(alignment: .leading, spacing: 5) {
-                    HeaderView(step: "Step 1", title: "List your place!")
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 20)
+            VStack(alignment: .leading) {
+                
+                // Header para el formulario
+                HeaderView(step: "Step 1", title: "List your place!")
 
                 VStack(alignment: .leading, spacing: 10) {
                     CustomInputField(
@@ -67,43 +67,40 @@ struct Step1View: View {
                         maxCharacters: maxAddressCharacters,
                         height: 50,
                         cornerRadius: 50,
-                        iconName: "mappin.and.ellipse"
+                        iconName: "mappin.and.ellipse" // Ícono de ubicación
                     )
                 }
-                .padding(.horizontal)
+                .padding()
 
-                Spacer()
-
-                VStack {
-                    HStack {
-                        CustomButton(title: "Back", action: {
-                            withAnimation(.easeInOut) {
-                                navigationState.currentStep = .profilePicker
-                            }
-                        }, isPrimary: false)
-
-                        Spacer()
-
-                        CustomButton(title: "Next", action: {
-                            withAnimation(.easeInOut) {
-                                navigationState.currentStep = .step2
-                            }
-                        }, isPrimary: true)
+                // Sección de botones con navegación al Step 2
+                HStack {
+                    
+                    NavigationLink(destination: ProfilePickerView(), isActive: $navigateBack) {
+                        EmptyView()
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 10)
+                    .hidden()
+
+                    
+                    CustomButton(title: "Back", action: {
+                        navigateBack = true
+                    }, isPrimary: false)
+
+                    Spacer()
+
+                    NavigationLink(destination: Step2View(), isActive: $navigateToStep2) {
+                        EmptyView()
+                    }
+                    .hidden()
+
+                    CustomButton(title: "Next", action: {
+                        navigateToStep2 = true
+                    }, isPrimary: true)
                 }
-                .frame(maxWidth: .infinity, alignment: .bottom)
+                .padding(.horizontal, 20)
+                .padding(.top, 10)
             }
             .padding()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .navigationBarHidden(true) // Asegura que la barra de navegación esté oculta
-        .onAppear {
-            // Reiniciar las propiedades de layout para asegurar que la vista se muestre correctamente
-            placeTitle = ""
-            placeDescription = ""
-            placeAddress = ""
-        }
+        .navigationBarHidden(true)
     }
 }

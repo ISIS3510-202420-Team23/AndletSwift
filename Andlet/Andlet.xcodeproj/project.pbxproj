@@ -82,8 +82,6 @@
 		A968E3E52C9F92CC00EE98F8 /* IncrementDecrementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3D92C9F92CC00EE98F8 /* IncrementDecrementView.swift */; };
 		A968E3E62C9F92CC00EE98F8 /* CustomInputField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3DA2C9F92CC00EE98F8 /* CustomInputField.swift */; };
 		A968E3E72C9F92CC00EE98F8 /* SelectableOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3DB2C9F92CC00EE98F8 /* SelectableOptionsView.swift */; };
-		A9DB26072CA8BF83001FFC22 /* MinutesFromCampus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DB26062CA8BF83001FFC22 /* MinutesFromCampus.swift */; };
-		A9DB260B2CA8D2DA001FFC22 /* NavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DB260A2CA8D2DA001FFC22 /* NavigationState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -174,8 +172,6 @@
 		A968E3D92C9F92CC00EE98F8 /* IncrementDecrementView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IncrementDecrementView.swift; sourceTree = "<group>"; };
 		A968E3DA2C9F92CC00EE98F8 /* CustomInputField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomInputField.swift; sourceTree = "<group>"; };
 		A968E3DB2C9F92CC00EE98F8 /* SelectableOptionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectableOptionsView.swift; sourceTree = "<group>"; };
-		A9DB26062CA8BF83001FFC22 /* MinutesFromCampus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinutesFromCampus.swift; sourceTree = "<group>"; };
-		A9DB260A2CA8D2DA001FFC22 /* NavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -251,7 +247,6 @@
 				37C0E2912C9E592800099A90 /* MainTabView.swift */,
 				37C0E2922C9E592800099A90 /* OfferImageCarouselView.swift */,
 				37C0E2932C9E592800099A90 /* SearchAndFilterBar.swift */,
-				A9DB26062CA8BF83001FFC22 /* MinutesFromCampus.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -438,7 +433,6 @@
 				A968E3C82C9F92A100EE98F8 /* Step1View.swift */,
 				A968E3CB2C9F92A100EE98F8 /* Step2View.swift */,
 				A968E3CA2C9F92A100EE98F8 /* Step3View.swift */,
-				A9DB260A2CA8D2DA001FFC22 /* NavigationState.swift */,
 			);
 			path = Forms;
 			sourceTree = "<group>";
@@ -604,7 +598,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3781A9AC2CA275E9000E0B86 /* PropertyModel.swift in Sources */,
-				A9DB260B2CA8D2DA001FFC22 /* NavigationState.swift in Sources */,
 				A968E3CD2C9F92A100EE98F8 /* FormView.swift in Sources */,
 				9C1369EF2C9E422C0000B55C /* AuthenticationViewModel.swift in Sources */,
 				37C0E2A42C9E59BA00099A90 /* OfferView.swift in Sources */,
@@ -644,7 +637,6 @@
 				9C1369CF2C9E35BE0000B55C /* WelcomePageView.swift in Sources */,
 				3781A9B62CA3A7F9000E0B86 /* UserModel.swift in Sources */,
 				9C1369652C9E30A10000B55C /* AndletApp.swift in Sources */,
-				A9DB26072CA8BF83001FFC22 /* MinutesFromCampus.swift in Sources */,
 				A968E3E52C9F92CC00EE98F8 /* IncrementDecrementView.swift in Sources */,
 				9C1369D02C9E35BE0000B55C /* CustomIndicatorView.swift in Sources */,
 				37C0E29E2C9E598000099A90 /* CreateMoreButton.swift in Sources */,
