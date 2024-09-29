@@ -1,6 +1,5 @@
 import SwiftUI
 
-// Componente Incrementador/Decrementador
 struct IncrementDecrementView: View {
     var title: String
     @Binding var count: Int
@@ -18,7 +17,7 @@ struct IncrementDecrementView: View {
             // Botones de decremento (-), número y incremento (+)
             HStack(spacing: 10) {
                 Button(action: {
-                    if count > 0 {
+                    if count > 1 { // Asegurarse de que el conteo no vaya más allá de 1
                         count -= 1
                     }
                 }) {
@@ -57,6 +56,6 @@ struct IncrementDecrementView: View {
 
 struct IncrementDecrementView_Previews: PreviewProvider {
     static var previews: some View {
-        IncrementDecrementView(title: "Sample", count: .constant(0))
+        IncrementDecrementView(title: "Sample", count: .constant(1)) // Ajustado a 1 como mínimo
     }
 }

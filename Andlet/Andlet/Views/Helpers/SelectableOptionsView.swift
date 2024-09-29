@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SelectableOptionsView: View {
-    @State private var selectedOption: String? = nil // Estado para la opción seleccionada
+    @Binding var selectedOption: String? // Estado ligado externamente para la opción seleccionada
     var options: [String] // Array de opciones para ser seleccionadas
     var title: String // Título que se mostrará arriba de los botones
     var additionalText: String = "" // Texto adicional que puede aparecer al lado del primer botón
@@ -55,5 +55,11 @@ struct SelectableOptionsView: View {
             }
         }
         .padding(.bottom, 20) // Ajustar espacio inferior
+    }
+}
+
+struct SelectableOptionsView_Previews: PreviewProvider {
+    static var previews: some View {
+        SelectableOptionsView(selectedOption: .constant(nil), options: ["Option 1", "Option 2"], title: "Select an Option")
     }
 }

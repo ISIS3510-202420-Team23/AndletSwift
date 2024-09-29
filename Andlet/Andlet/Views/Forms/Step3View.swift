@@ -1,15 +1,15 @@
 import SwiftUI
 
 struct Step3View: View {
-    // Variables de estado para controlar el contenido y la navegación
     @State private var rooms = 0
     @State private var beds = 0
     @State private var bathrooms = 0
     @State private var pricePerMonth = ""
-    @State private var startDate = Date()
-    @State private var endDate = Date()
-
-    let maxPriceCharacters = 20
+    @State private var startDate = Date() // Fecha inicial es la actual
+    @State private var endDate = Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date() // Fecha final es 1 semana después
+    @State private var showWarningMessage = false
+    @State private var navigateToMainTab = false // Estado para la navegación
+    @State private var selectedOption: String? = nil // Opción seleccionada en SelectableOptionsView
 
     var body: some View {
         NavigationStack {
@@ -21,7 +21,9 @@ struct Step3View: View {
                     HeaderView(step: "Step 3", title: "Set up your preferences")
                     
                     VStack(alignment: .leading, spacing: 5) {
+                        // Agregar SelectableOptionsView
                         SelectableOptionsView(
+                            selectedOption: $selectedOption,
                             options: ["Restrict to Andes", "Any Andlet guest"],
                             title: "Choose who will be your guest",
                             additionalText: "Only users signed in with a @uniandes.edu.co email will be able to contact you"
@@ -57,14 +59,14 @@ struct Step3View: View {
                             .navigationBarHidden(true)) {
                                 Text("Back")
                                     .font(.headline)
-                                    .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255)) // Azul del Step
+                                    .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
                                     .frame(width: 120, height: 50)
                                     .background(Color.white)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 15)
                                             .stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2)
                                     )
-                                    .cornerRadius(15) // Esquinas menos redondeadas
+                                    .cornerRadius(15)
                         }
 
                         Spacer()
@@ -72,19 +74,62 @@ struct Step3View: View {
                         // Next link (Fondo azul con texto negro)
                         NavigationLink(destination: MainTabLandlordView()
                             .navigationBarBackButtonHidden(true)
-                            .navigationBarHidden(true)) {
-                                Text("Save")
-                                    .font(.headline)
-                                    .foregroundColor(.white) // Texto en negro
-                                    .frame(width: 120, height: 50)
-                                    .background(Color(red: 12/255, green: 53/255, blue: 106/255)) // Fondo azul
-                                    .cornerRadius(15) // Esquinas menos redondeadas
+                            .navigationBarHidden(true),
+                                       isActive: $navigateToMainTab) {
+                            EmptyView()
                         }
+                        Text("Save")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(width: 120, height: 50)
+                            .background(Color(red: 12/255, green: 53/255, blue: 106/255))
+                            .cornerRadius(15)
+                            .onTapGesture {
+                                // Validación simplificada de fechas y opción seleccionada
+                                let todayStartOfDay = Calendar.current.startOfDay(for: Date()) // Día de hoy a las 00:00
+                                
+                                if startDate < todayStartOfDay || endDate <= startDate || selectedOption == nil {
+                                    showWarningMessage = true
+                                } else {
+                                    showWarningMessage = false
+                                    navigateToMainTab = true
+                                }
+
+                                // Mostrar el mensaje de advertencia por 2 segundos si hay algún error
+                                if showWarningMessage {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                        withAnimation {
+                                            showWarningMessage = false
+                                        }
+                                    }
+                                }
+                            }
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 10)
                 }
                 .padding()
+                
+                // Mostrar mensaje de advertencia de forma sutil con animación
+                if showWarningMessage {
+                    VStack {
+                        Spacer()
+                            .frame(height: 10) // Espacio arriba para que el mensaje quede más abajo
+
+                        Text("Please select a valid date range and an option and/or fill all the requested fields")
+                            .foregroundColor(.white)
+                            .font(.subheadline)
+                            .padding()
+                            .background(Color.red)
+                            .cornerRadius(10)
+                            .shadow(radius: 10)
+                            .transition(.move(edge: .top)) // Efecto de deslizamiento
+                            .animation(.easeInOut(duration: 0.5), value: showWarningMessage) // Controla la animación con valor
+                            .offset(y: showWarningMessage ? 0 : -100) // Desliza desde arriba
+                            .zIndex(1) // Asegura que el mensaje esté encima del contenido
+                    }
+                    .padding(.top, 10) // Ajusta la posición del mensaje
+                }
             }
             .navigationBarHidden(true)
         }

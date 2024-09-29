@@ -10,6 +10,7 @@ struct Step1View: View {
     @State private var showImagePicker2 = false
     @State private var showWarning = false
     @State private var navigateToStep2 = false // Control de navegación al siguiente paso
+    @State private var showWarningMessage = false // Control para mostrar el mensaje de advertencia
 
     var body: some View {
         NavigationView {
@@ -70,14 +71,6 @@ struct Step1View: View {
                     }
                     .padding(.horizontal)
 
-                    // Mostrar advertencia en caso de que falten campos obligatorios
-                    if showWarning {
-                        Text("Please fill out all required fields and add at least one photo before proceeding.")
-                            .foregroundColor(.red)
-                            .font(.subheadline)
-                            .padding(.top, 5)
-                    }
-
                     Spacer()
 
                     // Sección de navegación con textos (similar a ProfilePickerView)
@@ -107,27 +100,56 @@ struct Step1View: View {
                                        isActive: $navigateToStep2) {
                             EmptyView()
                         }
-                        Button(action: {
-                            // Validación de campos y al menos una imagen seleccionada
-                            if placeTitle.isEmpty || placeAddress.isEmpty || (selectedImage1 == nil && selectedImage2 == nil) {
-                                showWarning = true
-                            } else {
-                                showWarning = false
-                                navigateToStep2 = true // Permitir navegación a Step2
+                        Text("Next")
+                            .font(.headline)
+                            .foregroundColor(.white) // Texto blanco
+                            .frame(width: 120, height: 50)
+                            .background(Color(red: 12/255, green: 53/255, blue: 106/255)) // Fondo azul
+                            .cornerRadius(15) // Esquinas menos redondeadas
+                            .onTapGesture {
+                                // Validación de campos y al menos una imagen seleccionada
+                                if placeTitle.isEmpty || placeAddress.isEmpty || (selectedImage1 == nil && selectedImage2 == nil) {
+                                    showWarning = true
+                                    withAnimation {
+                                        showWarningMessage = true
+                                    }
+                                    // Ocultar la advertencia después de 2 segundos
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                        withAnimation {
+                                            showWarningMessage = false
+                                        }
+                                    }
+                                } else {
+                                    showWarning = false
+                                    navigateToStep2 = true // Permitir navegación a Step2
+                                }
                             }
-                        }) {
-                            Text("Next")
-                                .font(.headline)
-                                .foregroundColor(.white) // Texto blanco
-                                .frame(width: 120, height: 50)
-                                .background(Color(red: 12/255, green: 53/255, blue: 106/255)) // Fondo azul
-                                .cornerRadius(15) // Esquinas menos redondeadas
-                        }
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 40)
                 }
                 .padding()
+
+                // Mostrar mensaje de advertencia de forma sutil con animación
+                if showWarningMessage {
+                    VStack {
+                        Spacer()
+                            .frame(height: 10) // Espacio arriba para que el mensaje quede más abajo
+
+                        Text("Please fill out all required fields and add at least one photo before proceeding")
+                            .foregroundColor(.white)
+                            .font(.subheadline)
+                            .padding()
+                            .background(Color.red)
+                            .cornerRadius(10)
+                            .shadow(radius: 10)
+                            .transition(.move(edge: .top)) // Efecto de deslizamiento
+                            .animation(.easeInOut(duration: 0.5), value: showWarningMessage) // Controla la animación con valor
+                            .offset(y: showWarningMessage ? 0 : -100) // Desliza desde arriba
+                            .zIndex(1) // Asegura que el mensaje esté encima del contenido
+                    }
+                    .padding(.top, 10) // Ajusta la posición del mensaje
+                }
             }
             .navigationBarHidden(true) // Ocultar la barra de navegación para esta vista
         }

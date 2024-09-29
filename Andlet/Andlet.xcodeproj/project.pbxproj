@@ -82,6 +82,7 @@
 		A968E3E62C9F92CC00EE98F8 /* CustomInputField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3DA2C9F92CC00EE98F8 /* CustomInputField.swift */; };
 		A968E3E72C9F92CC00EE98F8 /* SelectableOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3DB2C9F92CC00EE98F8 /* SelectableOptionsView.swift */; };
 		A9DFF6C62CA8F4820063E52C /* MinutesFromCampus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFF6C52CA8F4820063E52C /* MinutesFromCampus.swift */; };
+		A9DFF6CA2CA90B380063E52C /* PriceField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFF6C92CA90B380063E52C /* PriceField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -172,6 +173,7 @@
 		A968E3DA2C9F92CC00EE98F8 /* CustomInputField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomInputField.swift; sourceTree = "<group>"; };
 		A968E3DB2C9F92CC00EE98F8 /* SelectableOptionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectableOptionsView.swift; sourceTree = "<group>"; };
 		A9DFF6C52CA8F4820063E52C /* MinutesFromCampus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinutesFromCampus.swift; sourceTree = "<group>"; };
+		A9DFF6C92CA90B380063E52C /* PriceField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -248,6 +250,7 @@
 				37C0E2922C9E592800099A90 /* OfferImageCarouselView.swift */,
 				37C0E2932C9E592800099A90 /* SearchAndFilterBar.swift */,
 				A9DFF6C52CA8F4820063E52C /* MinutesFromCampus.swift */,
+				A9DFF6C92CA90B380063E52C /* PriceField.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -637,6 +640,7 @@
 				3781A9B62CA3A7F9000E0B86 /* UserModel.swift in Sources */,
 				9C1369652C9E30A10000B55C /* AndletApp.swift in Sources */,
 				A9DFF6C62CA8F4820063E52C /* MinutesFromCampus.swift in Sources */,
+				A9DFF6CA2CA90B380063E52C /* PriceField.swift in Sources */,
 				A968E3E52C9F92CC00EE98F8 /* IncrementDecrementView.swift in Sources */,
 				9C1369D02C9E35BE0000B55C /* CustomIndicatorView.swift in Sources */,
 				37C0E29E2C9E598000099A90 /* CreateMoreButton.swift in Sources */,
