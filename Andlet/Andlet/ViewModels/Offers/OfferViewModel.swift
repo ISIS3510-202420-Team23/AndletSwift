@@ -128,6 +128,7 @@ class OfferViewModel: ObservableObject {
             idProperty = data["id_property"] as? String ?? ""  // Asignar el valor si es String o vacío si no se encuentra
         }
 
+        let id = data["id"] as? String ?? ""
         let isActive = data["is_active"] as? Bool ?? false
         let numBaths = data["num_baths"] as? Int ?? 0
         let numBeds = data["num_beds"] as? Int ?? 0
@@ -141,6 +142,7 @@ class OfferViewModel: ObservableObject {
         let views = data["views"] as? Int ?? 0
 
         return OfferModel(
+            id: id,
             finalDate: finalDate,
             idProperty: idProperty,  // Ahora este campo siempre tendrá un valor String válido
             initialDate: initialDate,
@@ -160,6 +162,7 @@ class OfferViewModel: ObservableObject {
 
     // Función para mapear datos de la propiedad al modelo PropertyModel
     private func mapPropertyDataToModel(data: [String: Any]) -> PropertyModel {
+        let id = data["id"] as? String ?? ""
         let address = data["address"] as? String ?? "Dirección desconocida"
         let complexName = data["complex_name"] as? String ?? "Complejo desconocido"
         let description = data["description"] as? String ?? ""
@@ -168,6 +171,7 @@ class OfferViewModel: ObservableObject {
         let title = data["title"] as? String ?? "Sin título"
 
         return PropertyModel(
+            id: id,
             address: address,
             complexName: complexName,
             description: description,

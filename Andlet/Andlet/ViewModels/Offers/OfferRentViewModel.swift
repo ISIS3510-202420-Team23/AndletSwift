@@ -119,7 +119,8 @@ class OfferRentViewModel: ObservableObject {
         } else {
             idProperty = ""
         }
-
+        
+        let id = data["id"] as? String ?? ""
         let isActive = data["is_active"] as? Bool ?? false
         let numBaths = data["num_baths"] as? Int ?? 0
         let numBeds = data["num_beds"] as? Int ?? 0
@@ -184,6 +185,7 @@ class OfferRentViewModel: ObservableObject {
 
     // Función para mapear datos de Firestore al modelo PropertyModel
     private func mapPropertyDataToModel(data: [String: Any]) -> PropertyModel {
+        let id = data["id"] as? String ?? ""
         let address = data["address"] as? String ?? "Dirección desconocida"
         let complexName = data["complex_name"] as? String ?? "Complejo desconocido"
         let description = data["description"] as? String ?? ""
@@ -192,6 +194,7 @@ class OfferRentViewModel: ObservableObject {
         let title = data["title"] as? String ?? "Sin título"
 
         return PropertyModel(
+            id: id,
             address: address,
             complexName: complexName,
             description: description,

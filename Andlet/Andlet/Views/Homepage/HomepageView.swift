@@ -37,8 +37,8 @@ struct HomepageView: View {
                                     .padding()
                             } else {
                                 LazyVStack(spacing: 32) {
-                                    ForEach(offerViewModel.offersWithProperties) { offerWithProperty in
-                                        NavigationLink(value: offerWithProperty) {  // Aquí pasamos OfferWithProperty
+                                    ForEach(sortedOffers()) { offerWithProperty in  // Aquí usamos sortedOffers() en lugar de offerViewModel.offersWithProperties
+                                        NavigationLink(value: offerWithProperty) {
                                             OfferView(offer: offerWithProperty.offer, property: offerWithProperty.property)
                                                 .frame(height: 330)
                                                 .clipShape(RoundedRectangle(cornerRadius: 30))

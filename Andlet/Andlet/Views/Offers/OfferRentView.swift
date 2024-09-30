@@ -89,7 +89,7 @@ struct OfferRentView: View {
                         Button(action: {
                             isSold.toggle() 
                             
-                            let offerKey = offer.id?.split(separator: "_").last.map(String.init) ?? "0"
+                            let offerKey = offer.id.split(separator: "_").last.map(String.init) ?? "0"
 
                             
                             viewModel.toggleOfferAvailability(
