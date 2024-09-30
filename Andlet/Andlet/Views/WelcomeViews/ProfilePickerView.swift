@@ -43,7 +43,7 @@ struct ProfilePickerView: View {
                     }
                     
                     // Rent Button
-                    NavigationLink(destination: FormView()
+                    NavigationLink(destination: HomepageRentView()
                         .navigationBarBackButtonHidden()
                         .ignoresSafeArea(.all)) {
                         Text("I want to list my place!")

@@ -17,6 +17,8 @@ struct Step1View: View {
     // Estado para controlar la navegación
     @State private var navigateToStep2 = false
     @State private var navigateBack = false
+    
+    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
         ZStack {
@@ -74,15 +76,9 @@ struct Step1View: View {
 
                 // Sección de botones con navegación al Step 2
                 HStack {
-                    
-                    NavigationLink(destination: ProfilePickerView(), isActive: $navigateBack) {
-                        EmptyView()
-                    }
-                    .hidden()
-
-                    
                     CustomButton(title: "Back", action: {
                         navigateBack = true
+                        presentationMode.wrappedValue.dismiss()
                     }, isPrimary: false)
 
                     Spacer()
