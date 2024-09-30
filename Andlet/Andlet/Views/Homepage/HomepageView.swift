@@ -10,12 +10,19 @@ import SwiftUI
 struct HomepageView: View {
     @State private var showFilterSearchView = false
     @StateObject private var offerViewModel = OfferViewModel()
+    @StateObject private var filterViewModel = FilterViewModel(  // Crear una instancia de FilterViewModel
+           startDate: Date(),
+           endDate: Date().addingTimeInterval(24 * 60 * 60),
+           minPrice: 0,
+           maxPrice: 10000000,
+           maxMinutes: 30
+       )
 
     var body: some View {
         if #available(iOS 16.0, *) {
             NavigationStack {
                 if showFilterSearchView {
-                    FilterSearchView(show: $showFilterSearchView)
+                    FilterSearchView(show: $showFilterSearchView, filterViewModel: filterViewModel, offerViewModel: offerViewModel)
                 } else {
                     ScrollView {
                         VStack {

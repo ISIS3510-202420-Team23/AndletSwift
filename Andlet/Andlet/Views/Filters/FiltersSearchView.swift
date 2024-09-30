@@ -1,69 +1,110 @@
-//
-//  FiltersSearchView.swift
-//  SwiftApp
-//
-//  Created by Sofía Torres Ramírez on 17/09/24.
-//
-
 import SwiftUI
-
-enum FilterSearchOptions {
-    case dates
-    case prices
-    case minutes
-}
 
 struct FilterSearchView: View {
     @Binding var show: Bool
+    @ObservedObject var filterViewModel: FilterViewModel
+    @ObservedObject var offerViewModel: OfferViewModel
+
+    // Variables locales para manejar temporalmente los valores de los filtros
+    @State private var localStartDate: Date
+    @State private var localEndDate: Date
+    @State private var localMinPrice: Double
+    @State private var localMaxPrice: Double
+    @State private var localMaxMinutes: Double
     @State private var selectedOption: FilterSearchOptions = .dates
-    @State private var startDate = Date()
-    @State private var endDate = Date()
-    @State private var minPrice: Double = 0
-    @State private var maxPrice: Double = 10000000
-    @State private var minMinutes: Double = 0
-    @State private var maxMinutes: Double = 30
-    
-    
+
+    // Custom initializer para inicializar las variables locales con los valores del ViewModel
+    init(show: Binding<Bool>, filterViewModel: FilterViewModel, offerViewModel: OfferViewModel) {
+        _show = show
+        _localStartDate = State(initialValue: filterViewModel.startDate)
+        _localEndDate = State(initialValue: filterViewModel.endDate)
+        _localMinPrice = State(initialValue: filterViewModel.minPrice)
+        _localMaxPrice = State(initialValue: filterViewModel.maxPrice)
+        _localMaxMinutes = State(initialValue: filterViewModel.maxMinutes)
+        self.filterViewModel = filterViewModel
+        self.offerViewModel = offerViewModel
+    }
+
     var body: some View {
         if #available(iOS 16.0, *) {
             VStack {
-                HStack{
+                // Header con botón de cerrar (x) y botón de aplicar (Apply)
+                HStack {
                     Button {
                         withAnimation(.snappy) {
-                            show.toggle()
+                            show.toggle() // Cerrar vista de filtros sin aplicar cambios
                         }
-                        
                     } label: {
                         Image(systemName: "xmark")
                             .foregroundStyle(Color(hex: "FFF4CF"))
-                        
-                            .background{
+                            .background {
                                 Circle()
                                     .fill(Color(hex: "0C356A"))
                                     .frame(width: 40, height: 40)
                             }
-                        
                     }
                     
                     Spacer()
                     
-                    
+                    Button(action: {
+                        // Actualizar los filtros en FilterViewModel con los valores locales
+                        filterViewModel.updateFilters(
+                            startDate: localStartDate,
+                            endDate: localEndDate,
+                            minPrice: localMinPrice,
+                            maxPrice: localMaxPrice,
+                            maxMinutes: localMaxMinutes
+                        )
+
+                        // Actualizar los filtros en OfferViewModel para reflejar los cambios aplicados
+                        offerViewModel.updateFilters(
+                            startDate: localStartDate,
+                            endDate: localEndDate,
+                            minPrice: localMinPrice,
+                            maxPrice: localMaxPrice,
+                            maxMinutes: localMaxMinutes
+                        )
+
+                        // Imprimir los filtros seleccionados en la consola
+                        print("Filtros aplicados:")
+                        print("Fecha Inicial: \(localStartDate)")
+                        print("Fecha Final: \(localEndDate)")
+                        print("Precio Mínimo: \(localMinPrice)")
+                        print("Precio Máximo: \(localMaxPrice)")
+                        print("Minutos Máximos desde el campus: \(localMaxMinutes)")
+
+                        withAnimation(.snappy) {
+                            show.toggle() // Cerrar vista de filtros al hacer clic en "Apply"
+                        }
+                    }) {
+                        Text("Apply")
+                            .font(.custom("LeagueSpartan-SemiBold", size: 18))
+                            .foregroundColor(.white)
+                            .frame(width: 80, height: 40)
+                            .background(Color(hex: "0C356A"))
+                            .cornerRadius(20)
+                    }
                 }
                 .padding()
                 .padding(.horizontal)
+
+                // Sincronizar los valores locales con los del ViewModel cada vez que se abra la vista
+                .onAppear {
+                    loadValuesFromViewModel()
+                }
                 
-                
-                
-                VStack (alignment: .leading){
-                    Text ("When?")
+                // Sección para seleccionar fechas
+                VStack(alignment: .leading) {
+                    Text("When?")
                         .font(.custom("LeagueSpartan-SemiBold", size: 28))
                         .fontWeight(.semibold)
-                    DatePicker("From", selection: $startDate, in: Date()...,
+                    
+                    DatePicker("From", selection: $localStartDate, in: Date()...,
                                displayedComponents: .date)
                     
-                    Divider ()
+                    Divider()
                     
-                    DatePicker("To", selection: $endDate, in: (startDate.addingTimeInterval(24 * 60 * 60))..., displayedComponents: .date)
+                    DatePicker("To", selection: $localEndDate, in: (localStartDate.addingTimeInterval(24 * 60 * 60))..., displayedComponents: .date)
                 }
                 .padding()
                 .frame(height: 180)
@@ -72,97 +113,94 @@ struct FilterSearchView: View {
                 .padding()
                 .shadow(radius: 10)
                 
-                
-                
-                
-                
-                
-                 
-               
-
-                
-                VStack (alignment: .leading){
+                // Sección para seleccionar rango de precios
+                VStack(alignment: .leading) {
                     if selectedOption == .prices {
                         Text("Price")
                             .font(.custom("LeagueSpartan-SemiBold", size: 28))
                             .fontWeight(.semibold)
                         
-                        Slider(value: $maxPrice, in: 0...10000000, step: 100000)
+                        Slider(value: $localMaxPrice, in: 0...10000000, step: 100000)
                             .accentColor(Color(hex: "0C356A"))
                         HStack {
                             Spacer()
-                            Text("$\(Int(maxPrice))")
+                            Text("$\(Int(localMaxPrice))")
                         }
                         .padding(.horizontal)
                         
-                    }else{
+                    } else {
                         CollapsedPickedView(title: "Price", description: "Select price")
                     }
                 }
                 .padding()
-                .frame(height: selectedOption == .prices ? 120: 64)
+                .frame(height: selectedOption == .prices ? 120 : 64)
                 .background(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding()
                 .shadow(radius: 10)
                 .onTapGesture {
-                    withAnimation(.snappy) {selectedOption = .prices}
+                    withAnimation(.snappy) { selectedOption = .prices }
                 }
                 
-                VStack (alignment: .leading){
+                // Sección para seleccionar minutos desde el campus
+                VStack(alignment: .leading) {
                     if selectedOption == .minutes {
                         Text("Minutes from campus")
                             .font(.custom("LeagueSpartan-SemiBold", size: 28))
                             .fontWeight(.semibold)
                         
-                        Slider(value: $maxMinutes, in: 0...30, step: 1)
+                        Slider(value: $localMaxMinutes, in: 0...30, step: 1)
                             .accentColor(Color(hex: "0C356A"))
                         HStack {
                             Spacer()
-                            Text("\(Int(maxMinutes)) mins")
+                            Text("\(Int(localMaxMinutes)) mins")
                         }
                         .padding(.horizontal)
                         
-                        
-                    }else{
+                    } else {
                         CollapsedPickedView(title: "Minutes from campus", description: "Select minutes")
                     }
                 }
                 .padding()
-                .frame(height: selectedOption == .minutes ? 120: 64)
+                .frame(height: selectedOption == .minutes ? 120 : 64)
                 .background(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding()
                 .shadow(radius: 10)
                 .onTapGesture {
-                    withAnimation(.snappy) {selectedOption = .minutes}
-                    
+                    withAnimation(.snappy) { selectedOption = .minutes }
                 }
                 
-                Spacer ()
-                
+                Spacer()
             }
-            
             .toolbar(.hidden, for: .tabBar)
         }
-        }
-}
-
-#Preview {
-    FilterSearchView(show: .constant(false))
-}
-
-struct CollapsibleFilterViewModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .padding()
-            .background(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .padding()
-            .shadow(radius: 10)
+    }
+    
+    // Función para sincronizar los valores locales con los del ViewModel al cargar la vista
+    private func loadValuesFromViewModel() {
+        localStartDate = filterViewModel.startDate
+        localEndDate = filterViewModel.endDate
+        localMinPrice = filterViewModel.minPrice
+        localMaxPrice = filterViewModel.maxPrice
+        localMaxMinutes = filterViewModel.maxMinutes
     }
 }
-                                        
+
+
+#Preview {
+    FilterSearchView(
+        show: .constant(false),
+        filterViewModel: FilterViewModel(
+            startDate: Date(),
+            endDate: Date().addingTimeInterval(24 * 60 * 60),
+            minPrice: 0,
+            maxPrice: 10000000,
+            maxMinutes: 30
+        ),
+        offerViewModel: OfferViewModel()
+    )
+}
 
 struct CollapsedPickedView: View {
     let title: String
@@ -173,11 +211,9 @@ struct CollapsedPickedView: View {
                 Text(title)
                     .foregroundStyle(.gray)
                 Spacer()
-                Text (description)
+                Text(description)
             }
-            //                .fontWeight(.bold)
             .font(.subheadline)
         }
-
     }
 }

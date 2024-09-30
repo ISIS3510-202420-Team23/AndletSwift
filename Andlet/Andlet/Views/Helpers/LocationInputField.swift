@@ -27,7 +27,7 @@ struct LocationInputField: View {
                         .padding(.vertical, 12) // Ajusta el padding del texto
                         .font(.custom("Montserrat-SemiBold", size: 12)) // Cambia la fuente del placeholder
                         .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255)) // Color para el texto
-                        .onChange(of: text) { newValue in
+                        .onChange(of: text) { oldValue, newValue in // Cambia a la sintaxis con dos parámetros
                             if newValue.count > maxCharacters {
                                 text = String(newValue.prefix(maxCharacters))
                             }
