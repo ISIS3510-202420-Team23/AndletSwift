@@ -200,6 +200,13 @@ struct OfferDetailView: View {
             .onAppear {
                 viewModel.fetchUser(userEmail: offer.userId)
                 updateUserViewCount()
+                let documentId = "E2amoJzmIbhtLq65ScpY"
+                            if let offerKey = offer.id.split(separator: "_").last.map(String.init) {
+                                viewModel.updateViewsOffer(documentId: documentId, offerKey: offerKey)
+                            } else {
+                                print("No se encontró un offerKey válido para la oferta")
+                            }
+                
             }
         } else {
             

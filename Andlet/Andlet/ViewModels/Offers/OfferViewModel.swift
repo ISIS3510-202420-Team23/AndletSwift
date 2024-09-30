@@ -47,8 +47,9 @@ class OfferViewModel: ObservableObject {
                                 let idPropertyString = "\(idProperty)"
 
                                 // Mapeamos los datos de la oferta al modelo OfferModel
-                                let offer = self.mapOfferDataToModel(data: offerData)
-                                let offerId = "\(document.documentID)_\(key)"  // ID único para la oferta
+                                let offerId = "\(document.documentID)_\(key)"
+                                let offer = self.mapOfferDataToModel( data: offerData, documentId: "E2amoJzmIbhtLq65ScpY", key: key)
+                                 // ID único para la oferta
 
                                 // Buscar la propiedad asociada
                                 self.fetchPropertyForOffer(idProperty: idPropertyString) { property in
@@ -116,7 +117,7 @@ class OfferViewModel: ObservableObject {
     }
 
     // Función para mapear datos de la oferta al modelo OfferModel
-    private func mapOfferDataToModel(data: [String: Any]) -> OfferModel {
+    private func mapOfferDataToModel(data: [String: Any], documentId: String, key: String) -> OfferModel {
         let finalDate = (data["final_date"] as? Timestamp)?.dateValue() ?? Date()
         let initialDate = (data["initial_date"] as? Timestamp)?.dateValue() ?? Date()
 
@@ -127,8 +128,9 @@ class OfferViewModel: ObservableObject {
         } else {
             idProperty = data["id_property"] as? String ?? ""  // Asignar el valor si es String o vacío si no se encuentra
         }
+        let documentId = "E2amoJzmIbhtLq65ScpY"
 
-        let id = data["id"] as? String ?? ""
+        let id = "\(documentId)_\(key)"
         let isActive = data["is_active"] as? Bool ?? false
         let numBaths = data["num_baths"] as? Int ?? 0
         let numBeds = data["num_beds"] as? Int ?? 0

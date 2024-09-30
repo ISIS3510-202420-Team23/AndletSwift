@@ -72,7 +72,7 @@ struct OfferRentView: View {
 
                 // Botón para cambiar entre "Available" y "Sold"
                 HStack {
-                    Text("15 views")
+                    Text("\(offer.views)  views")
                         .font(.custom("LeagueSpartan-Light", size: 16))
                         .foregroundColor(.black)
                     
