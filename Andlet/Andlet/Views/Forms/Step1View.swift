@@ -10,6 +10,9 @@ struct Step1View: View {
     @State private var navigateToStep2 = false
     @State private var showWarningMessage = false
     @State private var warningMessageText = "" // Almacena el mensaje de advertencia
+    @State private var navigateBack = false
+    
+    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
         NavigationView {

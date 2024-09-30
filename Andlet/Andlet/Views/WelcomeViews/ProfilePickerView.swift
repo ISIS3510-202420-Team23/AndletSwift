@@ -35,9 +35,9 @@ struct ProfilePickerView: View {
                             .background(Color(hex: "#F7B500")) // Yellow background
                             .cornerRadius(25) // Rounded button
                     }
-
-                    // Crear un nuevo PropertyOfferData y pasarlo a Step1View
-                    NavigationLink(destination: Step1View(propertyOfferData: PropertyOfferData())
+                    
+                    // Rent Button
+                    NavigationLink(destination: HomepageRentView()
                         .navigationBarBackButtonHidden()
                         .ignoresSafeArea(.all)) {
                         Text("I want to list my place!")
