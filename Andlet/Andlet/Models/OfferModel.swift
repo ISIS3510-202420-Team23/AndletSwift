@@ -28,11 +28,12 @@ struct OfferModel: Identifiable, Codable, Hashable, Equatable {
     let roommates: Int
     let type: OfferType
     let userId: String
+    let views: Int
     
     
 
     // A convenience initializer to manually create an OfferModel
-    init(id: String? = nil, finalDate: Date, idProperty: String, initialDate: Date, isActive: Bool, numBaths: Int, numBeds: Int, numRooms: Int, onlyAndes: Bool, pricePerMonth: Double, roommates: Int, type: OfferType, userId: String) {
+    init(id: String? = nil, finalDate: Date, idProperty: String, initialDate: Date, isActive: Bool, numBaths: Int, numBeds: Int, numRooms: Int, onlyAndes: Bool, pricePerMonth: Double, roommates: Int, type: OfferType, userId: String, views: Int) {
         self.id = id
         self.finalDate = finalDate
         self.idProperty = idProperty
@@ -46,6 +47,7 @@ struct OfferModel: Identifiable, Codable, Hashable, Equatable {
         self.roommates = roommates
         self.type = type  // Restriction enforced here
         self.userId = userId
+        self.views = views
     }
     
     // Implementamos Equatable (opcional, pero se genera automáticamente si todos los campos son Hashable y Equatable)
@@ -62,6 +64,7 @@ struct OfferModel: Identifiable, Codable, Hashable, Equatable {
                    lhs.pricePerMonth == rhs.pricePerMonth &&
                    lhs.roommates == rhs.roommates &&
                    lhs.type == rhs.type &&
-                   lhs.userId == rhs.userId
+                   lhs.userId == rhs.userId &&
+                   lhs.views == rhs.views
         }
 }

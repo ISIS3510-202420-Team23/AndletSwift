@@ -28,7 +28,7 @@ struct IconInputField: View {
                         .padding(.vertical, 12)
                         .font(.custom("Montserrat-SemiBold", size: 12))
                         .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
-                        .onChange(of: text) { newValue in
+                        .onChange(of: text) { oldValue, newValue in
                             if newValue.count > maxCharacters {
                                 text = String(newValue.prefix(maxCharacters))
                             }
@@ -41,6 +41,7 @@ struct IconInputField: View {
                 .cornerRadius(cornerRadius)
                 .overlay(RoundedRectangle(cornerRadius: cornerRadius).stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2))
             }
-        } .padding(.bottom, 60)
+        }
+        .padding(.bottom, 60)
     }
 }
