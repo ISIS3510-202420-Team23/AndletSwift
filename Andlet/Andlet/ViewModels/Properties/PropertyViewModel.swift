@@ -171,7 +171,7 @@ class PropertyViewModel: ObservableObject {
 
                 let offerData: [String: Any] = [
                     "final_date": propertyOfferData.finalDate,
-                    "id_property": propertyOfferData.propertyID, // Usar como número
+                    "id_property": propertyOfferData.propertyID,
                     "initial_date": propertyOfferData.initialDate,
                     "is_active": true,
                     "num_baths": propertyOfferData.numBaths,
@@ -179,14 +179,14 @@ class PropertyViewModel: ObservableObject {
                     "num_rooms": propertyOfferData.numRooms,
                     "only_andes": propertyOfferData.onlyAndes,
                     "price_per_month": propertyOfferData.pricePerMonth,
-                    "roommates": propertyOfferData.numBeds, // Usar `numBeds` como valor de `roommates`
+                    "roommates": propertyOfferData.roommates, // Usar el valor calculado de `roommates`
                     "type": propertyOfferData.type.rawValue,
                     "user_id": propertyOfferData.userId,
                     "views": 0
                 ]
 
                 self.db.collection("offers").document(documentID).updateData([
-                    "\(offerID)": offerData // Usar el ID como un número
+                    "\(offerID)": offerData
                 ]) { error in
                     if let error = error {
                         print("Error al hacer POST de la oferta: \(error)")
@@ -199,6 +199,7 @@ class PropertyViewModel: ObservableObject {
             }
         }
     }
+
     
     // Agregar esta función a PropertyViewModel si aún no está incluida
     func assignAuthenticatedUser(to propertyOfferData: PropertyOfferData) {

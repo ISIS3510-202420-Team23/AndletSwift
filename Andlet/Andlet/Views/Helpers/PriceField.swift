@@ -31,7 +31,7 @@ struct PriceField: View {
                         .font(.custom("Montserrat-SemiBold", size: 12))
                         .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
                         .keyboardType(.numberPad) // Configuración para solo aceptar números
-                        .onChange(of: formattedText) { newValue in
+                        .onChange(of: formattedText) { oldValue, newValue in
                             // Filtrar solo números y limitar el número de caracteres a maxCharacters
                             let filteredValue = newValue.filter { $0.isNumber }
                             if filteredValue.count > maxCharacters {
@@ -39,7 +39,7 @@ struct PriceField: View {
                             } else {
                                 formattedText = formatNumber(filteredValue)
                             }
-                            
+
                             // Actualizar el valor original del binding con el número sin formato
                             if let numberValue = Int(filteredValue) {
                                 text = String(numberValue)

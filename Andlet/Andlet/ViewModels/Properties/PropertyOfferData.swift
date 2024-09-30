@@ -6,12 +6,16 @@ class PropertyOfferData: ObservableObject, CustomStringConvertible {
     @Published var placeTitle: String = ""
     @Published var placeDescription: String = ""
     @Published var placeAddress: String = ""
-    @Published var photos: [String] = [] // Almacena URLs o identificadores de imágenes para el backend
-    @Published var selectedImagesData: [Data] = [] // Almacena las imágenes como Data para persistencia
+    @Published var photos: [String] = []
+    @Published var selectedImagesData: [Data] = []
 
     // Datos capturados en Step 2
     @Published var numBaths: Int = 0
-    @Published var numBeds: Int = 0
+    @Published var numBeds: Int = 0 {
+        didSet {
+            updateRoommates()
+        }
+    }
     @Published var numRooms: Int = 0
     @Published var pricePerMonth: Double = 0.0
     @Published var type: OfferType = .aRoom
@@ -23,10 +27,13 @@ class PropertyOfferData: ObservableObject, CustomStringConvertible {
     @Published var minutesFromCampus: Int = 0
 
     // Datos adicionales
-    @Published var userId: String = "" // ID del usuario autenticado
-    @Published var userName: String = "" // Nombre del usuario autenticado
-    @Published var userEmail: String = "" // Email del usuario autenticado
-    @Published var propertyID: Int = 0 // ID de la propiedad como Int
+    @Published var userId: String = ""
+    @Published var userName: String = ""
+    @Published var userEmail: String = ""
+    @Published var propertyID: Int = 0
+
+    // Variable de roommates calculada con base en `numBeds`
+    @Published var roommates: Int = 0
 
     // Implementación de CustomStringConvertible para detalles legibles
     var description: String {
@@ -50,6 +57,15 @@ class PropertyOfferData: ObservableObject, CustomStringConvertible {
         """
     }
 
+    // Método para actualizar el valor de `roommates` según el valor de `numBeds`
+    private func updateRoommates() {
+        if numBeds == 1 {
+            roommates = 0
+        } else {
+            roommates = numBeds
+        }
+    }
+
     func offerDetails() -> String {
         return """
         Offer Details:
@@ -60,6 +76,7 @@ class PropertyOfferData: ObservableObject, CustomStringConvertible {
         - Price Per Month: \(pricePerMonth)
         - Property ID: \(propertyID)
         - Only Andes: \(onlyAndes)
+        - Roommates: \(roommates)
         """
     }
 }

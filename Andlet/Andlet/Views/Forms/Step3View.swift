@@ -74,11 +74,23 @@ struct Step3View: View {
 
                         Spacer()
 
-                        NavigationLink(destination: MainTabLandlordView()
-                            .navigationBarBackButtonHidden(true)
-                            .navigationBarHidden(true),
-                                       isActive: $navigateToMainTab) {
-                            EmptyView()
+                        if #available(iOS 16.0, *) {
+                            NavigationLink(
+                                value: navigateToMainTab,
+                                label: { EmptyView() }
+                            )
+                            .navigationDestination(isPresented: $navigateToMainTab) {
+                                MainTabLandlordView()
+                                    .navigationBarBackButtonHidden(true)
+                                    .navigationBarHidden(true)
+                            }
+                        } else {
+                            NavigationLink(destination: MainTabLandlordView()
+                                .navigationBarBackButtonHidden(true)
+                                .navigationBarHidden(true),
+                                           isActive: $navigateToMainTab) {
+                                EmptyView()
+                            }
                         }
 
                         Text("Save")
