@@ -67,6 +67,7 @@
 		9C1369ED2C9E421E0000B55C /* WelcomePageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1369EC2C9E421E0000B55C /* WelcomePageModel.swift */; };
 		9C1369EF2C9E422C0000B55C /* AuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1369EE2C9E422C0000B55C /* AuthenticationViewModel.swift */; };
 		9C1369F22C9E487E0000B55C /* Montserrat-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9C1369F12C9E487E0000B55C /* Montserrat-ExtraLightItalic.ttf */; };
+		9C528C1A2CAB56FB007F6A76 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C528C192CAB56FB007F6A76 /* Launch Screen.storyboard */; };
 		A968E3CC2C9F92A100EE98F8 /* Step1View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3C82C9F92A100EE98F8 /* Step1View.swift */; };
 		A968E3CD2C9F92A100EE98F8 /* FormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3C92C9F92A100EE98F8 /* FormView.swift */; };
 		A968E3CE2C9F92A100EE98F8 /* Step3View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3CA2C9F92A100EE98F8 /* Step3View.swift */; };
@@ -157,6 +158,7 @@
 		9C1369EE2C9E422C0000B55C /* AuthenticationViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationViewModel.swift; sourceTree = "<group>"; };
 		9C1369F02C9E428D0000B55C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9C1369F12C9E487E0000B55C /* Montserrat-ExtraLightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
+		9C528C192CAB56FB007F6A76 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		A968E3C82C9F92A100EE98F8 /* Step1View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step1View.swift; sourceTree = "<group>"; };
 		A968E3C92C9F92A100EE98F8 /* FormView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormView.swift; sourceTree = "<group>"; };
 		A968E3CA2C9F92A100EE98F8 /* Step3View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step3View.swift; sourceTree = "<group>"; };
@@ -312,6 +314,7 @@
 				9C1369642C9E30A10000B55C /* AndletApp.swift */,
 				9C1369662C9E30A10000B55C /* ContentView.swift */,
 				9C1369682C9E30A20000B55C /* Assets.xcassets */,
+				9C528C192CAB56FB007F6A76 /* Launch Screen.storyboard */,
 				9C13696A2C9E30A20000B55C /* Andlet.entitlements */,
 				9C13696B2C9E30A20000B55C /* Preview Content */,
 			);
@@ -559,6 +562,7 @@
 			files = (
 				9C1369BB2C9E352F0000B55C /* Montserrat-Regular.ttf in Resources */,
 				9C1369BF2C9E352F0000B55C /* LeagueSpartan-ExtraBold.ttf in Resources */,
+				9C528C1A2CAB56FB007F6A76 /* Launch Screen.storyboard in Resources */,
 				9C1369BE2C9E352F0000B55C /* Montserrat-SemiBold.ttf in Resources */,
 				9C1369BA2C9E352F0000B55C /* LeagueSpartan-Light.ttf in Resources */,
 				9C1369B92C9E352F0000B55C /* LeagueSpartan-Regular.ttf in Resources */,
@@ -813,6 +817,7 @@
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -852,6 +857,7 @@
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
