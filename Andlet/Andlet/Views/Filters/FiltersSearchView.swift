@@ -1,31 +1,27 @@
 import SwiftUI
 
-enum FilterSearchOptions {
-    case dates
-    case prices
-    case minutes
-}
-
 struct FilterSearchView: View {
     @Binding var show: Bool
+    @ObservedObject var filterViewModel: FilterViewModel
     @ObservedObject var offerViewModel: OfferViewModel
 
-    // Estados locales para almacenar temporalmente los valores de los filtros
+    // Variables locales para manejar temporalmente los valores de los filtros
+    @State private var localStartDate: Date
+    @State private var localEndDate: Date
+    @State private var localMinPrice: Double
+    @State private var localMaxPrice: Double
+    @State private var localMaxMinutes: Double
     @State private var selectedOption: FilterSearchOptions = .dates
-    @State private var startDate: Date
-    @State private var endDate: Date
-    @State private var minPrice: Double
-    @State private var maxPrice: Double
-    @State private var maxMinutes: Double
 
-    // Custom initializer para inicializar los @State con los valores del ViewModel
-    init(show: Binding<Bool>, offerViewModel: OfferViewModel) {
+    // Custom initializer para inicializar las variables locales con los valores del ViewModel
+    init(show: Binding<Bool>, filterViewModel: FilterViewModel, offerViewModel: OfferViewModel) {
         _show = show
-        _startDate = State(initialValue: offerViewModel.startDate)
-        _endDate = State(initialValue: offerViewModel.endDate)
-        _minPrice = State(initialValue: offerViewModel.minPrice)
-        _maxPrice = State(initialValue: offerViewModel.maxPrice)
-        _maxMinutes = State(initialValue: offerViewModel.maxMinutesFromCampus)
+        _localStartDate = State(initialValue: filterViewModel.startDate)
+        _localEndDate = State(initialValue: filterViewModel.endDate)
+        _localMinPrice = State(initialValue: filterViewModel.minPrice)
+        _localMaxPrice = State(initialValue: filterViewModel.maxPrice)
+        _localMaxMinutes = State(initialValue: filterViewModel.maxMinutes)
+        self.filterViewModel = filterViewModel
         self.offerViewModel = offerViewModel
     }
 
@@ -36,7 +32,7 @@ struct FilterSearchView: View {
                 HStack {
                     Button {
                         withAnimation(.snappy) {
-                            show.toggle() // Cerrar vista de filtros
+                            show.toggle() // Cerrar vista de filtros sin aplicar cambios
                         }
                     } label: {
                         Image(systemName: "xmark")
@@ -51,22 +47,31 @@ struct FilterSearchView: View {
                     Spacer()
                     
                     Button(action: {
-                        // Actualizar los filtros en el ViewModel
+                        // Actualizar los filtros en FilterViewModel con los valores locales
+                        filterViewModel.updateFilters(
+                            startDate: localStartDate,
+                            endDate: localEndDate,
+                            minPrice: localMinPrice,
+                            maxPrice: localMaxPrice,
+                            maxMinutes: localMaxMinutes
+                        )
+
+                        // Actualizar los filtros en OfferViewModel para reflejar los cambios aplicados
                         offerViewModel.updateFilters(
-                            startDate: startDate,
-                            endDate: endDate,
-                            minPrice: minPrice,
-                            maxPrice: maxPrice,
-                            maxMinutes: maxMinutes
+                            startDate: localStartDate,
+                            endDate: localEndDate,
+                            minPrice: localMinPrice,
+                            maxPrice: localMaxPrice,
+                            maxMinutes: localMaxMinutes
                         )
 
                         // Imprimir los filtros seleccionados en la consola
                         print("Filtros aplicados:")
-                        print("Fecha Inicial: \(startDate)")
-                        print("Fecha Final: \(endDate)")
-                        print("Precio Mínimo: \(minPrice)")
-                        print("Precio Máximo: \(maxPrice)")
-                        print("Minutos Máximos desde el campus: \(maxMinutes)")
+                        print("Fecha Inicial: \(localStartDate)")
+                        print("Fecha Final: \(localEndDate)")
+                        print("Precio Mínimo: \(localMinPrice)")
+                        print("Precio Máximo: \(localMaxPrice)")
+                        print("Minutos Máximos desde el campus: \(localMaxMinutes)")
 
                         withAnimation(.snappy) {
                             show.toggle() // Cerrar vista de filtros al hacer clic en "Apply"
@@ -83,7 +88,7 @@ struct FilterSearchView: View {
                 .padding()
                 .padding(.horizontal)
 
-                // Sincronizar los valores del ViewModel cada vez que se abra la vista
+                // Sincronizar los valores locales con los del ViewModel cada vez que se abra la vista
                 .onAppear {
                     loadValuesFromViewModel()
                 }
@@ -94,12 +99,12 @@ struct FilterSearchView: View {
                         .font(.custom("LeagueSpartan-SemiBold", size: 28))
                         .fontWeight(.semibold)
                     
-                    DatePicker("From", selection: $startDate, in: Date()...,
+                    DatePicker("From", selection: $localStartDate, in: Date()...,
                                displayedComponents: .date)
                     
                     Divider()
                     
-                    DatePicker("To", selection: $endDate, in: (startDate.addingTimeInterval(24 * 60 * 60))..., displayedComponents: .date)
+                    DatePicker("To", selection: $localEndDate, in: (localStartDate.addingTimeInterval(24 * 60 * 60))..., displayedComponents: .date)
                 }
                 .padding()
                 .frame(height: 180)
@@ -115,11 +120,11 @@ struct FilterSearchView: View {
                             .font(.custom("LeagueSpartan-SemiBold", size: 28))
                             .fontWeight(.semibold)
                         
-                        Slider(value: $maxPrice, in: 0...10000000, step: 100000)
+                        Slider(value: $localMaxPrice, in: 0...10000000, step: 100000)
                             .accentColor(Color(hex: "0C356A"))
                         HStack {
                             Spacer()
-                            Text("$\(Int(maxPrice))")
+                            Text("$\(Int(localMaxPrice))")
                         }
                         .padding(.horizontal)
                         
@@ -144,11 +149,11 @@ struct FilterSearchView: View {
                             .font(.custom("LeagueSpartan-SemiBold", size: 28))
                             .fontWeight(.semibold)
                         
-                        Slider(value: $maxMinutes, in: 0...30, step: 1)
+                        Slider(value: $localMaxMinutes, in: 0...30, step: 1)
                             .accentColor(Color(hex: "0C356A"))
                         HStack {
                             Spacer()
-                            Text("\(Int(maxMinutes)) mins")
+                            Text("\(Int(localMaxMinutes)) mins")
                         }
                         .padding(.horizontal)
                         
@@ -172,18 +177,29 @@ struct FilterSearchView: View {
         }
     }
     
-    // Función para sincronizar los valores del ViewModel con los @State al cargar la vista
+    // Función para sincronizar los valores locales con los del ViewModel al cargar la vista
     private func loadValuesFromViewModel() {
-        startDate = offerViewModel.startDate
-        endDate = offerViewModel.endDate
-        minPrice = offerViewModel.minPrice
-        maxPrice = offerViewModel.maxPrice
-        maxMinutes = offerViewModel.maxMinutesFromCampus
+        localStartDate = filterViewModel.startDate
+        localEndDate = filterViewModel.endDate
+        localMinPrice = filterViewModel.minPrice
+        localMaxPrice = filterViewModel.maxPrice
+        localMaxMinutes = filterViewModel.maxMinutes
     }
 }
 
+
 #Preview {
-    FilterSearchView(show: .constant(false), offerViewModel: OfferViewModel())
+    FilterSearchView(
+        show: .constant(false),
+        filterViewModel: FilterViewModel(
+            startDate: Date(),
+            endDate: Date().addingTimeInterval(24 * 60 * 60),
+            minPrice: 0,
+            maxPrice: 10000000,
+            maxMinutes: 30
+        ),
+        offerViewModel: OfferViewModel()
+    )
 }
 
 struct CollapsedPickedView: View {
