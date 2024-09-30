@@ -1,10 +1,3 @@
-//
-//  FiltersSearchView.swift
-//  SwiftApp
-//
-//  Created by Sofía Torres Ramírez on 17/09/24.
-//
-
 import SwiftUI
 
 enum FilterSearchOptions {
@@ -15,53 +8,96 @@ enum FilterSearchOptions {
 
 struct FilterSearchView: View {
     @Binding var show: Bool
+    @ObservedObject var offerViewModel: OfferViewModel
+
+    // Estados locales para almacenar temporalmente los valores de los filtros
     @State private var selectedOption: FilterSearchOptions = .dates
-    @State private var startDate = Date()
-    @State private var endDate = Date()
-    @State private var minPrice: Double = 0
-    @State private var maxPrice: Double = 10000000
-    @State private var minMinutes: Double = 0
-    @State private var maxMinutes: Double = 30
-    
-    
+    @State private var startDate: Date
+    @State private var endDate: Date
+    @State private var minPrice: Double
+    @State private var maxPrice: Double
+    @State private var maxMinutes: Double
+
+    // Custom initializer para inicializar los @State con los valores del ViewModel
+    init(show: Binding<Bool>, offerViewModel: OfferViewModel) {
+        _show = show
+        _startDate = State(initialValue: offerViewModel.startDate)
+        _endDate = State(initialValue: offerViewModel.endDate)
+        _minPrice = State(initialValue: offerViewModel.minPrice)
+        _maxPrice = State(initialValue: offerViewModel.maxPrice)
+        _maxMinutes = State(initialValue: offerViewModel.maxMinutesFromCampus)
+        self.offerViewModel = offerViewModel
+    }
+
     var body: some View {
         if #available(iOS 16.0, *) {
             VStack {
-                HStack{
+                // Header con botón de cerrar (x) y botón de aplicar (Apply)
+                HStack {
                     Button {
                         withAnimation(.snappy) {
-                            show.toggle()
+                            show.toggle() // Cerrar vista de filtros
                         }
-                        
                     } label: {
                         Image(systemName: "xmark")
                             .foregroundStyle(Color(hex: "FFF4CF"))
-                        
-                            .background{
+                            .background {
                                 Circle()
                                     .fill(Color(hex: "0C356A"))
                                     .frame(width: 40, height: 40)
                             }
-                        
                     }
                     
                     Spacer()
                     
-                    
+                    Button(action: {
+                        // Actualizar los filtros en el ViewModel
+                        offerViewModel.updateFilters(
+                            startDate: startDate,
+                            endDate: endDate,
+                            minPrice: minPrice,
+                            maxPrice: maxPrice,
+                            maxMinutes: maxMinutes
+                        )
+
+                        // Imprimir los filtros seleccionados en la consola
+                        print("Filtros aplicados:")
+                        print("Fecha Inicial: \(startDate)")
+                        print("Fecha Final: \(endDate)")
+                        print("Precio Mínimo: \(minPrice)")
+                        print("Precio Máximo: \(maxPrice)")
+                        print("Minutos Máximos desde el campus: \(maxMinutes)")
+
+                        withAnimation(.snappy) {
+                            show.toggle() // Cerrar vista de filtros al hacer clic en "Apply"
+                        }
+                    }) {
+                        Text("Apply")
+                            .font(.custom("LeagueSpartan-SemiBold", size: 18))
+                            .foregroundColor(.white)
+                            .frame(width: 80, height: 40)
+                            .background(Color(hex: "0C356A"))
+                            .cornerRadius(20)
+                    }
                 }
                 .padding()
                 .padding(.horizontal)
+
+                // Sincronizar los valores del ViewModel cada vez que se abra la vista
+                .onAppear {
+                    loadValuesFromViewModel()
+                }
                 
-                
-                
-                VStack (alignment: .leading){
-                    Text ("When?")
+                // Sección para seleccionar fechas
+                VStack(alignment: .leading) {
+                    Text("When?")
                         .font(.custom("LeagueSpartan-SemiBold", size: 28))
                         .fontWeight(.semibold)
+                    
                     DatePicker("From", selection: $startDate, in: Date()...,
                                displayedComponents: .date)
                     
-                    Divider ()
+                    Divider()
                     
                     DatePicker("To", selection: $endDate, in: (startDate.addingTimeInterval(24 * 60 * 60))..., displayedComponents: .date)
                 }
@@ -72,16 +108,8 @@ struct FilterSearchView: View {
                 .padding()
                 .shadow(radius: 10)
                 
-                
-                
-                
-                
-                
-                 
-               
-
-                
-                VStack (alignment: .leading){
+                // Sección para seleccionar rango de precios
+                VStack(alignment: .leading) {
                     if selectedOption == .prices {
                         Text("Price")
                             .font(.custom("LeagueSpartan-SemiBold", size: 28))
@@ -95,21 +123,22 @@ struct FilterSearchView: View {
                         }
                         .padding(.horizontal)
                         
-                    }else{
+                    } else {
                         CollapsedPickedView(title: "Price", description: "Select price")
                     }
                 }
                 .padding()
-                .frame(height: selectedOption == .prices ? 120: 64)
+                .frame(height: selectedOption == .prices ? 120 : 64)
                 .background(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding()
                 .shadow(radius: 10)
                 .onTapGesture {
-                    withAnimation(.snappy) {selectedOption = .prices}
+                    withAnimation(.snappy) { selectedOption = .prices }
                 }
                 
-                VStack (alignment: .leading){
+                // Sección para seleccionar minutos desde el campus
+                VStack(alignment: .leading) {
                     if selectedOption == .minutes {
                         Text("Minutes from campus")
                             .font(.custom("LeagueSpartan-SemiBold", size: 28))
@@ -123,46 +152,39 @@ struct FilterSearchView: View {
                         }
                         .padding(.horizontal)
                         
-                        
-                    }else{
+                    } else {
                         CollapsedPickedView(title: "Minutes from campus", description: "Select minutes")
                     }
                 }
                 .padding()
-                .frame(height: selectedOption == .minutes ? 120: 64)
+                .frame(height: selectedOption == .minutes ? 120 : 64)
                 .background(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding()
                 .shadow(radius: 10)
                 .onTapGesture {
-                    withAnimation(.snappy) {selectedOption = .minutes}
-                    
+                    withAnimation(.snappy) { selectedOption = .minutes }
                 }
                 
-                Spacer ()
-                
+                Spacer()
             }
-            
             .toolbar(.hidden, for: .tabBar)
         }
-        }
+    }
+    
+    // Función para sincronizar los valores del ViewModel con los @State al cargar la vista
+    private func loadValuesFromViewModel() {
+        startDate = offerViewModel.startDate
+        endDate = offerViewModel.endDate
+        minPrice = offerViewModel.minPrice
+        maxPrice = offerViewModel.maxPrice
+        maxMinutes = offerViewModel.maxMinutesFromCampus
+    }
 }
 
 #Preview {
-    FilterSearchView(show: .constant(false))
+    FilterSearchView(show: .constant(false), offerViewModel: OfferViewModel())
 }
-
-struct CollapsibleFilterViewModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .padding()
-            .background(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .padding()
-            .shadow(radius: 10)
-    }
-}
-                                        
 
 struct CollapsedPickedView: View {
     let title: String
@@ -173,11 +195,9 @@ struct CollapsedPickedView: View {
                 Text(title)
                     .foregroundStyle(.gray)
                 Spacer()
-                Text (description)
+                Text(description)
             }
-            //                .fontWeight(.bold)
             .font(.subheadline)
         }
-
     }
 }

@@ -5,6 +5,13 @@ import SwiftUI
 
 class OfferViewModel: ObservableObject {
     @Published var offersWithProperties: [OfferWithProperty] = []
+    
+    // Propiedades para almacenar los filtros seleccionados
+   @Published var startDate: Date = Date()
+   @Published var endDate: Date = Date().addingTimeInterval(24 * 60 * 60)
+   @Published var minPrice: Double = 0
+   @Published var maxPrice: Double = 10000000
+   @Published var maxMinutesFromCampus: Double = 30
 
     private var db = Firestore.firestore()
 
@@ -81,6 +88,15 @@ class OfferViewModel: ObservableObject {
             }
         }
     }
+    
+    // Función para actualizar los filtros en OfferViewModel
+        func updateFilters(startDate: Date, endDate: Date, minPrice: Double, maxPrice: Double, maxMinutes: Double) {
+            self.startDate = startDate
+            self.endDate = endDate
+            self.minPrice = minPrice
+            self.maxPrice = maxPrice
+            self.maxMinutesFromCampus = maxMinutes
+        }
 
 
 

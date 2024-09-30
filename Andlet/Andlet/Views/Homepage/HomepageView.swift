@@ -15,7 +15,7 @@ struct HomepageView: View {
         if #available(iOS 16.0, *) {
             NavigationStack {
                 if showFilterSearchView {
-                    FilterSearchView(show: $showFilterSearchView)
+                    FilterSearchView(show: $showFilterSearchView, offerViewModel: offerViewModel)
                 } else {
                     ScrollView {
                         VStack {
