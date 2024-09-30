@@ -1,12 +1,6 @@
-//
-//  ProfilePickerView.swift
-//  SwiftApp
-//
-//  Created by Daniel Arango Cruz on 18/09/24.
-//
-
 import SwiftUI
 
+// Actualización de ProfilePickerView
 struct ProfilePickerView: View {
     var body: some View {
         NavigationView {
@@ -68,7 +62,8 @@ struct ProfilePickerView: View {
             .padding()
             .background(Color(hex: "#C5DDFF")) // Light blue background
             .edgesIgnoringSafeArea(.all) // Full screen background
-        } .navigationBarHidden(true)
+        }
+        .navigationBarHidden(true)
     }
 }
 

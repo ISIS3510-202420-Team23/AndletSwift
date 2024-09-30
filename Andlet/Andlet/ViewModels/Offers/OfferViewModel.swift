@@ -5,6 +5,13 @@ import SwiftUI
 
 class OfferViewModel: ObservableObject {
     @Published var offersWithProperties: [OfferWithProperty] = []
+    
+    // Propiedades para almacenar los filtros seleccionados
+   @Published var startDate: Date = Date()
+   @Published var endDate: Date = Date().addingTimeInterval(24 * 60 * 60)
+   @Published var minPrice: Double = 0
+   @Published var maxPrice: Double = 10000000
+   @Published var maxMinutesFromCampus: Double = 30
 
     private var db = Firestore.firestore()
 
@@ -81,6 +88,15 @@ class OfferViewModel: ObservableObject {
             }
         }
     }
+    
+    // Función para actualizar los filtros en OfferViewModel
+        func updateFilters(startDate: Date, endDate: Date, minPrice: Double, maxPrice: Double, maxMinutes: Double) {
+            self.startDate = startDate
+            self.endDate = endDate
+            self.minPrice = minPrice
+            self.maxPrice = maxPrice
+            self.maxMinutesFromCampus = maxMinutes
+        }
 
 
 
@@ -138,6 +154,7 @@ class OfferViewModel: ObservableObject {
         let typeString = data["type"] as? String ?? "a_room"
         let type = OfferType(rawValue: typeString) ?? .aRoom
         let userId = data["user_id"] as? String ?? ""
+        let views = data["views"] as? Int ?? 0
 
         return OfferModel(
             finalDate: finalDate,
@@ -151,7 +168,8 @@ class OfferViewModel: ObservableObject {
             pricePerMonth: pricePerMonth,
             roommates: roommates,
             type: type,
-            userId: userId
+            userId: userId,
+            views: views
         )
     }
 
@@ -162,6 +180,7 @@ class OfferViewModel: ObservableObject {
         let complexName = data["complex_name"] as? String ?? "Complejo desconocido"
         let description = data["description"] as? String ?? ""
         let location = data["location"] as? [Double] ?? [0.0, 0.0]
+        let minutes_from_campus = data["minutes_from_campus"] as? Int ?? 0
         let photos = data["photos"] as? [String] ?? []
         let title = data["title"] as? String ?? "Sin título"
 
@@ -170,6 +189,7 @@ class OfferViewModel: ObservableObject {
             complexName: complexName,
             description: description,
             location: location,
+            minutes_from_campus: minutes_from_campus,
             photos: photos,
             title: title
         )

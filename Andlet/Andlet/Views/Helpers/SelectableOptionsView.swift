@@ -1,15 +1,16 @@
 import SwiftUI
 
 struct SelectableOptionsView: View {
-    @State private var selectedOption: String? = nil // Estado para la opción seleccionada
-    var options: [String] // Array de opciones para ser seleccionadas
+    @Binding var selectedOption: String? // Estado ligado externamente para la opción seleccionada
+    var options: [String] // Valores que se guardan en la base de datos o en el objeto observable
+    var displayOptions: [String] // Valores que se muestran en la interfaz para el usuario
     var title: String // Título que se mostrará arriba de los botones
     var additionalText: String = "" // Texto adicional que puede aparecer al lado del primer botón
     var buttonWidth: CGFloat = 150 // Ancho fijo para los botones
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            // Texto en la parte superior, ajustado para que haga salto de línea cuando sea necesario
+            // Título en la parte superior, ajustado para hacer salto de línea cuando sea necesario
             Text(title)
                 .font(.custom("Montserrat-Light", size: 20))
                 .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
@@ -21,9 +22,9 @@ struct SelectableOptionsView: View {
                     HStack {
                         // Botón
                         Button(action: {
-                            selectedOption = options[index] // Selecciona la opción correspondiente
+                            selectedOption = options[index] // Guarda la opción seleccionada en el Binding
                         }) {
-                            Text(options[index])
+                            Text(displayOptions[index]) // Mostrar el texto amigable al usuario
                                 .frame(width: buttonWidth, height: 40) // Tamaño fijo para los botones
                                 .background(
                                     selectedOption == options[index]
@@ -55,5 +56,17 @@ struct SelectableOptionsView: View {
             }
         }
         .padding(.bottom, 20) // Ajustar espacio inferior
+    }
+}
+
+// Preview del componente con valores de ejemplo
+struct SelectableOptionsView_Previews: PreviewProvider {
+    static var previews: some View {
+        SelectableOptionsView(
+            selectedOption: .constant("a_room"),
+            options: ["entire_place", "a_room"],
+            displayOptions: ["An entire place", "A room"],
+            title: "What type of place will guests have?"
+        )
     }
 }
