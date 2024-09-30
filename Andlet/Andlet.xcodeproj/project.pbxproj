@@ -83,6 +83,8 @@
 		A968E3E72C9F92CC00EE98F8 /* SelectableOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3DB2C9F92CC00EE98F8 /* SelectableOptionsView.swift */; };
 		A9DFF6C62CA8F4820063E52C /* MinutesFromCampus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFF6C52CA8F4820063E52C /* MinutesFromCampus.swift */; };
 		A9DFF6CA2CA90B380063E52C /* PriceField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFF6C92CA90B380063E52C /* PriceField.swift */; };
+		A9DFF6CD2CA9193E0063E52C /* PropertyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFF6CC2CA9193E0063E52C /* PropertyViewModel.swift */; };
+		A9DFF6CF2CA91C7F0063E52C /* PropertyOfferData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFF6CE2CA91C7F0063E52C /* PropertyOfferData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -174,6 +176,8 @@
 		A968E3DB2C9F92CC00EE98F8 /* SelectableOptionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectableOptionsView.swift; sourceTree = "<group>"; };
 		A9DFF6C52CA8F4820063E52C /* MinutesFromCampus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinutesFromCampus.swift; sourceTree = "<group>"; };
 		A9DFF6C92CA90B380063E52C /* PriceField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceField.swift; sourceTree = "<group>"; };
+		A9DFF6CC2CA9193E0063E52C /* PropertyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyViewModel.swift; sourceTree = "<group>"; };
+		A9DFF6CE2CA91C7F0063E52C /* PropertyOfferData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyOfferData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -376,6 +380,7 @@
 		9C1369912C9E31800000B55C /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				A9DFF6CB2CA9192E0063E52C /* Properties */,
 				3781D25E2CA4F55600C43924 /* Offers */,
 				9C1369EE2C9E422C0000B55C /* AuthenticationViewModel.swift */,
 			);
@@ -438,6 +443,15 @@
 				A968E3CA2C9F92A100EE98F8 /* Step3View.swift */,
 			);
 			path = Forms;
+			sourceTree = "<group>";
+		};
+		A9DFF6CB2CA9192E0063E52C /* Properties */ = {
+			isa = PBXGroup;
+			children = (
+				A9DFF6CC2CA9193E0063E52C /* PropertyViewModel.swift */,
+				A9DFF6CE2CA91C7F0063E52C /* PropertyOfferData.swift */,
+			);
+			path = Properties;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -611,6 +625,7 @@
 				37C0E2A62C9E59BA00099A90 /* OfferDetailView.swift in Sources */,
 				A968E3E32C9F92CC00EE98F8 /* CustomTextField.swift in Sources */,
 				9C1369CB2C9E35BE0000B55C /* CircularArrowButton.swift in Sources */,
+				A9DFF6CF2CA91C7F0063E52C /* PropertyOfferData.swift in Sources */,
 				9C1369ED2C9E421E0000B55C /* WelcomePageModel.swift in Sources */,
 				37C0E2942C9E592800099A90 /* MainTabLandlordView.swift in Sources */,
 				37C0E2952C9E592800099A90 /* SearchAndFilterBar.swift in Sources */,
@@ -619,6 +634,7 @@
 				37C0E29A2C9E596700099A90 /* HomepageView.swift in Sources */,
 				37C0E2972C9E592800099A90 /* MainTabView.swift in Sources */,
 				A968E3E72C9F92CC00EE98F8 /* SelectableOptionsView.swift in Sources */,
+				A9DFF6CD2CA9193E0063E52C /* PropertyViewModel.swift in Sources */,
 				9C1369CE2C9E35BE0000B55C /* WelcomeIndividualPageView.swift in Sources */,
 				37C0E28C2C9E58F500099A90 /* FiltersSearchView.swift in Sources */,
 				A968E3DE2C9F92CC00EE98F8 /* CustomButton.swift in Sources */,

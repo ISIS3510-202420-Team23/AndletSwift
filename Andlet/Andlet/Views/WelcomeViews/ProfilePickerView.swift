@@ -1,12 +1,6 @@
-//
-//  ProfilePickerView.swift
-//  SwiftApp
-//
-//  Created by Daniel Arango Cruz on 18/09/24.
-//
-
 import SwiftUI
 
+// Actualización de ProfilePickerView
 struct ProfilePickerView: View {
     var body: some View {
         NavigationView {
@@ -41,9 +35,9 @@ struct ProfilePickerView: View {
                             .background(Color(hex: "#F7B500")) // Yellow background
                             .cornerRadius(25) // Rounded button
                     }
-                    
-                    // Rent Button
-                    NavigationLink(destination: Step1View()
+
+                    // Crear un nuevo PropertyOfferData y pasarlo a Step1View
+                    NavigationLink(destination: Step1View(propertyOfferData: PropertyOfferData())
                         .navigationBarBackButtonHidden()
                         .ignoresSafeArea(.all)) {
                         Text("I want to list my place!")
@@ -68,7 +62,8 @@ struct ProfilePickerView: View {
             .padding()
             .background(Color(hex: "#C5DDFF")) // Light blue background
             .edgesIgnoringSafeArea(.all) // Full screen background
-        } .navigationBarHidden(true)
+        }
+        .navigationBarHidden(true)
     }
 }
 

@@ -9,6 +9,8 @@ struct PriceField: View {
     var cornerRadius: CGFloat
     var iconName: String // Ícono pasado por parámetro
 
+    @State private var formattedText: String = ""
+
     var body: some View {
         VStack(alignment: .leading) {
             // Título del campo
@@ -24,17 +26,25 @@ struct PriceField: View {
                         .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
                         .padding(.leading, 10)
 
-                    TextField(placeholder, text: $text)
+                    TextField(placeholder, text: $formattedText)
                         .padding(.vertical, 12)
                         .font(.custom("Montserrat-SemiBold", size: 12))
                         .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
                         .keyboardType(.numberPad) // Configuración para solo aceptar números
-                        .onChange(of: text) { newValue in
+                        .onChange(of: formattedText) { newValue in
+                            // Filtrar solo números y limitar el número de caracteres a maxCharacters
                             let filteredValue = newValue.filter { $0.isNumber }
                             if filteredValue.count > maxCharacters {
-                                text = String(filteredValue.prefix(maxCharacters))
+                                formattedText = formatNumber(String(filteredValue.prefix(maxCharacters)))
                             } else {
-                                text = formatNumber(filteredValue)
+                                formattedText = formatNumber(filteredValue)
+                            }
+                            
+                            // Actualizar el valor original del binding con el número sin formato
+                            if let numberValue = Int(filteredValue) {
+                                text = String(numberValue)
+                            } else {
+                                text = "0"
                             }
                         }
                 }
@@ -47,13 +57,23 @@ struct PriceField: View {
             }
         }
         .padding(.bottom, 60)
+        .onAppear {
+            // Inicializar el texto formateado con el valor actual
+            formattedText = formatNumber(text)
+        }
     }
 
     // Función para formatear el número con puntos de mil
     private func formatNumber(_ value: String) -> String {
+        // Convertir el valor a número entero
+        guard let number = Int(value) else { return value }
+        
+        // Aplicar formato con separador de miles
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .decimal
-        let number = Int(value) ?? 0
+        numberFormatter.groupingSeparator = "."
+
+        // Retornar el número formateado o el valor original si la conversión falla
         return numberFormatter.string(from: NSNumber(value: number)) ?? value
     }
 }

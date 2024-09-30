@@ -1,30 +1,32 @@
 import SwiftUI
 
 struct Step3View: View {
-    @State private var rooms = 0
-    @State private var beds = 0
-    @State private var bathrooms = 0
-    @State private var pricePerMonth = ""
-    @State private var startDate = Date() // Fecha inicial es la actual
-    @State private var endDate = Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date() // Fecha final es 1 semana después
+    @ObservedObject var propertyOfferData: PropertyOfferData
+    @StateObject private var viewModel = PropertyViewModel() // Instancia del ViewModel como @StateObject
+
     @State private var showWarningMessage = false
-    @State private var navigateToMainTab = false // Estado para la navegación
-    @State private var selectedOption: String? = nil // Opción seleccionada en SelectableOptionsView
+    @State private var navigateToMainTab = false
 
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.white.ignoresSafeArea()
-                
+
                 VStack(alignment: .leading) {
-                    // Header para el formulario
                     HeaderView(step: "Step 3", title: "Set up your preferences")
-                    
+
                     VStack(alignment: .leading, spacing: 5) {
-                        // Agregar SelectableOptionsView
                         SelectableOptionsView(
-                            selectedOption: $selectedOption,
-                            options: ["Restrict to Andes", "Any Andlet guest"],
+                            selectedOption: Binding<String?>(
+                                get: { propertyOfferData.onlyAndes ? "true" : "false" },
+                                set: { newValue in
+                                    if let value = newValue {
+                                        propertyOfferData.onlyAndes = (value == "true")
+                                    }
+                                }
+                            ),
+                            options: ["true", "false"],
+                            displayOptions: ["Restrict to Andes", "Any Andlet guest"],
                             title: "Choose who will be your guest",
                             additionalText: "Only users signed in with a @uniandes.edu.co email will be able to contact you"
                         )
@@ -32,15 +34,18 @@ struct Step3View: View {
                     .padding(.bottom, 20)
                     .padding(.horizontal)
 
-                    // Componente de selección de rango de fechas
-                    DateRangePickerView(startDate: $startDate, endDate: $endDate)
+                    DateRangePickerView(startDate: $propertyOfferData.initialDate, endDate: $propertyOfferData.finalDate)
                         .frame(maxWidth: .infinity)
                         .padding(.bottom, 20)
 
-                    MinutesFromCampusView()
-                        .padding(.bottom, 50)
+                    MinutesFromCampusView(minutes: Binding<Int>(
+                        get: { propertyOfferData.minutesFromCampus },
+                        set: { newValue in
+                            propertyOfferData.minutesFromCampus = max(newValue, 5)
+                        }
+                    ))
+                    .padding(.bottom, 50)
 
-                    // Texto de finalización
                     Text("Perfect! You’re all set.\nFinish up\nand publish :)")
                         .font(.custom("Montserrat-Regular", size: 20))
                         .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
@@ -50,11 +55,9 @@ struct Step3View: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     Spacer()
-                    
-                    // Botones de navegación con NavigationLink
+
                     HStack {
-                        // Back link (Blanco con bordes azules y texto azul)
-                        NavigationLink(destination: Step2View()
+                        NavigationLink(destination: Step2View(propertyOfferData: propertyOfferData)
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true)) {
                                 Text("Back")
@@ -71,13 +74,13 @@ struct Step3View: View {
 
                         Spacer()
 
-                        // Next link (Fondo azul con texto negro)
                         NavigationLink(destination: MainTabLandlordView()
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true),
                                        isActive: $navigateToMainTab) {
                             EmptyView()
                         }
+
                         Text("Save")
                             .font(.headline)
                             .foregroundColor(.white)
@@ -85,17 +88,55 @@ struct Step3View: View {
                             .background(Color(red: 12/255, green: 53/255, blue: 106/255))
                             .cornerRadius(15)
                             .onTapGesture {
-                                // Validación simplificada de fechas y opción seleccionada
-                                let todayStartOfDay = Calendar.current.startOfDay(for: Date()) // Día de hoy a las 00:00
-                                
-                                if startDate < todayStartOfDay || endDate <= startDate || selectedOption == nil {
-                                    showWarningMessage = true
-                                } else {
+                                let todayStartOfDay = Calendar.current.startOfDay(for: Date())
+
+                                if propertyOfferData.initialDate >= todayStartOfDay && propertyOfferData.finalDate > propertyOfferData.initialDate {
                                     showWarningMessage = false
-                                    navigateToMainTab = true
+
+                                    viewModel.getNextPropertyID { propertyID in
+                                        guard let propertyID = propertyID else {
+                                            print("Error: No se pudo obtener el siguiente ID de propiedad")
+                                            return
+                                        }
+
+                                        propertyOfferData.propertyID = propertyID
+                                        print("Next Property ID: \(propertyID)")
+
+                                        let photoNames = propertyOfferData.selectedImagesData.enumerated().map { (index, _) in
+                                            return "\(propertyOfferData.userId)_\(propertyOfferData.propertyID)_\(index + 1).jpg"
+                                        }
+                                        propertyOfferData.photos = photoNames
+                                        print("Nombres de las fotos determinados: \(photoNames)")
+
+                                        viewModel.postProperty(propertyOfferData: propertyOfferData) { postSuccess in
+                                            if postSuccess {
+                                                print("Propiedad posteada exitosamente.")
+
+                                                viewModel.postOffer(propertyOfferData: propertyOfferData) { offerSuccess in
+                                                    if offerSuccess {
+                                                        print("Oferta posteada exitosamente.")
+
+                                                        viewModel.uploadImages(for: propertyOfferData) { uploadSuccess in
+                                                            if uploadSuccess {
+                                                                print("Fotos subidas con éxito.")
+                                                                navigateToMainTab = true
+                                                            } else {
+                                                                print("Error al subir las fotos.")
+                                                            }
+                                                        }
+                                                    } else {
+                                                        print("Error al postear la oferta.")
+                                                    }
+                                                }
+                                            } else {
+                                                print("Error al postear la propiedad.")
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    showWarningMessage = true
                                 }
 
-                                // Mostrar el mensaje de advertencia por 2 segundos si hay algún error
                                 if showWarningMessage {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                         withAnimation {
@@ -109,33 +150,48 @@ struct Step3View: View {
                     .padding(.top, 10)
                 }
                 .padding()
-                
-                // Mostrar mensaje de advertencia de forma sutil con animación
+
                 if showWarningMessage {
                     VStack {
                         Spacer()
-                            .frame(height: 10) // Espacio arriba para que el mensaje quede más abajo
+                            .frame(height: 10)
 
-                        Text("Please select a valid date range and an option and/or fill all the requested fields")
+                        Text("Please select a valid date range before proceeding")
                             .foregroundColor(.white)
                             .font(.subheadline)
                             .padding()
                             .background(Color.red)
                             .cornerRadius(10)
                             .shadow(radius: 10)
-                            .transition(.move(edge: .top)) // Efecto de deslizamiento
-                            .animation(.easeInOut(duration: 0.5), value: showWarningMessage) // Controla la animación con valor
-                            .offset(y: showWarningMessage ? 0 : -100) // Desliza desde arriba
-                            .zIndex(1) // Asegura que el mensaje esté encima del contenido
+                            .transition(.move(edge: .top))
+                            .animation(.easeInOut(duration: 0.5), value: showWarningMessage)
+                            .offset(y: showWarningMessage ? 0 : -100)
+                            .zIndex(1)
                     }
-                    .padding(.top, 10) // Ajusta la posición del mensaje
+                    .padding(.top, 10)
                 }
             }
             .navigationBarHidden(true)
         }
+        .onAppear {
+            if propertyOfferData.minutesFromCampus < 5 {
+                propertyOfferData.minutesFromCampus = 5
+            }
+
+            viewModel.getNextPropertyID { propertyID in
+                guard let propertyID = propertyID else {
+                    print("Error: No se pudo obtener el siguiente ID de propiedad")
+                    return
+                }
+
+                propertyOfferData.propertyID = propertyID // Asignar como Int
+                print("Next Property ID (onAppear): \(propertyID)")
+            }
+        }
     }
 }
 
+// Reemplazar la función Preview para probar con el ObservableObject
 #Preview {
-    Step3View()
+    Step3View(propertyOfferData: PropertyOfferData())
 }

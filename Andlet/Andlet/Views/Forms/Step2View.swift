@@ -1,50 +1,66 @@
 import SwiftUI
 
 struct Step2View: View {
-    // Variables de estado para controlar el contenido y la navegación
-    @State private var rooms = 1
-    @State private var beds = 1
-    @State private var bathrooms = 1
-    @State private var pricePerMonth = ""
-    @State private var selectedOption: String? = nil // Opción seleccionada en SelectableOptionsView
+    @ObservedObject var propertyOfferData: PropertyOfferData // Usar PropertyOfferData para almacenar y compartir datos
+    
     @State private var showWarning = false
     @State private var showWarningMessage = false // Estado para mostrar/ocultar el mensaje animado
     @State private var navigateToStep3 = false
 
-    let maxPriceCharacters = 20
+    let maxPriceCharacters = 9
 
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.white.ignoresSafeArea()
-                
+
                 VStack(alignment: .leading) {
                     // Header para el formulario
                     HeaderView(step: "Step 2", title: "Tell us about your place")
-                    
+
                     VStack(alignment: .leading, spacing: 5) {
+                        // Modificar SelectableOptionsView para trabajar con el tipo OfferType
                         SelectableOptionsView(
-                            selectedOption: $selectedOption, // Bindear la opción seleccionada
-                            options: ["An entire place", "A room"],
+                            selectedOption: Binding<String?>(
+                                get: { propertyOfferData.type.rawValue }, // Obtiene el valor como cadena
+                                set: { newValue in
+                                    if let newValue = newValue, let newType = OfferType(rawValue: newValue) {
+                                        propertyOfferData.type = newType // Asigna el tipo completo solo si el nuevo valor es no-nulo
+                                    }
+                                }
+                            ),
+                            options: ["entire_place", "a_room"], // Valores que se guardarán en la base de datos
+                            displayOptions: ["An entire place", "A room"], // Valores mostrados en la interfaz
                             title: "What type of place will guests have?"
                         )
-                        
+
                         Text("Let’s be more specific...")
                             .font(.custom("Montserrat-Light", size: 20))
                             .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
                             .padding(.top, 5)
-                        
+
+                        // Controles para seleccionar número de habitaciones, camas y baños
                         VStack(spacing: 15) {
-                            IncrementDecrementView(title: "Rooms available for sublet", count: $rooms)
-                            IncrementDecrementView(title: "Beds", count: $beds)
-                            IncrementDecrementView(title: "Bathrooms", count: $bathrooms)
+                            IncrementDecrementView(title: "Rooms available for sublet", count: $propertyOfferData.numRooms)
+                            IncrementDecrementView(title: "Beds", count: $propertyOfferData.numBeds)
+                            IncrementDecrementView(title: "Bathrooms", count: $propertyOfferData.numBaths)
                         }
                         .padding(.bottom, 30)
-                        
+
+                        // Campo para el precio por mes
                         PriceField(
                             title: "Now, set your price per month",
                             placeholder: "Enter price",
-                            text: $pricePerMonth,
+                            text: Binding(
+                                get: { String(format: "%.0f", propertyOfferData.pricePerMonth) }, // Convierte Double a String
+                                set: { newValue in
+                                    if let value = Double(newValue) {
+                                        propertyOfferData.pricePerMonth = value // Asigna el valor como Double
+                                    } else {
+                                        propertyOfferData.pricePerMonth = 0.0 // Valor por defecto si la conversión falla
+                                    }
+                                }
+                            ),
                             maxCharacters: maxPriceCharacters,
                             height: 50,
                             cornerRadius: 10,
@@ -52,30 +68,31 @@ struct Step2View: View {
                         )
                     }
                     .padding()
-                    
+
                     Spacer()
-                    
+
+                    // Sección de navegación con textos (similar a ProfilePickerView)
                     HStack {
                         // Back link (Blanco con bordes azules y texto azul)
-                        NavigationLink(destination: Step1View()
+                        NavigationLink(destination: Step1View(propertyOfferData: propertyOfferData)
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true)) {
                                 Text("Back")
                                     .font(.headline)
-                                    .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255)) // Azul del Step
+                                    .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
                                     .frame(width: 120, height: 50)
                                     .background(Color.white)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 15)
                                             .stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2)
                                     )
-                                    .cornerRadius(15) // Esquinas menos redondeadas
+                                    .cornerRadius(15)
                         }
 
                         Spacer()
 
                         // Botón Next con validación antes de permitir la navegación
-                        NavigationLink(destination: Step3View()
+                        NavigationLink(destination: Step3View(propertyOfferData: propertyOfferData)
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true),
                                        isActive: $navigateToStep3) {
@@ -89,7 +106,7 @@ struct Step2View: View {
                             .cornerRadius(15) // Esquinas menos redondeadas
                             .onTapGesture {
                                 // Validación de selección y precio
-                                if selectedOption == nil || pricePerMonth.isEmpty {
+                                if propertyOfferData.type.rawValue.isEmpty || propertyOfferData.pricePerMonth <= 0.0 {
                                     showWarning = true
                                     showWarningMessage = true // Mostrar advertencia sutil
 
@@ -101,6 +118,9 @@ struct Step2View: View {
                                     }
                                 } else {
                                     showWarning = false
+
+                                    // Imprimir el estado actual de propertyOfferData antes de continuar
+                                    print("Step 2 - PropertyOfferData: \(propertyOfferData)")
                                     navigateToStep3 = true // Permitir navegación a Step3
                                 }
                             }
@@ -109,7 +129,7 @@ struct Step2View: View {
                     .padding(.top, 10)
                 }
                 .padding()
-                
+
                 // Mostrar mensaje de advertencia de forma sutil con animación
                 if showWarningMessage {
                     VStack {
@@ -136,6 +156,7 @@ struct Step2View: View {
     }
 }
 
+// Reemplazar la función Preview para probar con el ObservableObject
 #Preview {
-    Step2View()
+    Step2View(propertyOfferData: PropertyOfferData())
 }

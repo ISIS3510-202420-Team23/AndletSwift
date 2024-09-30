@@ -1,16 +1,15 @@
 import SwiftUI
 
 struct Step1View: View {
-    @State private var placeTitle = ""
-    @State private var placeDescription = ""
-    @State private var placeAddress = ""
-    @State private var selectedImage1: UIImage?
-    @State private var selectedImage2: UIImage?
+    @ObservedObject var propertyOfferData: PropertyOfferData // Usamos el ObservableObject
+    @StateObject private var viewModel = PropertyViewModel() // Crear instancia del ViewModel
+
     @State private var showImagePicker1 = false
     @State private var showImagePicker2 = false
     @State private var showWarning = false
-    @State private var navigateToStep2 = false // Control de navegación al siguiente paso
-    @State private var showWarningMessage = false // Control para mostrar el mensaje de advertencia
+    @State private var navigateToStep2 = false
+    @State private var showWarningMessage = false
+    @State private var warningMessageText = "" // Almacena el mensaje de advertencia
 
     var body: some View {
         NavigationView {
@@ -18,28 +17,26 @@ struct Step1View: View {
                 Color.white.ignoresSafeArea()
 
                 VStack(alignment: .leading) {
-                    // Header para el formulario
                     VStack(alignment: .leading, spacing: 5) {
                         HeaderView(step: "Step 1", title: "List your place!")
                     }
                     .padding(.top, 10)
                     .padding(.horizontal)
 
-                    // Campos de entrada
                     VStack(alignment: .leading, spacing: 10) {
                         CustomInputField(
                             title: "Give your place a short title",
                             placeholder: "Awesome title",
-                            text: $placeTitle,
+                            text: $propertyOfferData.placeTitle,
                             maxCharacters: 32,
-                            height: 50,
+                            height: 60,
                             cornerRadius: 8
                         )
 
                         CustomInputField(
                             title: "Create your description",
                             placeholder: "Awesome description",
-                            text: $placeDescription,
+                            text: $propertyOfferData.placeDescription,
                             maxCharacters: 500,
                             height: 100,
                             cornerRadius: 8
@@ -52,8 +49,47 @@ struct Step1View: View {
                         HStack {
                             Spacer()
                             HStack(spacing: 20) {
-                                ImagePickerView(selectedImage: $selectedImage1, showImagePicker: $showImagePicker1)
-                                ImagePickerView(selectedImage: $selectedImage2, showImagePicker: $showImagePicker2)
+                                ImagePickerView(
+                                    selectedImage: Binding<UIImage?>(
+                                        get: {
+                                            if let data = propertyOfferData.selectedImagesData.first {
+                                                return UIImage(data: data)
+                                            }
+                                            return nil
+                                        },
+                                        set: { newImage in
+                                            if let newImage = newImage, let data = newImage.jpegData(compressionQuality: 0.8) {
+                                                if propertyOfferData.selectedImagesData.isEmpty {
+                                                    propertyOfferData.selectedImagesData.append(data)
+                                                } else {
+                                                    propertyOfferData.selectedImagesData[0] = data
+                                                }
+                                            }
+                                        }
+                                    ),
+                                    showImagePicker: $showImagePicker1
+                                )
+
+                                ImagePickerView(
+                                    selectedImage: Binding<UIImage?>(
+                                        get: {
+                                            if propertyOfferData.selectedImagesData.count > 1 {
+                                                return UIImage(data: propertyOfferData.selectedImagesData[1])
+                                            }
+                                            return nil
+                                        },
+                                        set: { newImage in
+                                            if let newImage = newImage, let data = newImage.jpegData(compressionQuality: 0.8) {
+                                                if propertyOfferData.selectedImagesData.count > 1 {
+                                                    propertyOfferData.selectedImagesData[1] = data
+                                                } else {
+                                                    propertyOfferData.selectedImagesData.append(data)
+                                                }
+                                            }
+                                        }
+                                    ),
+                                    showImagePicker: $showImagePicker2
+                                )
                             }
                             Spacer()
                         }
@@ -62,7 +98,7 @@ struct Step1View: View {
                         IconInputField(
                             title: "Where's your place located?",
                             placeholder: "Enter your address...",
-                            text: $placeAddress,
+                            text: $propertyOfferData.placeAddress,
                             maxCharacters: 48,
                             height: 50,
                             cornerRadius: 50,
@@ -73,9 +109,7 @@ struct Step1View: View {
 
                     Spacer()
 
-                    // Sección de navegación con textos (similar a ProfilePickerView)
                     HStack {
-                        // Back link (Blanco con bordes azules y texto azul)
                         NavigationLink(destination: ProfilePickerView()
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true)) {
@@ -93,8 +127,7 @@ struct Step1View: View {
 
                         Spacer()
 
-                        // Botón Next con validación antes de permitir la navegación
-                        NavigationLink(destination: Step2View()
+                        NavigationLink(destination: Step2View(propertyOfferData: propertyOfferData)
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true),
                                        isActive: $navigateToStep2) {
@@ -102,26 +135,27 @@ struct Step1View: View {
                         }
                         Text("Next")
                             .font(.headline)
-                            .foregroundColor(.white) // Texto blanco
+                            .foregroundColor(.white)
                             .frame(width: 120, height: 50)
-                            .background(Color(red: 12/255, green: 53/255, blue: 106/255)) // Fondo azul
-                            .cornerRadius(15) // Esquinas menos redondeadas
+                            .background(Color(red: 12/255, green: 53/255, blue: 106/255))
+                            .cornerRadius(15)
                             .onTapGesture {
-                                // Validación de campos y al menos una imagen seleccionada
-                                if placeTitle.isEmpty || placeAddress.isEmpty || (selectedImage1 == nil && selectedImage2 == nil) {
-                                    showWarning = true
-                                    withAnimation {
-                                        showWarningMessage = true
-                                    }
-                                    // Ocultar la advertencia después de 2 segundos
+                                // Validar campos obligatorios y mostrar advertencia si no se cumple la condición
+                                if propertyOfferData.placeTitle.isEmpty || propertyOfferData.placeAddress.isEmpty || propertyOfferData.selectedImagesData.isEmpty {
+                                    showWarningMessage = true
+                                    warningMessageText = "Please fill in all the required fields and add at least one photo."
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                         withAnimation {
                                             showWarningMessage = false
                                         }
                                     }
                                 } else {
-                                    showWarning = false
-                                    navigateToStep2 = true // Permitir navegación a Step2
+                                    showWarningMessage = false
+
+                                    // Asignar el usuario autenticado y luego imprimir solo el ID (correo electrónico)
+                                    viewModel.assignAuthenticatedUser(to: propertyOfferData)
+
+                                    navigateToStep2 = true
                                 }
                             }
                     }
@@ -130,33 +164,36 @@ struct Step1View: View {
                 }
                 .padding()
 
-                // Mostrar mensaje de advertencia de forma sutil con animación
+                // Mostrar mensaje de advertencia cuando `showWarningMessage` esté activo
                 if showWarningMessage {
                     VStack {
                         Spacer()
-                            .frame(height: 10) // Espacio arriba para que el mensaje quede más abajo
-
-                        Text("Please fill out all required fields and add at least one photo before proceeding")
+                            .frame(height: 10)
+                        Text(warningMessageText)
                             .foregroundColor(.white)
                             .font(.subheadline)
                             .padding()
                             .background(Color.red)
                             .cornerRadius(10)
                             .shadow(radius: 10)
-                            .transition(.move(edge: .top)) // Efecto de deslizamiento
-                            .animation(.easeInOut(duration: 0.5), value: showWarningMessage) // Controla la animación con valor
-                            .offset(y: showWarningMessage ? 0 : -100) // Desliza desde arriba
-                            .zIndex(1) // Asegura que el mensaje esté encima del contenido
+                            .transition(.move(edge: .top))
+                            .animation(.easeInOut(duration: 0.5), value: showWarningMessage)
+                            .offset(y: showWarningMessage ? 0 : -100)
+                            .zIndex(1)
                     }
-                    .padding(.top, 10) // Ajusta la posición del mensaje
+                    .padding(.top, 10)
                 }
             }
-            .navigationBarHidden(true) // Ocultar la barra de navegación para esta vista
+            .navigationBarHidden(true)
+        }
+        .onAppear {
+            // Asignar el usuario autenticado cuando se carga la vista
+            viewModel.assignAuthenticatedUser(to: propertyOfferData)
         }
     }
 }
 
-
+// Reemplazar la función Preview para probar con el ObservableObject
 #Preview {
-    Step1View()
+    Step1View(propertyOfferData: PropertyOfferData())
 }

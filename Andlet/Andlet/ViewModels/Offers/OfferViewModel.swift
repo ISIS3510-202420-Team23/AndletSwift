@@ -138,6 +138,7 @@ class OfferViewModel: ObservableObject {
         let typeString = data["type"] as? String ?? "a_room"
         let type = OfferType(rawValue: typeString) ?? .aRoom
         let userId = data["user_id"] as? String ?? ""
+        let views = data["views"] as? Int ?? 0
 
         return OfferModel(
             finalDate: finalDate,
@@ -151,7 +152,8 @@ class OfferViewModel: ObservableObject {
             pricePerMonth: pricePerMonth,
             roommates: roommates,
             type: type,
-            userId: userId
+            userId: userId,
+            views: views
         )
     }
 
@@ -162,6 +164,7 @@ class OfferViewModel: ObservableObject {
         let complexName = data["complex_name"] as? String ?? "Complejo desconocido"
         let description = data["description"] as? String ?? ""
         let location = data["location"] as? [Double] ?? [0.0, 0.0]
+        let minutes_from_campus = data["minutes_from_campus"] as? Int ?? 0
         let photos = data["photos"] as? [String] ?? []
         let title = data["title"] as? String ?? "Sin título"
 
@@ -170,6 +173,7 @@ class OfferViewModel: ObservableObject {
             complexName: complexName,
             description: description,
             location: location,
+            minutes_from_campus: minutes_from_campus,
             photos: photos,
             title: title
         )
