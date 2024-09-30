@@ -15,6 +15,7 @@ struct PropertyModel: Identifiable, Codable, Hashable, Equatable {
     let complexName: String
     let description: String
     let location: [Double]
+    let minutes_from_campus: Int
     let photos: [String]
     let title: String
 
@@ -25,6 +26,7 @@ struct PropertyModel: Identifiable, Codable, Hashable, Equatable {
                lhs.complexName == rhs.complexName &&
                lhs.description == rhs.description &&
                lhs.location == rhs.location &&
+               lhs.minutes_from_campus == rhs.minutes_from_campus &&
                lhs.photos == rhs.photos &&
                lhs.title == rhs.title
     }
@@ -36,6 +38,7 @@ struct PropertyModel: Identifiable, Codable, Hashable, Equatable {
         hasher.combine(complexName)
         hasher.combine(description)
         hasher.combine(location)
+        hasher.combine(minutes_from_campus)
         hasher.combine(photos)
         hasher.combine(title)
     }

@@ -182,6 +182,44 @@ class OfferRentViewModel: ObservableObject {
             completion(nil)  // Si no se encuentra la propiedad, devolvemos nil
         }
     }
+    
+    // Función para crear una oferta usando el ID de la propiedad y otros datos
+    func createOffer(for propertyId: String, offer: OfferModel, completion: @escaping (Bool) -> Void) {
+        guard !propertyId.isEmpty else {
+            print("Error: El ID de la propiedad está vacío.")
+            completion(false)
+            return
+        }
+        
+        let offerRef = db.collection("offers").document() // Nuevo documento en la colección "offers"
+        
+        // Datos a guardar en la colección offers
+        let data: [String: Any] = [
+            "final_date": offer.finalDate,
+            "id_property": propertyId, // ID de la propiedad recién creada
+            "initial_date": offer.initialDate,
+            "is_active": offer.isActive,
+            "num_baths": offer.numBaths,
+            "num_beds": offer.numBeds,
+            "num_rooms": offer.numRooms,
+            "only_andes": offer.onlyAndes,
+            "price_per_month": offer.pricePerMonth,
+            "roommates": offer.roommates,
+            "type": offer.type.rawValue, // Convertir enum a string
+            "user_id": offer.userId, // Obtener el user_id del usuario actual
+            "views": offer.views
+        ]
+        
+        offerRef.setData(data) { error in
+            if let error = error {
+                print("Error al crear la oferta: \(error)")
+                completion(false)
+            } else {
+                print("Oferta creada con éxito. ID: \(offerRef.documentID)")
+                completion(true)
+            }
+        }
+    }
 
     // Función para mapear datos de Firestore al modelo PropertyModel
     private func mapPropertyDataToModel(data: [String: Any]) -> PropertyModel {
@@ -190,6 +228,7 @@ class OfferRentViewModel: ObservableObject {
         let complexName = data["complex_name"] as? String ?? "Complejo desconocido"
         let description = data["description"] as? String ?? ""
         let location = data["location"] as? [Double] ?? [0.0, 0.0]
+        let minutes_from_campus = data["minutes_from_campus"] as? Int ?? 0
         let photos = data["photos"] as? [String] ?? []
         let title = data["title"] as? String ?? "Sin título"
 
@@ -199,6 +238,7 @@ class OfferRentViewModel: ObservableObject {
             complexName: complexName,
             description: description,
             location: location,
+            minutes_from_campus: minutes_from_campus,
             photos: photos,
             title: title
         )

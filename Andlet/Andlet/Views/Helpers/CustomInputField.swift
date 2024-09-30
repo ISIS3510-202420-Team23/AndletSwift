@@ -23,7 +23,7 @@ struct CustomInputField: View {
                     .background(Color.white)
                     .cornerRadius(cornerRadius)
                     .overlay(RoundedRectangle(cornerRadius: cornerRadius).stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2))
-                    .onChange(of: text) { newValue in
+                    .onChange(of: text) { _, newValue in // Utiliza la nueva sintaxis con dos parámetros
                         if newValue.count > maxCharacters {
                             text = String(newValue.prefix(maxCharacters))
                         }
