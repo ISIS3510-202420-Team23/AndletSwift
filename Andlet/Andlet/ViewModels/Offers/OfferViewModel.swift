@@ -41,14 +41,14 @@ class OfferViewModel: ObservableObject {
             for document in documents {
                 let data = document.data()
 
-                print("Documento de oferta completo: \(data)")
+                //print("Documento de oferta completo: \(data)")
 
                 // Iterar sobre las claves dentro del documento de ofertas
                 for (key, value) in data {
                     print("Clave: \(key), Valor: \(value)")  // Imprimir cada clave y valor
 
                     if let offerData = value as? [String: Any] {
-                        print("Datos de la oferta bajo la clave '\(key)': \(offerData)")
+                        //print("Datos de la oferta bajo la clave '\(key)': \(offerData)")
 
                         // Filtrar por is_active == true dentro de los campos anidados
                         if let isActive = offerData["is_active"] as? Bool, isActive == true {
@@ -113,13 +113,11 @@ class OfferViewModel: ObservableObject {
 
             for document in documents {
                 let propertyData = document.data()
-                print("Datos del documento de propiedades: \(propertyData)")  // Verificar los datos de cada propiedad
 
                 for (propertyKey, propertyValue) in propertyData {
                     if let propertyDetails = propertyValue as? [String: Any] {
                         let property = self.mapPropertyDataToModel(data: propertyDetails)
                         propertyMap[propertyKey] = property
-                        print("Propiedad mapeada: \(propertyKey): \(property)")  // Verificar cada propiedad mapeada
                     }
                 }
             }
@@ -140,7 +138,6 @@ class OfferViewModel: ObservableObject {
 
                 for document in documents {
                     let offerData = document.data()
-                    print("Documento de oferta completo: \(offerData)")  // Imprimir todas las ofertas antes de mapear
 
                     // Iterar sobre las ofertas dentro del documento
                     for (offerKey, offerValue) in offerData {
@@ -165,7 +162,12 @@ class OfferViewModel: ObservableObject {
                             }
 
                             // Crear objeto OfferModel
-                            let offer = self.mapOfferDataToModel(data: offerDetails)
+                            let offer = self.mapOfferDataToModel(
+                                data: offerDetails,
+                                documentId: document.documentID,  // ID del documento actual
+                                key: offerKey  // La clave actual de la oferta
+                            )
+
                             let offerId = "\(document.documentID)_\(offerKey)"  // Generar ID único para la oferta
 
                             // Verificar condiciones de fechas y precios antes de agregar la oferta a la lista
@@ -189,7 +191,6 @@ class OfferViewModel: ObservableObject {
                                     property: property
                                 )
 
-                                print("OfferWithProperty creado: \(offerWithProperty)")  // Verificar cada OfferWithProperty creado
                                 tempOffersWithProperties.append(offerWithProperty)
                             } else {
                                 print("La oferta con clave \(offerKey) no cumple con los filtros de fechas o precio.")
@@ -200,17 +201,11 @@ class OfferViewModel: ObservableObject {
                     }
                 }
 
-                // Imprimir todas las ofertas con propiedades antes de filtrar
-                print("Todos los OfferWithProperty antes de filtrar por minutes_from_campus: \(tempOffersWithProperties)")
-
                 // Filtrar por minutos desde el campus
                 let filteredOffers = tempOffersWithProperties.filter { offerWithProperty in
                     let property = offerWithProperty.property
                     return property.minutes_from_campus <= Int(self.maxMinutesFromCampus)
                 }
-
-                // Imprimir ofertas filtradas por minutos desde el campus
-                print("OfferWithProperty después de filtrar por minutes_from_campus (<= \(self.maxMinutesFromCampus)): \(filteredOffers)")
 
                 // Actualizar las ofertas con los filtros aplicados
                 DispatchQueue.main.async {
