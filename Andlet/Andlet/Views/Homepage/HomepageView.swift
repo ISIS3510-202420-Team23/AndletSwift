@@ -1,11 +1,3 @@
-
-//
-//  HomepageTestsView.swift
-//  SwiftApp
-//
-//  Created by Sofía Torres Ramírez on 16/09/24.
-//
-
 import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
@@ -130,7 +122,7 @@ struct HomepageView: View {
     }
 
     func refreshOffers() {
-        print("Dispositivo agitado. Refrescando ofertas...")
-        offerViewModel.fetchOffers()  // Llamamos a la función para recargar las ofertas
+            offerViewModel.fetchOffers()
     }
+
 }

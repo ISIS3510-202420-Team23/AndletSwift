@@ -65,6 +65,12 @@ struct FilterSearchView: View {
                             maxMinutes: localMaxMinutes
                         )
 
+                        // Establecer que se han aplicado filtros
+                        offerViewModel.filtersApplied = true
+
+                        // Llamar a la función para cargar las ofertas con filtros
+                        offerViewModel.fetchOffersWithFilters()
+
                         // Imprimir los filtros seleccionados en la consola
                         print("Filtros aplicados:")
                         print("Fecha Inicial: \(localStartDate)")
@@ -186,7 +192,6 @@ struct FilterSearchView: View {
         localMaxMinutes = filterViewModel.maxMinutes
     }
 }
-
 
 #Preview {
     FilterSearchView(
