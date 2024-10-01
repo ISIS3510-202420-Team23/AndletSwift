@@ -61,7 +61,7 @@ struct HomepageView: View {
                                 .frame(width: 0, height: 0)  // Oculto, pero activo
                         )
                         .alert(isPresented: $showShakeAlert) {
-                            Alert(title: Text("Shake Detected"), message: Text("You have refreshed the offers!"), dismissButton: .default(Text("OK")))
+                            Alert(title: Text("Shake Detected"), message: Text("Filters have been cleared🧹!"), dismissButton: .default(Text("OK")))
                         }
                         .onReceive(shakeDetector.$didShake) { didShake in
                             if didShake {
