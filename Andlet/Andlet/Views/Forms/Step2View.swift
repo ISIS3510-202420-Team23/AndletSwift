@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct Step2View: View {
-    @ObservedObject var propertyOfferData: PropertyOfferData // Usar PropertyOfferData para almacenar y compartir datos
-    
+    @ObservedObject var propertyOfferData: PropertyOfferData
+
     @State private var showWarning = false
-    @State private var showWarningMessage = false // Estado para mostrar/ocultar el mensaje animado
+    @State private var showWarningMessage = false
     @State private var navigateToStep3 = false
 
     let maxPriceCharacters = 9
@@ -24,15 +24,15 @@ struct Step2View: View {
                         // Modificar SelectableOptionsView para trabajar con el tipo OfferType
                         SelectableOptionsView(
                             selectedOption: Binding<String?>(
-                                get: { propertyOfferData.type.rawValue }, // Obtiene el valor como cadena
+                                get: { propertyOfferData.type.rawValue },
                                 set: { newValue in
                                     if let newValue = newValue, let newType = OfferType(rawValue: newValue) {
-                                        propertyOfferData.type = newType // Asigna el tipo completo solo si el nuevo valor es no-nulo
+                                        propertyOfferData.type = newType
                                     }
                                 }
                             ),
-                            options: ["entire_place", "a_room"], // Valores que se guardarán en la base de datos
-                            displayOptions: ["An entire place", "A room"], // Valores mostrados en la interfaz
+                            options: ["entire_place", "a_room"],
+                            displayOptions: ["An entire place", "A room"],
                             title: "What type of place will guests have?"
                         )
 
@@ -41,7 +41,6 @@ struct Step2View: View {
                             .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
                             .padding(.top, 5)
 
-                        // Controles para seleccionar número de habitaciones, camas y baños
                         VStack(spacing: 15) {
                             IncrementDecrementView(title: "Rooms available for sublet", count: $propertyOfferData.numRooms)
                             IncrementDecrementView(title: "Beds", count: $propertyOfferData.numBeds)
@@ -54,12 +53,12 @@ struct Step2View: View {
                             title: "Now, set your price per month",
                             placeholder: "Enter price",
                             text: Binding(
-                                get: { String(format: "%.0f", propertyOfferData.pricePerMonth) }, // Convierte Double a String
+                                get: { String(format: "%.0f", propertyOfferData.pricePerMonth) },
                                 set: { newValue in
                                     if let value = Double(newValue) {
-                                        propertyOfferData.pricePerMonth = value // Asigna el valor como Double
+                                        propertyOfferData.pricePerMonth = value
                                     } else {
-                                        propertyOfferData.pricePerMonth = 0.0 // Valor por defecto si la conversión falla
+                                        propertyOfferData.pricePerMonth = 0.0
                                     }
                                 }
                             ),
@@ -73,22 +72,21 @@ struct Step2View: View {
 
                     Spacer()
 
-                    // Sección de navegación con textos (similar a ProfilePickerView)
                     HStack {
                         // Back link (Blanco con bordes azules y texto azul)
                         NavigationLink(destination: Step1View(propertyOfferData: propertyOfferData, path: $path)
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true)) {
-                                Text("Back")
-                                    .font(.headline)
-                                    .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
-                                    .frame(width: 120, height: 50)
-                                    .background(Color.white)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 15)
-                                            .stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2)
-                                    )
-                                    .cornerRadius(15)
+                            Text("Back")
+                                .font(.headline)
+                                .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                                .frame(width: 120, height: 50)
+                                .background(Color.white)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2)
+                                )
+                                .cornerRadius(15)
                         }
 
                         Spacer()
@@ -102,17 +100,15 @@ struct Step2View: View {
                         }
                         Text("Next")
                             .font(.headline)
-                            .foregroundColor(.white) // Texto blanco
+                            .foregroundColor(.white)
                             .frame(width: 120, height: 50)
-                            .background(Color(red: 12/255, green: 53/255, blue: 106/255)) // Fondo azul
-                            .cornerRadius(15) // Esquinas menos redondeadas
+                            .background(Color(red: 12/255, green: 53/255, blue: 106/255))
+                            .cornerRadius(15)
                             .onTapGesture {
-                                // Validación de selección y precio
                                 if propertyOfferData.type.rawValue.isEmpty || propertyOfferData.pricePerMonth <= 0.0 {
                                     showWarning = true
-                                    showWarningMessage = true // Mostrar advertencia sutil
+                                    showWarningMessage = true
 
-                                    // Ocultar la advertencia después de 2 segundos
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                         withAnimation {
                                             showWarningMessage = false
@@ -120,10 +116,7 @@ struct Step2View: View {
                                     }
                                 } else {
                                     showWarning = false
-
-                                    // Imprimir el estado actual de propertyOfferData antes de continuar
-                                    print("Step 2 - PropertyOfferData: \(propertyOfferData)")
-                                    navigateToStep3 = true // Permitir navegación a Step3
+                                    navigateToStep3 = true
                                 }
                             }
                     }
@@ -132,12 +125,10 @@ struct Step2View: View {
                 }
                 .padding()
 
-                // Mostrar mensaje de advertencia de forma sutil con animación
                 if showWarningMessage {
                     VStack {
                         Spacer()
-                            .frame(height: 10) // Espacio arriba para que el mensaje quede más abajo
-
+                            .frame(height: 10)
                         Text("Please fill out all required fields before proceeding")
                             .foregroundColor(.white)
                             .font(.subheadline)
@@ -145,15 +136,19 @@ struct Step2View: View {
                             .background(Color.red)
                             .cornerRadius(10)
                             .shadow(radius: 10)
-                            .transition(.move(edge: .top)) // Efecto de deslizamiento
-                            .animation(.easeInOut(duration: 0.5), value: showWarningMessage) // Controla la animación con valor
-                            .offset(y: showWarningMessage ? 0 : -100) // Desliza desde arriba
-                            .zIndex(1) // Asegura que el mensaje esté encima del contenido
+                            .transition(.move(edge: .top))
+                            .animation(.easeInOut(duration: 0.5), value: showWarningMessage)
+                            .offset(y: showWarningMessage ? 0 : -100)
+                            .zIndex(1)
                     }
-                    .padding(.top, 10) // Ajusta la posición del mensaje
+                    .padding(.top, 10)
                 }
             }
             .navigationBarHidden(true)
+            .contentShape(Rectangle())  // Detecta toques en toda la vista
+            .onTapGesture {
+                self.hideKeyboard()  // Llama a la extensión para ocultar el teclado
+            }
         }
     }
 }
