@@ -202,6 +202,10 @@ struct Step1View: View {
                 }
             }
             .navigationBarHidden(true)
+            .contentShape(Rectangle())  // Agregar contentShape para reconocer toques en toda la vista
+            .onTapGesture {
+                hideKeyboard()  // Ocultar teclado al hacer clic en cualquier parte de la pantalla
+            }
         }
         .onAppear {
             // Asignar el usuario autenticado cuando se carga la vista
@@ -209,6 +213,7 @@ struct Step1View: View {
         }
     }
 }
+
 
 // Reemplazar la función Preview para probar con el ObservableObject
 #Preview {

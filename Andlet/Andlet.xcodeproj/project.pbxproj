@@ -90,6 +90,7 @@
 		A9DFF6CF2CA91C7F0063E52C /* PropertyOfferData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFF6CE2CA91C7F0063E52C /* PropertyOfferData.swift */; };
 		A9DFF6D22CAA83FD0063E52C /* FilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFF6D12CAA83FD0063E52C /* FilterViewModel.swift */; };
 		A9DFF6D42CAA85210063E52C /* FilterSearchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFF6D32CAA85210063E52C /* FilterSearchOptions.swift */; };
+		A9ED6DB12CAC52700066E3EA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9ED6DB02CAC52700066E3EA /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -188,6 +189,7 @@
 		A9DFF6CE2CA91C7F0063E52C /* PropertyOfferData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyOfferData.swift; sourceTree = "<group>"; };
 		A9DFF6D12CAA83FD0063E52C /* FilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewModel.swift; sourceTree = "<group>"; };
 		A9DFF6D32CAA85210063E52C /* FilterSearchOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSearchOptions.swift; sourceTree = "<group>"; };
+		A9ED6DB02CAC52700066E3EA /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -266,6 +268,7 @@
 				37C0E2932C9E592800099A90 /* SearchAndFilterBar.swift */,
 				A9DFF6C52CA8F4820063E52C /* MinutesFromCampus.swift */,
 				A9DFF6C92CA90B380063E52C /* PriceField.swift */,
+				A9ED6DB02CAC52700066E3EA /* Extensions.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -647,6 +650,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3781A9AC2CA275E9000E0B86 /* PropertyModel.swift in Sources */,
+				A9ED6DB12CAC52700066E3EA /* Extensions.swift in Sources */,
 				9C1369EF2C9E422C0000B55C /* AuthenticationViewModel.swift in Sources */,
 				A9DFF6D22CAA83FD0063E52C /* FilterViewModel.swift in Sources */,
 				37C0E2A42C9E59BA00099A90 /* OfferView.swift in Sources */,
@@ -858,7 +862,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Andlet/Preview Content\"";
-				DEVELOPMENT_TEAM = 25L8P5DHHR;
+				DEVELOPMENT_TEAM = NSVR4MKML4;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -879,7 +883,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet;
+				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet.Thais;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -898,7 +902,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Andlet/Preview Content\"";
-				DEVELOPMENT_TEAM = 25L8P5DHHR;
+				DEVELOPMENT_TEAM = NSVR4MKML4;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -919,7 +923,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet;
+				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet.Thais;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
