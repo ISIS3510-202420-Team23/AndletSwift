@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3741BB1D2CAB8E4C00A4C1D4 /* ShakeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3741BB1C2CAB8E3B00A4C1D4 /* ShakeDetector.swift */; };
 		3781A9A82CA26EA9000E0B86 /* OfferModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3781A9A72CA26EA4000E0B86 /* OfferModel.swift */; };
 		3781A9AC2CA275E9000E0B86 /* PropertyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3781A9AB2CA275E3000E0B86 /* PropertyModel.swift */; };
 		3781A9B02CA3A34A000E0B86 /* FirebaseDynamicLinks in Frameworks */ = {isa = PBXBuildFile; productRef = 3781A9AF2CA3A34A000E0B86 /* FirebaseDynamicLinks */; };
@@ -109,6 +110,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3741BB1C2CAB8E3B00A4C1D4 /* ShakeDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeDetector.swift; sourceTree = "<group>"; };
 		3781A9A72CA26EA4000E0B86 /* OfferModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferModel.swift; sourceTree = "<group>"; };
 		3781A9AB2CA275E3000E0B86 /* PropertyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyModel.swift; sourceTree = "<group>"; };
 		3781A9B52CA3A7F3000E0B86 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 		37C0E28D2C9E590D00099A90 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				3741BB1C2CAB8E3B00A4C1D4 /* ShakeDetector.swift */,
 				A968E3D22C9F92CC00EE98F8 /* CustomButton.swift */,
 				A968E3DA2C9F92CC00EE98F8 /* CustomInputField.swift */,
 				A968E3D72C9F92CC00EE98F8 /* CustomTextField.swift */,
@@ -673,6 +676,7 @@
 				3781A9A82CA26EA9000E0B86 /* OfferModel.swift in Sources */,
 				A968E3DD2C9F92CC00EE98F8 /* LocationInputField.swift in Sources */,
 				9C1369672C9E30A10000B55C /* ContentView.swift in Sources */,
+				3741BB1D2CAB8E4C00A4C1D4 /* ShakeDetector.swift in Sources */,
 				3781D2662CA650D900C43924 /* OfferWithProperty.swift in Sources */,
 				37C0E28F2C9E591F00099A90 /* Heading.swift in Sources */,
 				9C1369CC2C9E35BE0000B55C /* AuthenticationView.swift in Sources */,
@@ -854,7 +858,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Andlet/Preview Content\"";
-				DEVELOPMENT_TEAM = 62CHFB9B3W;
+				DEVELOPMENT_TEAM = 25L8P5DHHR;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -894,7 +898,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Andlet/Preview Content\"";
-				DEVELOPMENT_TEAM = 62CHFB9B3W;
+				DEVELOPMENT_TEAM = 25L8P5DHHR;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

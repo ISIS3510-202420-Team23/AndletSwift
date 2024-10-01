@@ -23,10 +23,10 @@ class OfferRentViewModel: ObservableObject {
             print("Error: offerKey está vacío, no se puede actualizar la oferta.")
             return
         }
-
+        
         // Referencia al documento en la colección "offers"
         let offerRef = db.collection("offers").document(documentId)
-
+        
         // Actualizamos el campo 'is_active' usando la clave interna de la oferta
         offerRef.updateData([
             "\(offerKey).is_active": newStatus
@@ -38,8 +38,8 @@ class OfferRentViewModel: ObservableObject {
             }
         }
     }
-
-
+    
+    
     // Función para buscar las ofertas del landlord
     func fetchOffers(for userId: String) {
         db.collection("offers").getDocuments { snapshot, error in
@@ -47,18 +47,18 @@ class OfferRentViewModel: ObservableObject {
                 print("Error al obtener las ofertas: \(error)")
                 return
             }
-
+            
             guard let documents = snapshot?.documents else {
                 print("No se encontraron documentos en la colección 'offers'")
                 return
             }
-
+            
             var tempOffersWithProperties: [OfferWithProperty] = []
-
+            
             // Iterar sobre los documentos en la colección "offers"
             for document in documents {
                 let data = document.data()
-
+                
                 // Iterar sobre las claves dentro del documento de ofertas (1, 2, etc.)
                 for (key, value) in data {
                     if let offerData = value as? [String: Any] {
@@ -67,11 +67,11 @@ class OfferRentViewModel: ObservableObject {
                             // Extraer el id_property como Int y convertirlo a String
                             if let idProperty = offerData["id_property"] as? Int {
                                 let idPropertyString = "\(idProperty)"
-
+                                
                                 // Mapeamos los datos de la oferta al modelo OfferModel
                                 let offer = self.mapOfferDataToModel(key: key, data: offerData)  // Aquí pasamos la clave interna como 'key'
                                 let offerId = "\(document.documentID)_\(key)"  // ID único para la oferta
-
+                                
                                 // Buscar la propiedad asociada
                                 self.fetchPropertyForOffer(idProperty: idPropertyString) { property in
                                     if let property = property {
@@ -81,7 +81,7 @@ class OfferRentViewModel: ObservableObject {
                                             property: property
                                         )
                                         tempOffersWithProperties.append(offerWithProperty)
-
+                                        
                                         // Actualizar las ofertas en el hilo principal
                                         DispatchQueue.main.async {
                                             self.offersWithProperties = tempOffersWithProperties
@@ -103,13 +103,13 @@ class OfferRentViewModel: ObservableObject {
             }
         }
     }
-
-
+    
+    
     // Función para mapear datos de la oferta al modelo OfferModel
     private func mapOfferDataToModel(key: String, data: [String: Any]) -> OfferModel {
         let finalDate = (data["final_date"] as? Timestamp)?.dateValue() ?? Date()
         let initialDate = (data["initial_date"] as? Timestamp)?.dateValue() ?? Date()
-
+        
         // Asegúrate de manejar el id_property como antes.
         let idProperty: String
         if let idPropertyInt = data["id_property"] as? Int {
@@ -132,7 +132,7 @@ class OfferRentViewModel: ObservableObject {
         let type = OfferType(rawValue: typeString) ?? .aRoom
         let userId = data["user_id"] as? String ?? ""
         let views = data["views"] as? Int ?? 0
-
+        
         return OfferModel(
             id: key,  // Aquí asignamos la clave como ID de la oferta
             finalDate: finalDate,
@@ -150,8 +150,8 @@ class OfferRentViewModel: ObservableObject {
             views: views
         )
     }
-
-
+    
+    
     // Función para obtener la propiedad asociada usando id_property
     func fetchPropertyForOffer(idProperty: String, completion: @escaping (PropertyModel?) -> Void) {
         db.collection("properties").getDocuments { snapshot, error in
@@ -160,17 +160,17 @@ class OfferRentViewModel: ObservableObject {
                 completion(nil)
                 return
             }
-
+            
             guard let documents = snapshot?.documents else {
                 print("No se encontraron documentos en la colección 'properties'")
                 completion(nil)
                 return
             }
-
+            
             // Iteramos sobre el documento de propiedades
             for document in documents {
                 let propertyData = document.data()
-
+                
                 // Buscamos la propiedad usando el id_property como clave
                 if let propertyDetails = propertyData[idProperty] as? [String: Any] {
                     let property = self.mapPropertyDataToModel(data: propertyDetails)
@@ -178,7 +178,7 @@ class OfferRentViewModel: ObservableObject {
                     return
                 }
             }
-
+            
             completion(nil)  // Si no se encuentra la propiedad, devolvemos nil
         }
     }
@@ -220,7 +220,7 @@ class OfferRentViewModel: ObservableObject {
             }
         }
     }
-
+    
     // Función para mapear datos de Firestore al modelo PropertyModel
     private func mapPropertyDataToModel(data: [String: Any]) -> PropertyModel {
         let id = data["id"] as? String ?? ""
@@ -231,7 +231,7 @@ class OfferRentViewModel: ObservableObject {
         let minutes_from_campus = data["minutes_from_campus"] as? Int ?? 0
         let photos = data["photos"] as? [String] ?? []
         let title = data["title"] as? String ?? "Sin título"
-
+        
         return PropertyModel(
             id: id,
             address: address,
