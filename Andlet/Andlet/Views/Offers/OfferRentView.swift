@@ -26,7 +26,7 @@ struct OfferRentView: View {
     var body: some View {
         VStack(spacing: 8) {
             // Imagen de la propiedad
-            OfferImageCarouselView()
+            OfferImageCarouselView(property: property)
                 .frame(height: 250)
                 .clipShape(RoundedRectangle(cornerRadius: 30))
                 .tabViewStyle(.page)
@@ -72,7 +72,7 @@ struct OfferRentView: View {
 
                 // Botón para cambiar entre "Available" y "Sold"
                 HStack {
-                    Text("15 views")
+                    Text("\(offer.views)  views")
                         .font(.custom("LeagueSpartan-Light", size: 16))
                         .foregroundColor(.black)
                     
@@ -89,7 +89,7 @@ struct OfferRentView: View {
                         Button(action: {
                             isSold.toggle() 
                             
-                            let offerKey = offer.id?.split(separator: "_").last.map(String.init) ?? "0"
+                            let offerKey = offer.id.split(separator: "_").last.map(String.init) ?? "0"
 
                             
                             viewModel.toggleOfferAvailability(
@@ -98,7 +98,7 @@ struct OfferRentView: View {
                                 newStatus: !isSold
                             )
                         }) {
-                            Text(isSold ? "Sold" : "Available")
+                            Text(isSold ? "Leased" : "Available")
                                 .font(.custom("LeagueSpartan-Medium", size: 16))
                                 .foregroundColor(.black)
                         }

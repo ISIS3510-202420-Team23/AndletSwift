@@ -26,6 +26,7 @@ struct AndletApp: App {
     var body: some Scene {
         WindowGroup {
             WelcomePageView()
+//            ContentView()
         }
     }
 }

@@ -14,7 +14,7 @@ struct OfferView: View {
     var body: some View{
         VStack(spacing: 8){
 //            images
-            OfferImageCarouselView()
+            OfferImageCarouselView(property: property)
                 .frame(height: 250)
                 .clipShape(RoundedRectangle(cornerRadius: 30))
                 .tabViewStyle(.page)
