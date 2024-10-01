@@ -69,6 +69,7 @@
 		9C1369EF2C9E422C0000B55C /* AuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1369EE2C9E422C0000B55C /* AuthenticationViewModel.swift */; };
 		9C1369F22C9E487E0000B55C /* Montserrat-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9C1369F12C9E487E0000B55C /* Montserrat-ExtraLightItalic.ttf */; };
 		9C528C1A2CAB56FB007F6A76 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C528C192CAB56FB007F6A76 /* Launch Screen.storyboard */; };
+		9C528C1D2CAB7EDD007F6A76 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C528C1C2CAB7EDD007F6A76 /* ProfileView.swift */; };
 		A968E3CC2C9F92A100EE98F8 /* Step1View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3C82C9F92A100EE98F8 /* Step1View.swift */; };
 		A968E3CE2C9F92A100EE98F8 /* Step3View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3CA2C9F92A100EE98F8 /* Step3View.swift */; };
 		A968E3CF2C9F92A100EE98F8 /* Step2View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3CB2C9F92A100EE98F8 /* Step2View.swift */; };
@@ -166,6 +167,7 @@
 		9C1369F02C9E428D0000B55C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9C1369F12C9E487E0000B55C /* Montserrat-ExtraLightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
 		9C528C192CAB56FB007F6A76 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		9C528C1C2CAB7EDD007F6A76 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		A968E3C82C9F92A100EE98F8 /* Step1View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step1View.swift; sourceTree = "<group>"; };
 		A968E3CA2C9F92A100EE98F8 /* Step3View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step3View.swift; sourceTree = "<group>"; };
 		A968E3CB2C9F92A100EE98F8 /* Step2View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step2View.swift; sourceTree = "<group>"; };
@@ -371,6 +373,7 @@
 		9C13698F2C9E31680000B55C /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9C528C1B2CAB7EBF007F6A76 /* Profile */,
 				A968E3C72C9F924C00EE98F8 /* Forms */,
 				37C0E2A02C9E59AC00099A90 /* Offers */,
 				37C0E29B2C9E596C00099A90 /* HomepageRent */,
@@ -452,6 +455,14 @@
 				9C1369D42C9E3B3D0000B55C /* ColorExtensions.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		9C528C1B2CAB7EBF007F6A76 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				9C528C1C2CAB7EDD007F6A76 /* ProfileView.swift */,
+			);
+			path = Profile;
 			sourceTree = "<group>";
 		};
 		A968E3C72C9F924C00EE98F8 /* Forms */ = {
@@ -653,6 +664,7 @@
 				A968E3CC2C9F92A100EE98F8 /* Step1View.swift in Sources */,
 				37ECCB112CA7D5AD007BBE02 /* UserViewsViewModel.swift in Sources */,
 				37C0E2A52C9E59BA00099A90 /* OfferRentView.swift in Sources */,
+				9C528C1D2CAB7EDD007F6A76 /* ProfileView.swift in Sources */,
 				37C0E2A62C9E59BA00099A90 /* OfferDetailView.swift in Sources */,
 				A968E3E32C9F92CC00EE98F8 /* CustomTextField.swift in Sources */,
 				9C1369CB2C9E35BE0000B55C /* CircularArrowButton.swift in Sources */,

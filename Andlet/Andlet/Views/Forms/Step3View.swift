@@ -6,6 +6,8 @@ struct Step3View: View {
 
     @State private var showWarningMessage = false
     @State private var navigateToMainTab = false
+    
+    @Binding var path: NavigationPath
 
     var body: some View {
         NavigationStack {
@@ -57,7 +59,7 @@ struct Step3View: View {
                     Spacer()
 
                     HStack {
-                        NavigationLink(destination: Step2View(propertyOfferData: propertyOfferData)
+                        NavigationLink(destination: Step2View(propertyOfferData: propertyOfferData, path: $path)
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true)) {
                                 Text("Back")
@@ -80,12 +82,12 @@ struct Step3View: View {
                                 label: { EmptyView() }
                             )
                             .navigationDestination(isPresented: $navigateToMainTab) {
-                                MainTabLandlordView()
+                                MainTabLandlordView(path: $path)
                                     .navigationBarBackButtonHidden(true)
                                     .navigationBarHidden(true)
                             }
                         } else {
-                            NavigationLink(destination: MainTabLandlordView()
+                            NavigationLink(destination: MainTabLandlordView(path: $path)
                                 .navigationBarBackButtonHidden(true)
                                 .navigationBarHidden(true),
                                            isActive: $navigateToMainTab) {
@@ -204,6 +206,6 @@ struct Step3View: View {
 }
 
 // Reemplazar la función Preview para probar con el ObservableObject
-#Preview {
-    Step3View(propertyOfferData: PropertyOfferData())
-}
+//#Preview {
+//    Step3View(propertyOfferData: PropertyOfferData())
+//}

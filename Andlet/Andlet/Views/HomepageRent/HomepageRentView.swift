@@ -11,6 +11,7 @@ import FirebaseAuth
 struct HomepageRentView: View {
     @State private var showFilterSearchView = false
     @StateObject private var viewModel = OfferRentViewModel()
+    @Binding var path: NavigationPath
     let currentUser = Auth.auth().currentUser
     var body: some View{
         
@@ -21,7 +22,7 @@ struct HomepageRentView: View {
                 } else {
                     ScrollView {
                         VStack {
-                            Heading()
+                            Heading(path: $path)
                             SearchAndFilterBar()
                             
                                 .onTapGesture {
@@ -29,7 +30,7 @@ struct HomepageRentView: View {
                                         showFilterSearchView.toggle()
                                     }
                                 }
-                            CreateMoreButton()
+                            CreateMoreButton(path: $path)
                         
                             if viewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")

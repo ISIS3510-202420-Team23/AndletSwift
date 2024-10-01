@@ -9,7 +9,10 @@ import SwiftUI
 import FirebaseAuth
 
 struct Heading: View {
+    // TODO: CHANGED TO THE PERSISTANT USER
     let currentUser = Auth.auth().currentUser
+    @State private var isProfileViewActive = false
+    @Binding var path: NavigationPath
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
@@ -25,7 +28,8 @@ struct Heading: View {
             }
             Spacer()
             // Imagen de perfil
-            if let photoURL = currentUser?.photoURL {
+            let photoURL = currentUser?.photoURL
+            if  (photoURL != nil){
     
                 AsyncImage(url: photoURL) { image in
                     image
@@ -33,6 +37,9 @@ struct Heading: View {
                         .frame(width: 67, height: 67)
                         .clipShape(Circle())
                         .shadow(radius: 5)
+                        .onTapGesture {
+                            isProfileViewActive = true
+                        }
                 } placeholder: {
                     // Placeholder mientras se carga la imagen
                     Circle()
@@ -50,7 +57,7 @@ struct Heading: View {
         }
         .padding(.horizontal)
         .padding(.bottom, 3)
-        .padding(.top, 5)
+        .padding(.top, 40)
         .onAppear {
             printUserDetails()
                     }
@@ -69,6 +76,6 @@ struct Heading: View {
                     }
                 }
             }
-#Preview {
-    Heading()
-}
+//#Preview {
+//    Heading()
+//}

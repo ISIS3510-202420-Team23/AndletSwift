@@ -9,16 +9,11 @@ import SwiftUI
 
 
 struct MainTabLandlordView: View {
-    init() {
-          
-        UITabBar.appearance().backgroundColor = UIColor.white
-        UITabBar.appearance().shadowImage = UIImage()
-        UITabBar.appearance().backgroundImage = UIImage()
-       }
+    @Binding var path: NavigationPath
     
     var body: some View {
         TabView {
-            HomepageRentView()
+            HomepageRentView(path: $path)
                 .tabItem {
                     Label("Explore", systemImage: "location.fill"
                         )
@@ -27,10 +22,11 @@ struct MainTabLandlordView: View {
             
         }
         .accentColor(Color(hex: "0C356A"))
+        .onAppear{
+            UITabBar.appearance().backgroundColor = UIColor.white
+            UITabBar.appearance().shadowImage = UIImage()
+            UITabBar.appearance().backgroundImage = UIImage()
+            
+        }
     }
-}
-
-#Preview {
-    MainTabLandlordView()
-    
 }

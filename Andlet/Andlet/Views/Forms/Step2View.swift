@@ -8,6 +8,8 @@ struct Step2View: View {
     @State private var navigateToStep3 = false
 
     let maxPriceCharacters = 9
+    
+    @Binding var path: NavigationPath
 
     var body: some View {
         NavigationStack {
@@ -74,7 +76,7 @@ struct Step2View: View {
                     // Sección de navegación con textos (similar a ProfilePickerView)
                     HStack {
                         // Back link (Blanco con bordes azules y texto azul)
-                        NavigationLink(destination: Step1View(propertyOfferData: propertyOfferData)
+                        NavigationLink(destination: Step1View(propertyOfferData: propertyOfferData, path: $path)
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true)) {
                                 Text("Back")
@@ -92,7 +94,7 @@ struct Step2View: View {
                         Spacer()
 
                         // Botón Next con validación antes de permitir la navegación
-                        NavigationLink(destination: Step3View(propertyOfferData: propertyOfferData)
+                        NavigationLink(destination: Step3View(propertyOfferData: propertyOfferData, path: $path)
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true),
                                        isActive: $navigateToStep3) {
@@ -157,6 +159,6 @@ struct Step2View: View {
 }
 
 // Reemplazar la función Preview para probar con el ObservableObject
-#Preview {
-    Step2View(propertyOfferData: PropertyOfferData())
-}
+//#Preview {
+//    Step2View(propertyOfferData: PropertyOfferData())
+//}

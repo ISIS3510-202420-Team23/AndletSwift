@@ -9,16 +9,11 @@ import SwiftUI
 
 
 struct MainTabView: View {
-    init() {
-          
-        UITabBar.appearance().backgroundColor = UIColor.white
-        UITabBar.appearance().shadowImage = UIImage()
-        UITabBar.appearance().backgroundImage = UIImage()
-       }
+    @Binding var path: NavigationPath
     
     var body: some View {
         TabView {
-            HomepageView()
+            HomepageView(path: $path)
                 .edgesIgnoringSafeArea(.all)
                 .tabItem {
                     Label("Explore", systemImage: "location.fill"
@@ -27,11 +22,13 @@ struct MainTabView: View {
                 }
             
         }
+        .navigationBarBackButtonHidden(true)
         .accentColor(Color(hex: "0C356A"))
+        .onAppear {
+            UITabBar.appearance().backgroundColor = UIColor.white
+            UITabBar.appearance().shadowImage = UIImage()
+            UITabBar.appearance().backgroundImage = UIImage()
+            
+        }
     }
-}
-
-#Preview {
-    MainTabView()
-    
 }

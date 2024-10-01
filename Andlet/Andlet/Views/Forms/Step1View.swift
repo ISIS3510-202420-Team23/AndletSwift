@@ -13,6 +13,8 @@ struct Step1View: View {
     @State private var navigateBack = false
     
     @Environment(\.presentationMode) var presentationMode
+    
+    @Binding var path: NavigationPath
 
     var body: some View {
         NavigationView {
@@ -113,7 +115,7 @@ struct Step1View: View {
                     Spacer()
 
                     HStack {
-                        NavigationLink(destination: MainTabLandlordView()
+                        NavigationLink(destination: MainTabLandlordView(path: $path)
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true)) {
                                 Text("Back")
@@ -137,12 +139,12 @@ struct Step1View: View {
                                 label: { EmptyView() }
                             )
                             .navigationDestination(isPresented: $navigateToStep2) {
-                                Step2View(propertyOfferData: propertyOfferData)
+                                Step2View(propertyOfferData: propertyOfferData, path: $path)
                                     .navigationBarBackButtonHidden(true)
                                     .navigationBarHidden(true)
                             }
                         } else {
-                            NavigationLink(destination: Step2View(propertyOfferData: propertyOfferData)
+                            NavigationLink(destination: Step2View(propertyOfferData: propertyOfferData, path: $path)
                                 .navigationBarBackButtonHidden(true)
                                 .navigationBarHidden(true),
                                            isActive: $navigateToStep2) {
@@ -211,6 +213,6 @@ struct Step1View: View {
 }
 
 // Reemplazar la función Preview para probar con el ObservableObject
-#Preview {
-    Step1View(propertyOfferData: PropertyOfferData())
-}
+//#Preview {
+//    Step1View(propertyOfferData: PropertyOfferData(), path: $nil)
+//}

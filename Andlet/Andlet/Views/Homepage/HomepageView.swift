@@ -20,6 +20,7 @@ struct HomepageView: View {
            maxPrice: 10000000,
            maxMinutes: 30
        )
+    @Binding var path: NavigationPath
 
     var body: some View {
         if #available(iOS 16.0, *) {
@@ -29,7 +30,10 @@ struct HomepageView: View {
                 } else {
                     ScrollView {
                         VStack {
-                            Heading()
+                            
+                            Spacer()
+                            
+                            Heading(path: $path)
                             SearchAndFilterBar()
                                 .onTapGesture {
                                     withAnimation(.snappy) {
@@ -65,7 +69,9 @@ struct HomepageView: View {
                     }
                 }
             }
-        } else {
+            .navigationBarBackButtonHidden(true)
+        }
+        else {
             Text("Versión de iOS no soportada")
         }
     }
