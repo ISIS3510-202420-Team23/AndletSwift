@@ -1,3 +1,4 @@
+
 //
 //  HomepageTestsView.swift
 //  SwiftApp
@@ -8,19 +9,22 @@
 import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
+import UIKit
 
 struct HomepageView: View {
     @State private var showFilterSearchView = false
     @State private var showShakeAlert = false
     @StateObject private var offerViewModel = OfferViewModel()
     @State private var userRoommatePreference: Bool? = nil  // true = prefiere roommates, false = no roommates
-    @StateObject private var filterViewModel = FilterViewModel(  // Crear una instancia de FilterViewModel
+    @StateObject private var filterViewModel = FilterViewModel(
         startDate: Date(),
         endDate: Date().addingTimeInterval(24 * 60 * 60),
         minPrice: 0,
         maxPrice: 10000000,
         maxMinutes: 30
     )
+    
+    @StateObject private var shakeDetector = ShakeDetector()
     
     var body: some View {
         if #available(iOS 16.0, *) {
@@ -45,7 +49,7 @@ struct HomepageView: View {
                                     .padding()
                             } else {
                                 LazyVStack(spacing: 32) {
-                                    ForEach(sortedOffers()) { offerWithProperty in  // Aquí usamos sortedOffers() en lugar de offerViewModel.offersWithProperties
+                                    ForEach(sortedOffers()) { offerWithProperty in
                                         NavigationLink(value: offerWithProperty) {
                                             OfferView(offer: offerWithProperty.offer, property: offerWithProperty.property)
                                                 .frame(height: 330)
@@ -59,13 +63,20 @@ struct HomepageView: View {
                         .onAppear {
                             fetchUserViewPreferences()
                         }
-                        .onShake {
-                            print("Shake detected!")
-                            refreshOffers()
-                            showShakeAlert = true
-                        }
+                        // Agregamos el controlador de detección de shake
+                        .background(
+                            ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)
+                                .frame(width: 0, height: 0)  // Oculto, pero activo
+                        )
                         .alert(isPresented: $showShakeAlert) {
                             Alert(title: Text("Shake Detected"), message: Text("You have refreshed the offers!"), dismissButton: .default(Text("OK")))
+                        }
+                        .onReceive(shakeDetector.$didShake) { didShake in
+                            if didShake {
+                                showShakeAlert = true
+                                refreshOffers()  // Llama a la función para refrescar las ofertas
+                                shakeDetector.resetShake()  // Reinicia el valor para que pueda detectar nuevos shakes
+                            }
                         }
                         .navigationDestination(for: OfferWithProperty.self) { offerWithProperty in
                             OfferDetailView(offer: offerWithProperty.offer, property: offerWithProperty.property)
@@ -78,6 +89,7 @@ struct HomepageView: View {
             Text("Versión de iOS no soportada")
         }
     }
+
     // Función para obtener la preferencia del usuario desde Firestore
     func fetchUserViewPreferences() {
         let db = Firestore.firestore()
@@ -98,7 +110,7 @@ struct HomepageView: View {
             }
         }
     }
-    
+
     // Función para ordenar las ofertas basadas en la preferencia del usuario
     func sortedOffers() -> [OfferWithProperty] {
         guard let preference = userRoommatePreference else {
@@ -110,16 +122,15 @@ struct HomepageView: View {
             let secondHasRoommates = second.offer.roommates > 0
             
             if preference {
-                // Prefiere roommates: primero las ofertas con roommates
                 return firstHasRoommates && !secondHasRoommates
             } else {
-                // Prefiere no roommates: primero las ofertas sin roommates
                 return !firstHasRoommates && secondHasRoommates
             }
         }
     }
+
     func refreshOffers() {
-            print("Dispositivo agitado. Refrescando ofertas...")
-            offerViewModel.fetchOffers()  // Llamamos a la función para recargar las ofertas
-        }
+        print("Dispositivo agitado. Refrescando ofertas...")
+        offerViewModel.fetchOffers()  // Llamamos a la función para recargar las ofertas
+    }
 }

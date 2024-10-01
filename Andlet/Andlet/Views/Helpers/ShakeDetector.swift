@@ -1,32 +1,48 @@
-import SwiftUI
 import UIKit
+import SwiftUI
+import Combine
 
-// Subclass of UIView to detect shake gestures
-class ShakeDetectingView: UIView {
-    var onShake: (() -> Void)?
+// ShakeDetector que usará un UIViewController para capturar el evento
+class ShakeDetector: ObservableObject {
+    @Published var didShake = false
 
-    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-        if motion == .motionShake {
-            onShake?()
+    // Esta función será llamada por el controlador cuando se detecte el shake
+    func deviceShook() {
+        DispatchQueue.main.async {
+            self.didShake = true
+        }
+    }
+
+    // Resetea el estado del shake después de que se ha procesado
+    func resetShake() {
+        DispatchQueue.main.async {
+            self.didShake = false
         }
     }
 }
 
-// ShakeDetector to integrate with SwiftUI
-struct ShakeDetector: UIViewRepresentable {
-    var onShake: () -> Void
+// Controlador que detectará el evento shake
+class ShakeDetectingViewController: UIViewController {
+    var shakeDetector: ShakeDetector?
 
-    func makeUIView(context: Context) -> ShakeDetectingView {
-        let view = ShakeDetectingView()
-        view.onShake = onShake
-        return view
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            shakeDetector?.deviceShook()
+        }
     }
-
-    func updateUIView(_ uiView: ShakeDetectingView, context: Context) {}
 }
 
-extension View {
-    func onShake(perform action: @escaping () -> Void) -> some View {
-        self.background(ShakeDetector(onShake: action))
+// Usamos UIViewControllerRepresentable para integrarlo en SwiftUI
+struct ShakeHandlingControllerRepresentable: UIViewControllerRepresentable {
+    @ObservedObject var shakeDetector: ShakeDetector
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        let controller = ShakeDetectingViewController()
+        controller.shakeDetector = shakeDetector
+        return controller
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        // Nada que actualizar dinámicamente por ahora
     }
 }

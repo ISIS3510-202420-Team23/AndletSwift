@@ -9,6 +9,8 @@ import SwiftUI
 
 
 struct MainTabView: View {
+    @StateObject private var shakeDetector = ShakeDetector()  // Instancia de ShakeDetector
+    @State private var showShakeAlert = false
     init() {
           
         UITabBar.appearance().backgroundColor = UIColor.white
@@ -28,6 +30,22 @@ struct MainTabView: View {
             
         }
         .accentColor(Color(hex: "0C356A"))
+        .onAppear {
+                    UIApplication.shared.windows.first?.rootViewController?.becomeFirstResponder()
+                }
+                .onReceive(shakeDetector.$didShake) { didShake in
+                    if didShake {
+                        showShakeAlert = true
+                        shakeDetector.didShake = false  // Reinicia el valor
+                    }
+                }
+                .alert(isPresented: $showShakeAlert) {
+                    Alert(
+                        title: Text("Shake Detected"),
+                        message: Text("You have refreshed the offers!"),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
     }
 }
 
