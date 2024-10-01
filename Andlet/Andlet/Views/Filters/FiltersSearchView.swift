@@ -1,4 +1,5 @@
 import SwiftUI
+import FirebaseAuth
 
 struct FilterSearchView: View {
     @Binding var show: Bool
@@ -71,13 +72,8 @@ struct FilterSearchView: View {
                         // Llamar a la función para cargar las ofertas con filtros
                         offerViewModel.fetchOffersWithFilters()
 
-                        // Imprimir los filtros seleccionados en la consola
-                        print("Filtros aplicados:")
-                        print("Fecha Inicial: \(localStartDate)")
-                        print("Fecha Final: \(localEndDate)")
-                        print("Precio Mínimo: \(localMinPrice)")
-                        print("Precio Máximo: \(localMaxPrice)")
-                        print("Minutos Máximos desde el campus: \(localMaxMinutes)")
+                        // Registrar el evento usando AnalyticsManager
+                        logFilterAppliedEvent()
 
                         withAnimation(.snappy) {
                             show.toggle() // Cerrar vista de filtros al hacer clic en "Apply"
@@ -183,6 +179,31 @@ struct FilterSearchView: View {
         }
     }
     
+    // Función para registrar evento de filtro aplicado usando AnalyticsManager
+    private func logFilterAppliedEvent() {
+        guard let currentUser = Auth.auth().currentUser, let userEmail = currentUser.email else {
+            print("Error: No se pudo obtener el email del usuario, el usuario no está autenticado.")
+            return
+        }
+        
+        // Obtener la fecha actual como string
+        let currentDate = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let formattedDate = dateFormatter.string(from: currentDate)
+
+        // Establecer el ID del usuario en Analytics usando el email
+        AnalyticsManager.shared.setUserId(userId: userEmail)
+
+        // Registrar el evento en Firebase Analytics usando AnalyticsManager
+        AnalyticsManager.shared.logEvent(name: "apply_filters", params: [
+            "user_id": userEmail,
+            "filter_applied_date": formattedDate
+        ])
+        
+        print("Evento 'apply_filters' registrado con éxito con el user_id: \(userEmail) y la fecha: \(formattedDate)")
+    }
+
     // Función para sincronizar los valores locales con los del ViewModel al cargar la vista
     private func loadValuesFromViewModel() {
         localStartDate = filterViewModel.startDate
@@ -192,6 +213,8 @@ struct FilterSearchView: View {
         localMaxMinutes = filterViewModel.maxMinutes
     }
 }
+
+
 
 #Preview {
     FilterSearchView(
