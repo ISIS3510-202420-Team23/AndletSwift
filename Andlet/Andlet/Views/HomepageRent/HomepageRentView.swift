@@ -28,12 +28,6 @@ struct HomepageRentView: View {
                     ScrollView {
                         VStack {
                             Heading()
-                            SearchAndFilterBar()
-                                .onTapGesture {
-                                    withAnimation(.snappy) {
-                                        showFilterSearchView.toggle()
-                                    }
-                                }
                             CreateMoreButton()
                         
                             if viewModel.offersWithProperties.isEmpty {
