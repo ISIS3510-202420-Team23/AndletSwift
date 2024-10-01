@@ -15,7 +15,7 @@ enum OfferType: String, Codable, Hashable, Equatable  {
 }
 
 struct OfferModel: Identifiable, Codable, Hashable, Equatable {
-    var id: String?  
+    var id: String
     let finalDate: Date
     let idProperty: String
     let initialDate: Date
@@ -33,7 +33,7 @@ struct OfferModel: Identifiable, Codable, Hashable, Equatable {
     
 
     // A convenience initializer to manually create an OfferModel
-    init(id: String? = nil, finalDate: Date, idProperty: String, initialDate: Date, isActive: Bool, numBaths: Int, numBeds: Int, numRooms: Int, onlyAndes: Bool, pricePerMonth: Double, roommates: Int, type: OfferType, userId: String, views: Int) {
+    init(id: String, finalDate: Date, idProperty: String, initialDate: Date, isActive: Bool, numBaths: Int, numBeds: Int, numRooms: Int, onlyAndes: Bool, pricePerMonth: Double, roommates: Int, type: OfferType, userId: String, views: Int) {
         self.id = id
         self.finalDate = finalDate
         self.idProperty = idProperty
