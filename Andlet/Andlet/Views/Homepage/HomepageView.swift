@@ -122,16 +122,7 @@ struct HomepageView: View {
     }
 
     func refreshOffers() {
-        print("Dispositivo agitado. Refrescando ofertas...")
-        if offerViewModel.filtersApplied {
-            // Si los filtros están aplicados, realiza fetch con filtros
-            print("Refrescando ofertas con filtros aplicados...")
-            offerViewModel.fetchOffersWithFilters()
-        } else {
-            // Si no se han aplicado filtros, realiza fetch normal
-            print("Refrescando ofertas sin filtros aplicados...")
             offerViewModel.fetchOffers()
-        }
     }
 
 }
