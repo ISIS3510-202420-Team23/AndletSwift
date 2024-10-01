@@ -19,7 +19,12 @@ class OfferViewModel: ObservableObject {
     var filtersApplied = false
 
     init() {
-        fetchOffers()
+        // Verifica si los filtros se han aplicado y llama a la función adecuada.
+        if filtersApplied {
+            fetchOffersWithFilters()
+        } else {
+            fetchOffers()
+        }
     }
 
     // Obtener ofertas y asegurarse de que tienen una propiedad asociada
