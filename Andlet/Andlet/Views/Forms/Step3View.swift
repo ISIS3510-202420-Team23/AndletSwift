@@ -61,7 +61,7 @@ struct Step3View: View {
                         Spacer()
 
                         HStack {
-                            NavigationLink(destination: Step2View(propertyOfferData: propertyOfferData)
+                            NavigationLink(destination: Step2View(propertyOfferData: propertyOfferData, path: $path)
                                 .navigationBarBackButtonHidden(true)
                                 .navigationBarHidden(true)) {
                                     Text("Back")
@@ -196,7 +196,7 @@ struct Step3View: View {
                 }
             }
             .navigationDestination(isPresented: $navigateToMainTab) {
-                MainTabLandlordView()
+                MainTabLandlordView(path: $path)
                     .navigationBarBackButtonHidden(true)
                     .navigationBarHidden(true)
             }

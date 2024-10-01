@@ -28,7 +28,7 @@ struct HomepageRentView: View {
                 } else {
                     ScrollView {
                         VStack {
-                            Heading()
+                            Heading(path: $path)
                             CreateMoreButton(path: $path)
                         
                             if viewModel.offersWithProperties.isEmpty {

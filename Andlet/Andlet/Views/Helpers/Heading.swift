@@ -58,9 +58,6 @@ struct Heading: View {
         .padding(.horizontal)
         .padding(.bottom, 3)
         .padding(.top, 40)
-        .onAppear {
-            printUserDetails()
-                    }
                 }
                 
                
