@@ -1,10 +1,3 @@
-//
-//  HomepageTestsView.swift
-//  SwiftApp
-//
-//  Created by Sofía Torres Ramírez on 16/09/24.
-//
-
 import SwiftUI
 
 struct HomepageView: View {
@@ -50,6 +43,15 @@ struct HomepageView: View {
                                     }
                                 }
                                 .padding()
+                            }
+                        }
+                        .onAppear {
+                            if offerViewModel.filtersApplied {
+                                // Llamar a fetchOffersWithFilters si se han aplicado filtros
+                                offerViewModel.fetchOffersWithFilters()
+                            } else {
+                                // Llamar a fetchOffers si no se han aplicado filtros
+                                offerViewModel.fetchOffers()
                             }
                         }
                         // Cambia el tipo que pasas al `navigationDestination` a `OfferWithProperty`
