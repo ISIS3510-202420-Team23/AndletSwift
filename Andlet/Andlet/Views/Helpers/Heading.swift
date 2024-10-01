@@ -51,23 +51,10 @@ struct Heading: View {
         .padding(.horizontal)
         .padding(.bottom, 3)
         .padding(.top, 5)
-        .onAppear {
-            printUserDetails()
-                    }
+
                 }
                 
-                // Función para imprimir detalles del usuario
-                func printUserDetails() {
-                    if let currentUser = currentUser {
-                        print("Nombre de usuario: \(currentUser.displayName ?? "Desconocido")")
-                        print("URL de la foto: \(currentUser.photoURL?.absoluteString ?? "No hay foto disponible")")
-                        
-                        // Verifica si puedes acceder a más detalles
-                        print("Información completa del usuario: \(currentUser)")
-                    } else {
-                        print("No hay un usuario autenticado.")
-                    }
-                }
+               
             }
 #Preview {
     Heading()
