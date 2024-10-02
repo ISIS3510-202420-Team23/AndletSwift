@@ -52,8 +52,13 @@ struct Heading: View {
                                     .frame(width: 67, height: 67)
                                     .clipShape(Circle())
                                     .shadow(radius: 5)
+                                    .onTapGesture {
+                                        isProfileViewActive = true
+                                    }
+                
             }
-            NavigationLink(destination: ProfileView(authViewModel: AuthenticationViewModel()), isActive: $isProfileViewActive){
+            // TODO: Change this to the user in db
+            NavigationLink(destination: ProfileView(authViewModel: AuthenticationViewModel(), userImageURL: currentUser?.photoURL?.absoluteString), isActive: $isProfileViewActive){
                 
             }
         }
