@@ -12,6 +12,7 @@ import FirebaseFirestore
 enum UserType: String, Codable {
     case landlord = "landlord"
     case student = "student"
+    case notDefined = "notDefined"
 }
 
 struct UserModel: Codable, Identifiable {
@@ -20,16 +21,19 @@ struct UserModel: Codable, Identifiable {
     let isAndes: Bool
     let name: String
     let phone: String
-    let typeUser: UserType  // Restrict type_user using the enum
+    let photo: String
+    var typeUser: UserType
+        
 
     // Convenience initializer to create a UserModel manually
-    init(id: String? = nil,  favoriteOffers: [Int]? = nil, isAndes: Bool, name: String, phone: String, typeUser: UserType) {
+    init(id: String? = nil,  favoriteOffers: [Int]? = nil, isAndes: Bool, name: String, phone: String, typeUser: UserType, photo: String) {
         self.id = id
         self.favoriteOffers = favoriteOffers
         self.isAndes = isAndes
         self.name = name
         self.phone = phone
         self.typeUser = typeUser
+        self.photo = photo
     }
 }
 

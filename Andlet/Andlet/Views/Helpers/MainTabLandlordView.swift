@@ -9,12 +9,6 @@ import SwiftUI
 
 
 struct MainTabLandlordView: View {
-    init() {
-          
-        UITabBar.appearance().backgroundColor = UIColor.white
-        UITabBar.appearance().shadowImage = UIImage()
-        UITabBar.appearance().backgroundImage = UIImage()
-       }
     
     var body: some View {
         TabView {
@@ -27,10 +21,11 @@ struct MainTabLandlordView: View {
             
         }
         .accentColor(Color(hex: "0C356A"))
+        .onAppear{
+            UITabBar.appearance().backgroundColor = UIColor.white
+            UITabBar.appearance().shadowImage = UIImage()
+            UITabBar.appearance().backgroundImage = UIImage()
+            
+        }
     }
-}
-
-#Preview {
-    MainTabLandlordView()
-    
 }

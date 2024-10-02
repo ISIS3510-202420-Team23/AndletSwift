@@ -12,11 +12,15 @@ struct WelcomePageView: View {
     private let WelcomePages: [Page] = Page.pages
     @StateObject private var authViewModel = AuthenticationViewModel()
     var body: some View {
-        NavigationView{
+        NavigationStack {
             VStack{
                 WelcomeIndividualPageView(pageIndex: $pageIndex, authViewModel: authViewModel, pages: WelcomePages)
             }
         }
+        .onAppear{
+            print("Entre al welcome Page view")
+        }
+        .navigationBarBackButtonHidden(true)
             
             
     }
