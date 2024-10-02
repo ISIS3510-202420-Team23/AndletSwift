@@ -1,4 +1,6 @@
 import SwiftUI
+import FirebaseAuth
+import FirebaseFirestore
 
 struct Step3View: View {
     @ObservedObject var propertyOfferData: PropertyOfferData
@@ -7,7 +9,6 @@ struct Step3View: View {
     @State private var showWarningMessage = false
     @State private var isSaving = false // Estado para controlar si se está guardando la información
     @State private var navigateToMainTab = false // Controla la navegación programática
-
 
     var body: some View {
         NavigationStack {
@@ -120,6 +121,9 @@ struct Step3View: View {
                                                                     print("Fotos subidas con éxito.")
                                                                     isSaving = false // Liberar el bloqueo del botón
                                                                     navigateToMainTab = true // Navegar al MainTabLandlordView
+
+                                                                    // Registrar la acción de Save en Firestore
+                                                                    logSaveAction()
                                                                 } else {
                                                                     print("Error al subir las fotos.")
                                                                     isSaving = false // Liberar el bloqueo del botón
@@ -217,9 +221,36 @@ struct Step3View: View {
             }
         }
     }
-}
+    
+    // Nueva función para registrar la acción de Save en Firestore
+    private func logSaveAction() {
+        guard let currentUser = Auth.auth().currentUser, let userEmail = currentUser.email else {
+            print("Error: No se pudo obtener el email del usuario, el usuario no está autenticado.")
+            return
+        }
 
-// Reemplazar la función Preview para probar con el ObservableObject
-//#Preview {
-//    Step3View(propertyOfferData: PropertyOfferData())
-//}
+        // Crear un identificador único para el documento usando el formato solicitado
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH:mm:ss"
+        let formattedDate = dateFormatter.string(from: Date())
+        let documentID = "3_\(userEmail)_\(formattedDate)"  // Identificador que empieza con "3"
+
+        // Crear la estructura del documento
+        let actionData: [String: Any] = [
+            "action": "publish",
+            "app": "swift",
+            "date": Date(),
+            "user_id": userEmail
+        ]
+
+        // Registrar la acción en la colección "user_actions" en Firestore
+        let db = Firestore.firestore()
+        db.collection("user_actions").document(documentID).setData(actionData) { error in
+            if let error = error {
+                print("Error al registrar el evento de save en Firestore: \(error.localizedDescription)")
+            } else {
+                print("Evento de save registrado exitosamente en Firestore con ID: \(documentID)")
+            }
+        }
+    }
+}
