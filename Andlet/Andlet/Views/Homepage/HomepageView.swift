@@ -53,7 +53,9 @@ struct HomepageView: View {
                             }
                         }
                         .onAppear {
+                            requestNotificationPermission()
                             fetchUserViewPreferences()
+                            checkDaysSinceLastContact()
                         }
                         // Agregamos el controlador de detección de shake
                         .background(
