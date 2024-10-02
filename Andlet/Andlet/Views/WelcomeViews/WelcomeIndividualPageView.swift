@@ -1,18 +1,16 @@
-//
-//  WelcomeIndividualPageView.swift
-//  SwiftApp
-//
-//  Created by Daniel Arango Cruz on 16/09/24.
-//
-
 import SwiftUI
-
 struct WelcomeIndividualPageView: View {
     @Binding var pageIndex: Int
     @ObservedObject var authViewModel: AuthenticationViewModel
-    @State private var navigateToAuth = false // State to control navigation to AuthenticationView
-    @State private var navigateToProfile = false // State to control navigation to ProfilePickerView
+    @State private var destination: NavigationDestination?  // Manage the navigation state
     var pages: [Page]
+
+    enum NavigationDestination: Hashable {
+        case studentHome
+        case landlordHome
+        case profilePicker
+        case authView
+    }
 
     var body: some View {
         ZStack {
@@ -22,7 +20,6 @@ struct WelcomeIndividualPageView: View {
             VStack {
                 Spacer()
 
-                // Displaying the image from the current page
                 Image(pages[0].imageUrl)
                     .resizable()
                     .scaledToFit()
@@ -33,22 +30,15 @@ struct WelcomeIndividualPageView: View {
                 Spacer()
 
                 HStack {
-                    // Custom page indicator
                     CustomIndicatorView(totalPages: pages.count, currentPage: pageIndex)
 
                     Spacer()
 
-
                     CircularArrowButton()
                         .onTapGesture {
-                            // Trigger navigation based on authentication state
-                            if authViewModel.isAuthenticated {
-                                navigateToProfile = true // Navigate to ProfilePickerView
-                            } else {
-                                navigateToAuth = true // Navigate to AuthenticationView
-                            }
-                            
-                            // Increment the pageIndex when clicked
+                            handleUserNavigation()
+
+                            // Increment the page index
                             if pageIndex < pages.count - 1 {
                                 pageIndex += 1
                             }
@@ -57,35 +47,57 @@ struct WelcomeIndividualPageView: View {
                 .padding(.bottom, 40)
                 .padding(.trailing, 20)
                 .padding(.leading, 40)
+
+                // Use NavigationLink to navigate to another view
+                NavigationLink(
+                    destination: getDestinationView(),  // Dynamically determine the view to navigate to
+                    isActive: Binding(
+                        get: { destination != nil },
+                        set: { _ in destination = nil }  // Reset destination after navigation
+                    )) {
+                    EmptyView()  // Invisible NavigationLink
+                }
             }
-            // Navigation Links (hidden) that trigger when states change
-            .background(
-                NavigationLink(
-                    destination: ProfilePickerView(),
-                    isActive: $navigateToProfile // Tied to state to navigate to ProfilePickerView
-                ) {
-                    EmptyView() // No visible content
-                }
-            )
-            .background(
-                NavigationLink(
-                    destination: AuthenticationView(
-                        pages: pages,
-                        onLogginSuccess: {
-                            authViewModel.isAuthenticated = true // After login, mark as authenticated
-                            navigateToProfile = true // Automatically navigate to ProfilePickerView
-                        },
-                        authViewModel: authViewModel
-                    ),
-                    isActive: $navigateToAuth // Tied to state to navigate to AuthenticationView
-                ) {
-                    EmptyView() // No visible content
-                }
-            )
+            .navigationBarBackButtonHidden(true)
+        }
+        .onAppear {
+            authViewModel.checkIfUserIsLoggedIn()
+            print("Entre al welcome individual")
         }
     }
-}
 
-#Preview {
-    WelcomePageView()
+    // Handle user navigation based on authentication status and role
+    private func handleUserNavigation() {
+        if authViewModel.isAuthenticated {
+            if let user = authViewModel.currentUser {
+                switch user.typeUser {
+                case .student:
+                    print("Navigating to student home")
+                    destination = .studentHome  // Set the destination to student home
+                case .landlord:
+                    destination = .landlordHome  // Set the destination to landlord home
+                case .notDefined:
+                    destination = .profilePicker  // Set the destination to profile picker
+                }
+            }
+        } else {
+            destination = .authView  // Navigate to authentication view if not signed in
+        }
+    }
+
+    // Dynamically return the view to navigate to
+    private func getDestinationView() -> some View {
+        switch destination {
+        case .studentHome:
+            return AnyView(MainTabView())  // Navigate to MainTabView (student home)
+        case .landlordHome:
+            return AnyView(MainTabLandlordView())  // Navigate to MainTabLandlordView (landlord home)
+        case .profilePicker:
+            return AnyView(ProfilePickerView(authViewModel: authViewModel))  // Navigate to ProfilePickerView
+        case .authView:
+            return AnyView(AuthenticationView(pages: pages, authViewModel: authViewModel))  // Navigate to AuthenticationView
+        case .none:
+            return AnyView(EmptyView())  // Default case when no navigation is set
+        }
+    }
 }
