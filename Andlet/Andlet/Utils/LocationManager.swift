@@ -12,8 +12,8 @@ class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
     private var locationManager = CLLocationManager()
     
     //University coordinates
-    private let universityLatitude = 4.628997
-    private let universityLongitude = -74.083394
+    private let universityLatitude = 4.602812
+    private let universityLongitude = -74.064912
     
     override init() {
         super.init()
@@ -39,7 +39,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
     
     func registerUniversityGeofence() {
         let universityCenter = CLLocationCoordinate2D(latitude: universityLatitude, longitude: universityLongitude)
-        let geofenceRegion = CLCircularRegion(center: universityCenter, radius: 500, identifier: "universityGeofence")
+        let geofenceRegion = CLCircularRegion(center: universityCenter, radius: 1000, identifier: "universityGeofence")
         geofenceRegion.notifyOnEntry = true
         geofenceRegion.notifyOnExit = false
         
@@ -85,7 +85,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
             
             // Check if the user is already within the geofence region
             let distance = currentLocation.distance(from: universityLocation)
-            if distance <= 500 {
+            if distance <= 1000 {
                 print("User is already within the university geofence")
                 sendNotification()  // Trigger notification manually
                 print("Stop updating")
