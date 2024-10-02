@@ -55,8 +55,11 @@ struct HomepageView: View {
                                 .padding()
                             }
                         }
+                        
                         .onAppear {
+                            requestNotificationPermission()
                             fetchUserViewPreferences()
+                            checkDaysSinceLastContact()
                         }
                         .background(
                             ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)
