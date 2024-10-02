@@ -19,7 +19,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
         super.init()
         locationManager.delegate = self
         requestPermissions()
-        locationManager.startUpdatingLocation()
+//        locationManager.startUpdatingLocation()
     }
     
     private func requestPermissions () {
@@ -89,7 +89,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
                 print("User is already within the university geofence")
                 sendNotification()  // Trigger notification manually
                 print("Stop updating")
-                locationManager.stopUpdatingLocation()
+//                locationManager.stopUpdatingLocation()
                 
             }
         }
