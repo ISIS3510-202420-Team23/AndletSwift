@@ -23,12 +23,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct AndletApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @StateObject private var locationManager = LocationManager()
+    
     var body: some Scene {
         WindowGroup {
             WelcomePageView()
                 .onAppear {
-                    locationManager.registerUniversityGeofence()
+                    LocationManager.shared.registerUniversityGeofence()
                     checkDaysSinceLastContact()
                 }
 //            ContentView()
