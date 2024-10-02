@@ -73,6 +73,7 @@
 		9C1369F22C9E487E0000B55C /* Montserrat-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9C1369F12C9E487E0000B55C /* Montserrat-ExtraLightItalic.ttf */; };
 		9C528C1A2CAB56FB007F6A76 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C528C192CAB56FB007F6A76 /* Launch Screen.storyboard */; };
 		9C528C1D2CAB7EDD007F6A76 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C528C1C2CAB7EDD007F6A76 /* ProfileView.swift */; };
+		9C528C1F2CACE0B5007F6A76 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C528C1E2CACE0B5007F6A76 /* LocationManager.swift */; };
 		A968E3CC2C9F92A100EE98F8 /* Step1View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3C82C9F92A100EE98F8 /* Step1View.swift */; };
 		A968E3CE2C9F92A100EE98F8 /* Step3View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3CA2C9F92A100EE98F8 /* Step3View.swift */; };
 		A968E3CF2C9F92A100EE98F8 /* Step2View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3CB2C9F92A100EE98F8 /* Step2View.swift */; };
@@ -176,6 +177,7 @@
 		9C1369F12C9E487E0000B55C /* Montserrat-ExtraLightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
 		9C528C192CAB56FB007F6A76 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		9C528C1C2CAB7EDD007F6A76 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		9C528C1E2CACE0B5007F6A76 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		A968E3C82C9F92A100EE98F8 /* Step1View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step1View.swift; sourceTree = "<group>"; };
 		A968E3CA2C9F92A100EE98F8 /* Step3View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step3View.swift; sourceTree = "<group>"; };
 		A968E3CB2C9F92A100EE98F8 /* Step2View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step2View.swift; sourceTree = "<group>"; };
@@ -468,6 +470,7 @@
 			isa = PBXGroup;
 			children = (
 				9C1369D42C9E3B3D0000B55C /* ColorExtensions.swift */,
+				9C528C1E2CACE0B5007F6A76 /* LocationManager.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -694,6 +697,7 @@
 				9C1369CB2C9E35BE0000B55C /* CircularArrowButton.swift in Sources */,
 				A9DFF6CF2CA91C7F0063E52C /* PropertyOfferData.swift in Sources */,
 				9C1369ED2C9E421E0000B55C /* WelcomePageModel.swift in Sources */,
+				9C528C1F2CACE0B5007F6A76 /* LocationManager.swift in Sources */,
 				37C0E2942C9E592800099A90 /* MainTabLandlordView.swift in Sources */,
 				37C0E2952C9E592800099A90 /* SearchAndFilterBar.swift in Sources */,
 				A968E3CF2C9F92A100EE98F8 /* Step2View.swift in Sources */,

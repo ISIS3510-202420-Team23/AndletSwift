@@ -14,8 +14,8 @@ struct OfferDetailView: View {
     
     var body: some View {
         if #available(iOS 16.0, *) {
-            ScrollView{
-                ZStack (alignment: .topLeading){
+            ScrollView {
+                ZStack (alignment: .topLeading) {
                     OfferImageCarouselView(property: property)
                         .frame(height: 370)
                         .tabViewStyle(.page)
@@ -30,7 +30,7 @@ struct OfferDetailView: View {
                     } label: {
                         Image(systemName: "chevron.left")
                             .foregroundStyle(Color(hex: "FFF4CF"))
-                            .background{
+                            .background {
                                 Circle()
                                     .fill(Color(hex: "0C356A"))
                                     .frame(width: 40, height: 40)
@@ -38,10 +38,9 @@ struct OfferDetailView: View {
                             .padding(32)
                             .padding(.top, 30)
                     }
-                    
                 }
                 
-                VStack(alignment: .leading, spacing: 8){
+                VStack(alignment: .leading, spacing: 8) {
                     Text(property.title)
                         .font(.custom("LeagueSpartan-SemiBold", size: 28))
                         .fontWeight(.semibold)
@@ -59,14 +58,13 @@ struct OfferDetailView: View {
                 .padding(.top)
                 .padding(.bottom, 5)
                 
-                
-                VStack(alignment: .leading, spacing: 8){
+                VStack(alignment: .leading, spacing: 8) {
                     Text ("Facilities")
                         .font(.custom("LeagueSpartan-SemiBold", size: 22))
                     
-                    ScrollView(.horizontal, showsIndicators: false){
+                    ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
-                            VStack{
+                            VStack {
                                 Image(systemName: "bed.double")
                                 Text("\(offer.numBeds) Bedrooms")
                                     .font(.custom("LeagueSpartan-Regular", size: 19))
@@ -102,18 +100,17 @@ struct OfferDetailView: View {
                                     .foregroundStyle(Color(hex: "CFCFCF"))
                             }
                         }
-                        
                     }
                 }
                 .padding(.leading)
                 .padding(.top, 7)
                 
-                VStack (alignment: .leading) {
+                VStack(alignment: .leading) {
                     Text("Description")
                         .font(.custom("LeagueSpartan-SemiBold", size: 22))
                         .frame(width: 250, alignment: .leading )
                     
-                    Text (property.description)
+                    Text(property.description)
                         .font(.custom("LeagueSpartan-Light", size: 17))
                         .padding(.top, 1)
                     
@@ -124,9 +121,9 @@ struct OfferDetailView: View {
             .toolbar(.hidden, for: .tabBar)
             .ignoresSafeArea()
             .padding(.bottom, 64)
-            .overlay(alignment: .bottom){
+            .overlay(alignment: .bottom) {
                 VStack (spacing: 0) {
-                    Divider ()
+                    Divider()
                         .padding(.bottom)
                     
                     HStack {
@@ -149,64 +146,53 @@ struct OfferDetailView: View {
                                 .clipShape(Circle())
                         }
                         
-                        VStack (alignment: .leading)
-                        {
+                        VStack(alignment: .leading) {
                             if viewModel.isLoading {
                                 Text("Loading...")
                                     .font(.custom("LeagueSpartan-SemiBold", size: 18))
                                     .foregroundColor(Color(hex: "0C356A"))
                             } else {
-                                
                                 Text(viewModel.user.name)
                                     .font(.custom("LeagueSpartan-SemiBold", size: 18))
                                     .foregroundColor(Color(hex: "0C356A"))
                             }
-                            Text ("Property agent")
+                            Text("Property agent")
                                 .font(.custom("LeagueSpartan-SemiBold", size: 18))
                                 .foregroundColor(Color(hex: "3D4D62"))
-                            Text ("$\(offer.pricePerMonth, specifier: "%.0f")")
+                            Text("$\(offer.pricePerMonth, specifier: "%.0f")")
                                 .font(.custom("LeagueSpartan-Regular", size: 18))
                                 .padding(.top, 4)
-                            
                         }
-                        Spacer ()
+                        Spacer()
                         
                         Button {
                             withAnimation {
                                 showContactDetails.toggle()
                             }
-                        } label:{
+                            logContactAction()  // Llamada a la función para registrar el evento en Firestore
+                        } label: {
                             Text("Contact")
                                 .foregroundStyle(.white)
                                 .font(.subheadline)
-                                .frame(width: 140, height:50)
+                                .frame(width: 140, height: 50)
                                 .background(Color(hex: "0C356A"))
                                 .clipShape(RoundedRectangle(cornerRadius: 30))
-                            
                         }
-                        
                     }
-                    .padding(.horizontal,18)
+                    .padding(.horizontal, 18)
+                    
                     VStack {
                         if showContactDetails {
                             Text(offer.userId)
                                 .font(.custom("LeagueSpartan-Regular", size: 18))
                                 .padding(.top, 15)
                                 .padding(.horizontal, 18)
-                            
                         }
-                        
                     }
-                    
                     .transition(.move(edge: .bottom))
                 }
                 .background(Color(hex: "FFF4CF"))
-                
-                
                 .frame(maxHeight: showContactDetails ? nil : 50)
-                
-                
-                
             }
             .onAppear {
                 viewModel.fetchUser(userEmail: offer.userId)
@@ -217,13 +203,44 @@ struct OfferDetailView: View {
                 } else {
                     print("No se encontró un offerKey válido para la oferta")
                 }
-                print("Entre al detail")
-                
             }
         } else {
-            
+            Text("Versión de iOS no soportada")
         }
     }
+
+    // Nueva función para registrar la acción de contacto en Firestore
+    private func logContactAction() {
+        guard let currentUser = Auth.auth().currentUser, let userEmail = currentUser.email else {
+            print("Error: No se pudo obtener el email del usuario, el usuario no está autenticado.")
+            return
+        }
+        
+        // Crear un identificador único para el documento usando el formato solicitado
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH:mm:ss"
+        let formattedDate = dateFormatter.string(from: Date())
+        let documentID = "2_\(userEmail)_\(formattedDate)"  // Identificador que empieza con "2"
+
+        // Crear la estructura del documento
+        let actionData: [String: Any] = [
+            "action": "contact",
+            "app": "swift",
+            "date": Date(),
+            "user_id": userEmail
+        ]
+
+        // Registrar la acción en la colección "user_actions" en Firestore
+        let db = Firestore.firestore()
+        db.collection("user_actions").document(documentID).setData(actionData) { error in
+            if let error = error {
+                print("Error al registrar el evento de contacto en Firestore: \(error.localizedDescription)")
+            } else {
+                print("Evento de contacto registrado exitosamente en Firestore con ID: \(documentID)")
+            }
+        }
+    }
+
     func updateUserViewCount() {
         let db = Firestore.firestore()
         guard let userEmail = Auth.auth().currentUser?.email else {

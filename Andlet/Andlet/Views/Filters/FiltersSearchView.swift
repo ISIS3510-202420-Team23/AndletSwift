@@ -1,5 +1,6 @@
 import SwiftUI
 import FirebaseAuth
+import FirebaseFirestore
 
 struct FilterSearchView: View {
     @Binding var show: Bool
@@ -72,7 +73,7 @@ struct FilterSearchView: View {
                         // Llamar a la función para cargar las ofertas con filtros
                         offerViewModel.fetchOffersWithFilters()
 
-                        // Registrar el evento usando AnalyticsManager
+                        // Registrar el evento en Firestore
                         logFilterAppliedEvent()
 
                         withAnimation(.snappy) {
@@ -180,29 +181,36 @@ struct FilterSearchView: View {
         }
     }
     
-    // Función para registrar evento de filtro aplicado usando AnalyticsManager
+    // Función para registrar evento de filtro aplicado en Firestore
     private func logFilterAppliedEvent() {
         guard let currentUser = Auth.auth().currentUser, let userEmail = currentUser.email else {
             print("Error: No se pudo obtener el email del usuario, el usuario no está autenticado.")
             return
         }
         
-        // Obtener la fecha actual como string
-        let currentDate = Date()
+        // Crear un identificador único para el documento usando el formato solicitado
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let formattedDate = dateFormatter.string(from: currentDate)
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH:mm:ss"
+        let formattedDate = dateFormatter.string(from: Date())
+        let documentID = "1_\(userEmail)_\(formattedDate)"
 
-        // Establecer el ID del usuario en Analytics usando el email
-        AnalyticsManager.shared.setUserId(userId: userEmail)
+        // Crear la estructura del documento
+        let actionData: [String: Any] = [
+            "action": "filter",
+            "app": "swift",
+            "date": Date(),
+            "user_id": userEmail
+        ]
 
-        // Registrar el evento en Firebase Analytics usando AnalyticsManager
-        AnalyticsManager.shared.logEvent(name: "apply_filters", params: [
-            "user_id": userEmail,
-            "filter_applied_date": formattedDate
-        ])
-        
-        print("Evento 'apply_filters' registrado con éxito con el user_id: \(userEmail) y la fecha: \(formattedDate)")
+        // Registrar la acción en la colección "user_actions" en Firestore
+        let db = Firestore.firestore()
+        db.collection("user_actions").document(documentID).setData(actionData) { error in
+            if let error = error {
+                print("Error al registrar el evento en Firestore: \(error.localizedDescription)")
+            } else {
+                print("Evento de filtro aplicado registrado exitosamente en Firestore con ID: \(documentID)")
+            }
+        }
     }
 
     // Función para sincronizar los valores locales con los del ViewModel al cargar la vista
@@ -214,6 +222,7 @@ struct FilterSearchView: View {
         localMaxMinutes = filterViewModel.maxMinutes
     }
 }
+
 
 
 
