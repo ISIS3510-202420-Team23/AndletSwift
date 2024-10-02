@@ -21,20 +21,18 @@ struct ImagePickerView: View {
                     .scaledToFill()
                     .frame(width: 140, height: 80)
                     .clipped()
-                    .onTapGesture {
-                        showImagePicker.toggle()
-                    }
             } else {
                 Text("+")
                     .font(.largeTitle)
                     .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
-                    .onTapGesture {
-                        showImagePicker.toggle()
-                    }
             }
+        }
+        .onTapGesture {
+            showImagePicker.toggle()  // Solo se abrirá cuando se toque dentro del recuadro
         }
         .sheet(isPresented: $showImagePicker) {
             ImagePicker(selectedImage: $selectedImage)
         }
+        .contentShape(Rectangle()) // Asegura que la zona de tap es solo la del recuadro
     }
 }
