@@ -81,7 +81,7 @@ func sendNotification() {
     content.sound = UNNotificationSound.default
 
     // Configuramos la notificación para que se envíe inmediatamente
-    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 500, repeats: false)
     let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
     
     // Añadimos la notificación al centro de notificaciones
@@ -89,7 +89,7 @@ func sendNotification() {
         if let error = error {
             print("Error al programar la notificación: \(error)")
         } else {
-            print("Notificación enviada correctamente.")
+            print("Notificación programada correctamente para dentro de 500 segundos.")
         }
     }
 }
