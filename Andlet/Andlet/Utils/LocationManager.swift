@@ -9,13 +9,16 @@ import CoreLocation
 import UserNotifications
 
 class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
+    // Singleton instance
+    static let shared = LocationManager()
+    
     private var locationManager = CLLocationManager()
     
     //University coordinates
     private let universityLatitude = 4.602812
     private let universityLongitude = -74.064912
     
-    override init() {
+    private override init() {
         super.init()
         locationManager.delegate = self
         requestPermissions()
