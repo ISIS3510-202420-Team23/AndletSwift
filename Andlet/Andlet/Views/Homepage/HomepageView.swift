@@ -55,6 +55,7 @@ struct HomepageView: View {
                                 .padding()
                             }
                         }
+                        
                         .onAppear {
                             requestNotificationPermission()
                             fetchUserViewPreferences()
