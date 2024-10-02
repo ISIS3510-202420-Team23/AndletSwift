@@ -71,6 +71,7 @@ struct Step2View: View {
                     Spacer()
 
                     HStack {
+                        // Back link (Blanco con bordes azules y texto azul)
                         NavigationLink(destination: Step1View(propertyOfferData: propertyOfferData)
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true)) {
@@ -88,6 +89,7 @@ struct Step2View: View {
 
                         Spacer()
 
+                        // Botón Next con validación antes de permitir la navegación
                         NavigationLink(destination: Step3View(propertyOfferData: propertyOfferData)
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true),
@@ -150,6 +152,6 @@ struct Step2View: View {
 }
 
 // Reemplazar la función Preview para probar con el ObservableObject
-#Preview {
-    Step2View(propertyOfferData: PropertyOfferData())
-}
+//#Preview {
+//    Step2View(propertyOfferData: PropertyOfferData())
+//}

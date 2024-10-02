@@ -91,13 +91,13 @@ class OfferRentViewModel: ObservableObject {
                                     }
                                 }
                             } else {
-                                print("id_property no encontrado o no es un número en la oferta bajo la clave '\(key)'")
+//                                print("id_property no encontrado o no es un número en la oferta bajo la clave '\(key)'")
                             }
                         } else {
-                            print("La oferta bajo la clave '\(key)' no pertenece al user_id '\(userId)' y no se incluirá.")
+//                            print("La oferta bajo la clave '\(key)' no pertenece al user_id '\(userId)' y no se incluirá.")
                         }
                     } else {
-                        print("Los datos de la oferta bajo la clave '\(key)' no están en el formato esperado.")
+//                        print("Los datos de la oferta bajo la clave '\(key)' no están en el formato esperado.")
                     }
                 }
             }

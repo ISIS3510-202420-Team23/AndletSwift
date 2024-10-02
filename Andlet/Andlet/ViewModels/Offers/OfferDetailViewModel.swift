@@ -8,7 +8,9 @@ class OfferDetailViewModel: ObservableObject {
         isAndes: false,
         name: "Loading...",
         phone: "0000000000",
-        typeUser: .landlord
+        typeUser: .landlord,
+        // TODO: HACER Manejo de la foto del usuario
+        photo: ""
     )  // Usuario inicial por defecto para evitar opcionales
     
     @Published var isLoading: Bool = false  // Para mostrar un indicador de carga
@@ -55,6 +57,7 @@ class OfferDetailViewModel: ObservableObject {
         let typeUserString = data["type_user"] as? String ?? "landlord"
         let typeUser = UserType(rawValue: typeUserString) ?? .landlord
         let favoriteOffers = data["favorite_offers"] as? [Int] ?? []
+        let photo = data["photo"] as? String ?? ""
         
         return UserModel(
             id: userEmail,
@@ -62,7 +65,8 @@ class OfferDetailViewModel: ObservableObject {
             isAndes: isAndes,
             name: name,
             phone: phone,
-            typeUser: typeUser
+            typeUser: typeUser,
+            photo: photo
         )
     }
     

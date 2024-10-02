@@ -216,6 +216,6 @@ struct Step1View: View {
 
 
 // Reemplazar la función Preview para probar con el ObservableObject
-#Preview {
-    Step1View(propertyOfferData: PropertyOfferData())
-}
+//#Preview {
+//    Step1View(propertyOfferData: PropertyOfferData(), path: $nil)
+//}

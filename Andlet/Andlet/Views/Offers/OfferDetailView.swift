@@ -4,8 +4,8 @@ import FirebaseAuth
 
 struct OfferDetailView: View {
     
-    @Environment(\.dismiss) var dismiss
     @State private var showContactDetails = false
+    @State private var navigateBackToMainTab = false  // New state to manage navigation back
     
     let offer: OfferModel
     let property: PropertyModel
@@ -19,8 +19,14 @@ struct OfferDetailView: View {
                     OfferImageCarouselView(property: property)
                         .frame(height: 370)
                         .tabViewStyle(.page)
+                    
+                    // Button to navigate back to MainTabView
+                    NavigationLink(destination: MainTabView(), isActive: $navigateBackToMainTab) {
+                        EmptyView() // Invisible NavigationLink
+                    }
+                    
                     Button {
-                        dismiss()
+                        navigateBackToMainTab = true  // Trigger navigation to MainTabView
                     } label: {
                         Image(systemName: "chevron.left")
                             .foregroundStyle(Color(hex: "FFF4CF"))

@@ -8,6 +8,7 @@ struct Step3View: View {
     @State private var isSaving = false // Estado para controlar si se está guardando la información
     @State private var navigateToMainTab = false // Controla la navegación programática
 
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -219,6 +220,6 @@ struct Step3View: View {
 }
 
 // Reemplazar la función Preview para probar con el ObservableObject
-#Preview {
-    Step3View(propertyOfferData: PropertyOfferData())
-}
+//#Preview {
+//    Step3View(propertyOfferData: PropertyOfferData())
+//}
