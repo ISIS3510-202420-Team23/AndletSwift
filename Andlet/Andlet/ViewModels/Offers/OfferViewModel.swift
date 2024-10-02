@@ -1,4 +1,5 @@
 import FirebaseFirestore
+import FirebaseAuth
 import SwiftUI
 
 
@@ -41,20 +42,17 @@ class OfferViewModel: ObservableObject {
             }
 
             var tempOffersWithProperties: [OfferWithProperty] = []
+            let group = DispatchGroup() // Crear un DispatchGroup para gestionar la concurrencia
 
             // Iterar sobre los documentos en la colección "offers"
             for document in documents {
                 let data = document.data()
-
-                //print("Documento de oferta completo: \(data)")
 
                 // Iterar sobre las claves dentro del documento de ofertas
                 for (key, value) in data {
                     /*print("Clave: \(key), Valor: \(value)") */ // Imprimir cada clave y valor
 
                     if let offerData = value as? [String: Any] {
-                        //print("Datos de la oferta bajo la clave '\(key)': \(offerData)")
-
                         // Filtrar por is_active == true dentro de los campos anidados
                         if let isActive = offerData["is_active"] as? Bool, isActive == true {
                             // Extraer el id_property como Int y convertirlo a String si es necesario
@@ -63,8 +61,10 @@ class OfferViewModel: ObservableObject {
 
                                 // Mapeamos los datos de la oferta al modelo OfferModel
                                 let offerId = "\(document.documentID)_\(key)"
-                                let offer = self.mapOfferDataToModel( data: offerData, documentId: "E2amoJzmIbhtLq65ScpY", key: key)
-                                 // ID único para la oferta
+                                let offer = self.mapOfferDataToModel(data: offerData, documentId: "E2amoJzmIbhtLq65ScpY", key: key)
+
+                                // Añadir tarea al DispatchGroup
+                                group.enter()
 
                                 // Buscar la propiedad asociada
                                 self.fetchPropertyForOffer(idProperty: idPropertyString) { property in
@@ -75,14 +75,12 @@ class OfferViewModel: ObservableObject {
                                             property: property
                                         )
                                         tempOffersWithProperties.append(offerWithProperty)
-
-                                        // Actualizar las ofertas en el hilo principal
-                                        DispatchQueue.main.async {
-                                            self.offersWithProperties = tempOffersWithProperties
-                                        }
                                     } else {
                                         print("Propiedad no encontrada para id_property \(idPropertyString).")
                                     }
+
+                                    // Salir del DispatchGroup al finalizar la tarea
+                                    group.leave()
                                 }
                             } else {
 //                                print("id_property no encontrado o no es un número en la oferta bajo la clave '\(key)'")
@@ -95,7 +93,47 @@ class OfferViewModel: ObservableObject {
                     }
                 }
             }
+
+            // Ejecutar la siguiente lógica cuando todas las tareas hayan terminado
+            group.notify(queue: .main) {
+                // Actualizar las ofertas en el hilo principal
+                self.offersWithProperties = tempOffersWithProperties
+                self.calculateEmptyDescriptionPercentage() // Calcular porcentaje una vez que se hayan cargado todas las ofertas
+            }
         }
+    }
+    
+    // Calcular el porcentaje de propiedades activas con descripción vacía
+    func calculateEmptyDescriptionPercentage() {
+        // Filtrar propiedades activas
+        let activeProperties = offersWithProperties.map { $0.property }
+        let totalActiveProperties = activeProperties.count
+
+        // Contar propiedades activas con descripción vacía
+        let emptyDescriptionCount = activeProperties.filter { $0.description == "" }.count
+
+        // Calcular porcentaje
+        let percentage = totalActiveProperties == 0 ? 0.0 : (Double(emptyDescriptionCount) / Double(totalActiveProperties)) * 100.0
+        logPercentageToAnalytics(percentage: percentage, totalProperties: totalActiveProperties)
+    }
+    
+    // Registrar el porcentaje en Firebase Analytics usando AnalyticsManager
+    private func logPercentageToAnalytics(percentage: Double, totalProperties: Int) {
+        guard let currentUser = Auth.auth().currentUser, let userEmail = currentUser.email else {
+            print("Error: No se pudo obtener el email del usuario, el usuario no está autenticado.")
+            return
+        }
+
+        AnalyticsManager.shared.setUserId(userId: userEmail)
+
+        // Registrar el evento en Firebase Analytics usando AnalyticsManager
+        AnalyticsManager.shared.logEvent(name: "empty_description_percentage", params: [
+            "user_id": userEmail,
+            "percentage_empty_descriptions": percentage,
+            "total_active_properties": totalProperties
+        ])
+
+        print("Evento 'empty_description_percentage' registrado con éxito con el user_id: \(userEmail), el porcentaje: \(percentage) y total_properties: \(totalProperties)")
     }
     
     func fetchOffersWithFilters() {
@@ -183,11 +221,15 @@ class OfferViewModel: ObservableObject {
                                 continue
                             }
 
-                            // Filtrar por fechas y precio
-                            if initialDate.dateValue() >= self.startDate &&
-                                finalDate.dateValue() <= self.endDate &&
-                                pricePerMonth >= self.minPrice &&
-                                pricePerMonth <= self.maxPrice {
+                            // Convertir las fechas de Timestamp a Date y luego normalizarlas a año, mes y día
+                            let propertyStartDate = self.normalizeDate(initialDate.dateValue())
+                            let propertyEndDate = self.normalizeDate(finalDate.dateValue())
+                            let userStartDate = self.normalizeDate(self.startDate)
+                            let userEndDate = self.normalizeDate(self.endDate)
+
+                            // Condición para verificar que el rango de fechas del usuario esté dentro del rango de fechas de la propiedad
+                            if userStartDate >= propertyStartDate && userEndDate <= propertyEndDate &&
+                                pricePerMonth >= self.minPrice && pricePerMonth <= self.maxPrice {
 
                                 // Crear OfferWithProperty solo si cumple con las condiciones de filtro
                                 let offerWithProperty = OfferWithProperty(
@@ -220,6 +262,12 @@ class OfferViewModel: ObservableObject {
         }
     }
 
+    // Función para normalizar una fecha a año, mes y día
+    private func normalizeDate(_ date: Date) -> Date {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day], from: date)
+        return calendar.date(from: components) ?? date
+    }
     
     // Función para actualizar los filtros en OfferViewModel
         func updateFilters(startDate: Date, endDate: Date, minPrice: Double, maxPrice: Double, maxMinutes: Double) {
