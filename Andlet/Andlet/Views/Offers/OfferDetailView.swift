@@ -131,10 +131,23 @@ struct OfferDetailView: View {
                     
                     HStack {
                         
-                        Image("pau")
-                            .resizable()
-                            .frame(width: 55, height: 55)
-                            .clipShape(Circle())
+                        
+                        if let photoURL = URL(string: viewModel.user.photo), !viewModel.user.photo.isEmpty {
+                            AsyncImage(url: photoURL) { image in
+                                image.resizable()
+                                    .scaledToFill()
+                                    .frame(width: 55, height: 55)
+                                    .clipShape(Circle())
+                            } placeholder: {
+                                ProgressView()
+                                    .frame(width: 55, height: 55)
+                            }
+                        } else {
+                            Image("Icon")  // Imagen predeterminada
+                                .resizable()
+                                .frame(width: 55, height: 55)
+                                .clipShape(Circle())
+                        }
                         
                         VStack (alignment: .leading)
                         {
@@ -199,11 +212,11 @@ struct OfferDetailView: View {
                 viewModel.fetchUser(userEmail: offer.userId)
                 updateUserViewCount()
                 let documentId = "E2amoJzmIbhtLq65ScpY"
-                            if let offerKey = offer.id.split(separator: "_").last.map(String.init) {
-                                viewModel.updateViewsOffer(documentId: documentId, offerKey: offerKey)
-                            } else {
-                                print("No se encontró un offerKey válido para la oferta")
-                            }
+                if let offerKey = offer.id.split(separator: "_").last.map(String.init) {
+                    viewModel.updateViewsOffer(documentId: documentId, offerKey: offerKey)
+                } else {
+                    print("No se encontró un offerKey válido para la oferta")
+                }
                 print("Entre al detail")
                 
             }
@@ -211,56 +224,56 @@ struct OfferDetailView: View {
             
         }
     }
-        func updateUserViewCount() {
-            let db = Firestore.firestore()
-            guard let userEmail = Auth.auth().currentUser?.email else {
-                print("Error: No hay usuario logueado")
-                return
-            }
-            
-            // Documento en Firestore para las vistas del usuario
-            let userViewsRef = db.collection("user_views").document(userEmail)
-            
-            userViewsRef.getDocument { document, error in
-                if let document = document, document.exists {
-                    // Si el documento ya existe, actualizamos el contador correspondiente
-                    if offer.roommates > 0 {
-                        userViewsRef.updateData([
-                            "roommates_views": FieldValue.increment(Int64(1))
-                        ]) { error in
-                            if let error = error {
-                                print("Error al actualizar roommates_views: \(error)")
-                            } else {
-                                print("roommates_views actualizado correctamente")
-                            }
-                        }
-                    } else {
-                        userViewsRef.updateData([
-                            "no_roommates_views": FieldValue.increment(Int64(1))
-                        ]) { error in
-                            if let error = error {
-                                print("Error al actualizar no_roommates_views: \(error)")
-                            } else {
-                                print("no_roommates_views actualizado correctamente")
-                            }
+    func updateUserViewCount() {
+        let db = Firestore.firestore()
+        guard let userEmail = Auth.auth().currentUser?.email else {
+            print("Error: No hay usuario logueado")
+            return
+        }
+        
+        // Documento en Firestore para las vistas del usuario
+        let userViewsRef = db.collection("user_views").document(userEmail)
+        
+        userViewsRef.getDocument { document, error in
+            if let document = document, document.exists {
+                // Si el documento ya existe, actualizamos el contador correspondiente
+                if offer.roommates > 0 {
+                    userViewsRef.updateData([
+                        "roommates_views": FieldValue.increment(Int64(1))
+                    ]) { error in
+                        if let error = error {
+                            print("Error al actualizar roommates_views: \(error)")
+                        } else {
+                            print("roommates_views actualizado correctamente")
                         }
                     }
                 } else {
-                    // Si el documento no existe, lo creamos con los valores iniciales
-                    userViewsRef.setData([
-                        "roommates_views": offer.roommates > 0 ? 1 : 0,
-                        "no_roommates_views": offer.roommates > 0 ? 0 : 1
+                    userViewsRef.updateData([
+                        "no_roommates_views": FieldValue.increment(Int64(1))
                     ]) { error in
                         if let error = error {
-                            print("Error al crear el documento de vistas del usuario: \(error)")
+                            print("Error al actualizar no_roommates_views: \(error)")
                         } else {
-                            print("Documento de vistas del usuario creado correctamente")
+                            print("no_roommates_views actualizado correctamente")
                         }
+                    }
+                }
+            } else {
+                // Si el documento no existe, lo creamos con los valores iniciales
+                userViewsRef.setData([
+                    "roommates_views": offer.roommates > 0 ? 1 : 0,
+                    "no_roommates_views": offer.roommates > 0 ? 0 : 1
+                ]) { error in
+                    if let error = error {
+                        print("Error al crear el documento de vistas del usuario: \(error)")
+                    } else {
+                        print("Documento de vistas del usuario creado correctamente")
                     }
                 }
             }
         }
     }
+}
 
 //#Preview{
 //    OfferDetailView()
