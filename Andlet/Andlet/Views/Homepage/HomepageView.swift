@@ -54,11 +54,15 @@ struct HomepageView: View {
                                 }
                                 .padding()
                             }
+                                
                         }
+                        .safeAreaInset(edge: .bottom) {
+                        Color.clear.frame(height: 80)}
                         
                         .onAppear {
+                            
                             fetchUserViewPreferences()
-                            checkDaysSinceLastContact()
+                            
                         }
                         .background(
                             ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)

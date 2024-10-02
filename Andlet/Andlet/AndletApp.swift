@@ -29,6 +29,7 @@ struct AndletApp: App {
             WelcomePageView()
                 .onAppear {
                     locationManager.registerUniversityGeofence()
+                    checkDaysSinceLastContact()
                 }
 //            ContentView()
         }

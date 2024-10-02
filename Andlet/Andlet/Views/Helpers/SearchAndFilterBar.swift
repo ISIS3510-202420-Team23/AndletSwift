@@ -20,10 +20,10 @@ struct SearchAndFilterBar: View {
             }
             Spacer ()
             
-            Button(action: {}, label: {
+            
                 Image (systemName: "line.horizontal.3")
                     .foregroundStyle(Color(hex: "0C356A"))
-            })
+            
         }
         .padding(.horizontal)
         .padding(.vertical, 11)
