@@ -93,6 +93,7 @@ struct FilterSearchView: View {
                 }
                 .padding()
                 .padding(.horizontal)
+                .padding(.top, 55)
 
                 // Sincronizar los valores locales con los del ViewModel cada vez que se abra la vista
                 .onAppear {

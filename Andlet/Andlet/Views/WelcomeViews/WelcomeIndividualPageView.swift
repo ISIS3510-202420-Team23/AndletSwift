@@ -1,23 +1,15 @@
-//
-//  WelcomeIndividualPageView.swift
-//  SwiftApp
-//
-//  Created by Daniel Arango Cruz on 16/09/24.
-//
-
 import SwiftUI
-
 struct WelcomeIndividualPageView: View {
     @Binding var pageIndex: Int
     @ObservedObject var authViewModel: AuthenticationViewModel
-    @Binding var path: NavigationPath  // Manage the navigation stack dynamically
+    @State private var destination: NavigationDestination?  // Manage the navigation state
     var pages: [Page]
+
     enum NavigationDestination: Hashable {
         case studentHome
         case landlordHome
         case profilePicker
         case authView
-        case welcomePage
     }
 
     var body: some View {
@@ -55,25 +47,22 @@ struct WelcomeIndividualPageView: View {
                 .padding(.bottom, 40)
                 .padding(.trailing, 20)
                 .padding(.leading, 40)
-            }
-            .navigationDestination(for: NavigationDestination.self) { destination in
-                switch destination {
-                case .studentHome:
-                    MainTabView(path: $path)
-                case .landlordHome:
-                    MainTabLandlordView(path: $path)
-                case .profilePicker:
-                    ProfilePickerView(authViewModel: authViewModel, path: $path)
-                case .authView:
-                    AuthenticationView(pages: pages, authViewModel: authViewModel, path: $path)
-                case .welcomePage:
-                    WelcomePageView()
+
+                // Use NavigationLink to navigate to another view
+                NavigationLink(
+                    destination: getDestinationView(),  // Dynamically determine the view to navigate to
+                    isActive: Binding(
+                        get: { destination != nil },
+                        set: { _ in destination = nil }  // Reset destination after navigation
+                    )) {
+                    EmptyView()  // Invisible NavigationLink
                 }
             }
             .navigationBarBackButtonHidden(true)
         }
         .onAppear {
             authViewModel.checkIfUserIsLoggedIn()
+            print("Entre al welcome individual")
         }
     }
 
@@ -83,15 +72,32 @@ struct WelcomeIndividualPageView: View {
             if let user = authViewModel.currentUser {
                 switch user.typeUser {
                 case .student:
-                    path.append(NavigationDestination.studentHome)  // Navigate to student home
+                    print("Navigating to student home")
+                    destination = .studentHome  // Set the destination to student home
                 case .landlord:
-                    path.append(NavigationDestination.landlordHome)  // Navigate to landlord home
+                    destination = .landlordHome  // Set the destination to landlord home
                 case .notDefined:
-                    path.append(NavigationDestination.profilePicker)  // Navigate to profile picker
+                    destination = .profilePicker  // Set the destination to profile picker
                 }
             }
         } else {
-            path.append(NavigationDestination.authView)  // Navigate to authentication view if not signed in
+            destination = .authView  // Navigate to authentication view if not signed in
+        }
+    }
+
+    // Dynamically return the view to navigate to
+    private func getDestinationView() -> some View {
+        switch destination {
+        case .studentHome:
+            return AnyView(MainTabView())  // Navigate to MainTabView (student home)
+        case .landlordHome:
+            return AnyView(MainTabLandlordView())  // Navigate to MainTabLandlordView (landlord home)
+        case .profilePicker:
+            return AnyView(ProfilePickerView(authViewModel: authViewModel))  // Navigate to ProfilePickerView
+        case .authView:
+            return AnyView(AuthenticationView(pages: pages, authViewModel: authViewModel))  // Navigate to AuthenticationView
+        case .none:
+            return AnyView(EmptyView())  // Default case when no navigation is set
         }
     }
 }

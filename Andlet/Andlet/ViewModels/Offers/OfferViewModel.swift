@@ -50,7 +50,7 @@ class OfferViewModel: ObservableObject {
 
                 // Iterar sobre las claves dentro del documento de ofertas
                 for (key, value) in data {
-                    print("Clave: \(key), Valor: \(value)")  // Imprimir cada clave y valor
+                    /*print("Clave: \(key), Valor: \(value)") */ // Imprimir cada clave y valor
 
                     if let offerData = value as? [String: Any] {
                         //print("Datos de la oferta bajo la clave '\(key)': \(offerData)")
@@ -85,13 +85,13 @@ class OfferViewModel: ObservableObject {
                                     }
                                 }
                             } else {
-                                print("id_property no encontrado o no es un número en la oferta bajo la clave '\(key)'")
+//                                print("id_property no encontrado o no es un número en la oferta bajo la clave '\(key)'")
                             }
                         } else {
-                            print("La oferta bajo la clave '\(key)' no está activa y no se incluirá.")
+//                            print("La oferta bajo la clave '\(key)' no está activa y no se incluirá.")
                         }
                     } else {
-                        print("Los datos de la oferta bajo la clave '\(key)' no están en el formato esperado.")
+//                        print("Los datos de la oferta bajo la clave '\(key)' no están en el formato esperado.")
                     }
                 }
             }

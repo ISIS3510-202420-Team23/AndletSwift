@@ -9,13 +9,12 @@ import SwiftUI
 
 
 struct MainTabView: View {
-    @Binding var path: NavigationPath
     @StateObject private var shakeDetector = ShakeDetector()  // Instancia de ShakeDetector
     @State private var showShakeAlert = false
   
     var body: some View {
         TabView {
-            HomepageView(path: $path)
+            HomepageView()
                 .edgesIgnoringSafeArea(.all)
                 .tabItem {
                     Label("Explore", systemImage: "location.fill"

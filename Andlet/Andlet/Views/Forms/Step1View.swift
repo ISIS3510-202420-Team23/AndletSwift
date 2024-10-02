@@ -13,8 +13,6 @@ struct Step1View: View {
     @State private var navigateBack = false
     
     @Environment(\.presentationMode) var presentationMode
-    
-    @Binding var path: NavigationPath
 
     var body: some View {
         NavigationView {
@@ -115,7 +113,7 @@ struct Step1View: View {
                     Spacer()
 
                     HStack {
-                        NavigationLink(destination: MainTabLandlordView(path: $path)
+                        NavigationLink(destination: MainTabLandlordView()
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true)) {
                                 Text("Back")
@@ -139,12 +137,12 @@ struct Step1View: View {
                                 label: { EmptyView() }
                             )
                             .navigationDestination(isPresented: $navigateToStep2) {
-                                Step2View(propertyOfferData: propertyOfferData, path: $path)
+                                Step2View(propertyOfferData: propertyOfferData)
                                     .navigationBarBackButtonHidden(true)
                                     .navigationBarHidden(true)
                             }
                         } else {
-                            NavigationLink(destination: Step2View(propertyOfferData: propertyOfferData, path: $path)
+                            NavigationLink(destination: Step2View(propertyOfferData: propertyOfferData)
                                 .navigationBarBackButtonHidden(true)
                                 .navigationBarHidden(true),
                                            isActive: $navigateToStep2) {

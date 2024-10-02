@@ -6,10 +6,10 @@ import GoogleSignInSwift
 struct AuthenticationView: View {
     var pages: [Page]
     @ObservedObject var authViewModel: AuthenticationViewModel
-    @Binding var path: NavigationPath  // Shared navigation path from the parent view
+    @State private var destination: NavigationDestination?  // Manage navigation state
 
     // Enum to manage different navigation destinations
-    enum NavigationDestination: Hashable, Codable {
+    enum NavigationDestination: Hashable {
         case profilePicker
         case studentHome
         case landlordHome
@@ -18,6 +18,7 @@ struct AuthenticationView: View {
     var body: some View {
         VStack(spacing: 20) {
             Spacer(minLength: 50)
+
             // Title
             Text(pages[1].title)
                 .font(.custom("LeagueSpartan-ExtraBold", size: 48).bold())
@@ -26,6 +27,7 @@ struct AuthenticationView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 27)
 
+            // Subtitle
             Text(pages[1].subTitle)
                 .font(.custom("Montserrat-Light", size: 18))
                 .foregroundColor(Color(hex: "#1B3A68"))
@@ -48,7 +50,7 @@ struct AuthenticationView: View {
                         .underline()
                 }
 
-                // Sign in button
+                // Google Sign-In Button
                 Button(action: signInWithGoogle) {
                     HStack {
                         Image("GoogleIcon")
@@ -66,6 +68,7 @@ struct AuthenticationView: View {
                     .shadow(radius: 5)
                 }
 
+                // Divider with "Or log in with Email"
                 HStack {
                     Rectangle()
                         .frame(height: 1)
@@ -77,9 +80,10 @@ struct AuthenticationView: View {
 
                     Rectangle()
                         .frame(height: 1)
-                        .foregroundColor(.black)
+                        .foregroundColor(Color.black)
                 }
 
+                // Log in with Google Button
                 Button(action: signInWithGoogle) {
                     HStack {
                         Image("GoogleIcon")
@@ -96,22 +100,27 @@ struct AuthenticationView: View {
                     .cornerRadius(50)
                     .shadow(radius: 5)
                 }
-
-                Spacer()
-
-                HStack {
-                    CustomIndicatorView(totalPages: pages.count, currentPage: pages[1].tag)
-                    Spacer()
-                }
-                .padding(.bottom, 70)
-                .padding(.trailing, 20)
-                .padding(.leading, 20)
             }
-            .padding(.horizontal)
 
-            // Navigation happens programmatically via path.append()
-            .navigationDestination(for: NavigationDestination.self) { destination in
-                getDestinationView(for: destination)
+            Spacer()
+
+            HStack {
+                CustomIndicatorView(totalPages: pages.count, currentPage: pages[1].tag)
+                Spacer()
+            }
+            .padding(.bottom, 70)
+            .padding(.trailing, 20)
+            .padding(.leading, 20)
+
+            // Programmatic NavigationLink
+            NavigationLink(
+                destination: getDestinationView(),  // Navigate based on destination
+                isActive: Binding(
+                    get: { destination != nil },
+                    set: { _ in destination = nil }  // Reset after navigation
+                )
+            ) {
+                EmptyView()  // Invisible NavigationLink
             }
         }
         .padding()
@@ -120,37 +129,38 @@ struct AuthenticationView: View {
         .navigationBarHidden(true)
     }
 
-    // Function to handle Google Sign-In and programmatically navigate based on role
+    // Google Sign-In logic
     private func signInWithGoogle() {
         Task {
             let isSuccess = await authViewModel.signInWithGoogle()
-            print("This is the path in auth \(String(describing: path.codable))")
             if isSuccess {
-                // Navigate based on user role
+                // Set the destination based on user role after sign-in
                 if let user = authViewModel.currentUser {
                     switch user.typeUser {
                     case .notDefined:
-                        path.append(NavigationDestination.profilePicker)
+                        destination = .profilePicker
                     case .student:
-                        path.append(NavigationDestination.studentHome)
+                        destination = .studentHome
                     case .landlord:
-                        path.append(NavigationDestination.landlordHome)
+                        destination = .landlordHome
                     }
                 }
             }
         }
     }
 
-    // Helper function to return the destination view based on the user's role
+    // Function to get the correct destination view
     @ViewBuilder
-    func getDestinationView(for destination: NavigationDestination) -> some View {
+    private func getDestinationView() -> some View {
         switch destination {
         case .profilePicker:
-            ProfilePickerView(authViewModel: authViewModel, path: $path)
+            ProfilePickerView(authViewModel: authViewModel)
         case .studentHome:
-            MainTabView(path: $path)
+            MainTabView()
         case .landlordHome:
-            MainTabLandlordView(path: $path)
+            MainTabLandlordView()
+        case .none:
+            EmptyView()
         }
     }
 }

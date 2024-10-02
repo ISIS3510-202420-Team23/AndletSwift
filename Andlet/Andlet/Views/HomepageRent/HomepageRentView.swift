@@ -15,7 +15,6 @@ struct HomepageRentView: View {
     @State private var showFilterSearchView = false
     @State private var showShakeAlert = false
     @StateObject private var viewModel = OfferRentViewModel()
-    @Binding var path: NavigationPath
     @StateObject private var shakeDetector = ShakeDetector()  // Detector de shake
 
     let currentUser = Auth.auth().currentUser
@@ -28,8 +27,8 @@ struct HomepageRentView: View {
                 } else {
                     ScrollView {
                         VStack {
-                            Heading(path: $path)
-                            CreateMoreButton(path: $path)
+                            Heading()
+                            CreateMoreButton()
                         
                             if viewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")

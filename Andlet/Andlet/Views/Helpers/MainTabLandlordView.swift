@@ -9,11 +9,10 @@ import SwiftUI
 
 
 struct MainTabLandlordView: View {
-    @Binding var path: NavigationPath
     
     var body: some View {
         TabView {
-            HomepageRentView(path: $path)
+            HomepageRentView()
                 .tabItem {
                     Label("Explore", systemImage: "location.fill"
                         )

@@ -11,19 +11,16 @@ struct WelcomePageView: View {
     @State private var pageIndex = 0
     private let WelcomePages: [Page] = Page.pages
     @StateObject private var authViewModel = AuthenticationViewModel()
-    @State var path = NavigationPath()
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack {
             VStack{
-                WelcomeIndividualPageView(pageIndex: $pageIndex, authViewModel: authViewModel, path: $path, pages: WelcomePages)
+                WelcomeIndividualPageView(pageIndex: $pageIndex, authViewModel: authViewModel, pages: WelcomePages)
             }
         }
-        .navigationBarBackButtonHidden(true)
         .onAppear{
-            print("PATH \(String(describing: path.codable))")
-            path.removeLast(path.count)
-            
+            print("Entre al welcome Page view")
         }
+        .navigationBarBackButtonHidden(true)
             
             
     }

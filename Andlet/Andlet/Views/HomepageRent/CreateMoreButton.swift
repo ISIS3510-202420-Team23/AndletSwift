@@ -2,7 +2,6 @@ import SwiftUI
 
 // Actualización de CreateMoreButton
 struct CreateMoreButton: View {
-    @Binding var path: NavigationPath
     var body: some View {
         HStack {
             Text("Your listings")
@@ -12,7 +11,7 @@ struct CreateMoreButton: View {
             Spacer()
             
             // Crear un nuevo PropertyOfferData y pasarlo a Step1View
-            NavigationLink(destination: Step1View(propertyOfferData: PropertyOfferData(), path: $path)
+            NavigationLink(destination: Step1View(propertyOfferData: PropertyOfferData())
                 .navigationBarBackButtonHidden()
                 .toolbar(.hidden, for: .tabBar)
                 .ignoresSafeArea(.all)) {

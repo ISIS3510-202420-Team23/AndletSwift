@@ -5,7 +5,6 @@ struct Step3View: View {
     @StateObject private var viewModel = PropertyViewModel() // Instancia del ViewModel como @StateObject
 
     @State private var showWarningMessage = false
-    @Binding var path: NavigationPath
     @State private var isSaving = false // Estado para controlar si se está guardando la información
     @State private var navigateToMainTab = false // Controla la navegación programática
 
@@ -61,7 +60,7 @@ struct Step3View: View {
                         Spacer()
 
                         HStack {
-                            NavigationLink(destination: Step2View(propertyOfferData: propertyOfferData, path: $path)
+                            NavigationLink(destination: Step2View(propertyOfferData: propertyOfferData)
                                 .navigationBarBackButtonHidden(true)
                                 .navigationBarHidden(true)) {
                                     Text("Back")
@@ -196,7 +195,7 @@ struct Step3View: View {
                 }
             }
             .navigationDestination(isPresented: $navigateToMainTab) {
-                MainTabLandlordView(path: $path)
+                MainTabLandlordView()
                     .navigationBarBackButtonHidden(true)
                     .navigationBarHidden(true)
             }

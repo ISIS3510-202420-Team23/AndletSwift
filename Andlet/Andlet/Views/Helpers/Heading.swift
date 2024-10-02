@@ -12,7 +12,6 @@ struct Heading: View {
     // TODO: CHANGED TO THE PERSISTANT USER
     let currentUser = Auth.auth().currentUser
     @State private var isProfileViewActive = false
-    @Binding var path: NavigationPath
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
@@ -54,10 +53,13 @@ struct Heading: View {
                                     .clipShape(Circle())
                                     .shadow(radius: 5)
             }
+            NavigationLink(destination: ProfileView(authViewModel: AuthenticationViewModel()), isActive: $isProfileViewActive){
+                
+            }
         }
         .padding(.horizontal)
         .padding(.bottom, 3)
-        .padding(.top, 40)
+        .padding(.top, 55)
                 }
                 
                

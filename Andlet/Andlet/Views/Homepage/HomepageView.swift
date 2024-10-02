@@ -7,8 +7,7 @@ struct HomepageView: View {
     @State private var showFilterSearchView = false
     @State private var showShakeAlert = false
     @StateObject private var offerViewModel = OfferViewModel()
-    @State private var userRoommatePreference: Bool? = nil  // true = prefiere roommates, false = no roommates
-    @Binding var path: NavigationPath
+    @State private var userRoommatePreference: Bool? = nil
     @StateObject private var filterViewModel = FilterViewModel(
         startDate: Date(),
         endDate: Date().addingTimeInterval(24 * 60 * 60),
@@ -17,6 +16,8 @@ struct HomepageView: View {
         maxMinutes: 30
     )
     @StateObject private var shakeDetector = ShakeDetector()
+    @State private var selectedOffer: OfferWithProperty?  // Add a state to track selected offer
+    
     var body: some View {
         if #available(iOS 16.0, *) {
             NavigationStack {
@@ -25,17 +26,15 @@ struct HomepageView: View {
                 } else {
                     ScrollView {
                         VStack {
-                            
                             Spacer()
-                            
-                            Heading(path: $path)
+                            Heading()
                             SearchAndFilterBar()
                                 .onTapGesture {
                                     withAnimation(.snappy) {
                                         showFilterSearchView.toggle()
                                     }
                                 }
-                            
+
                             if offerViewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
                                     .font(.headline)
@@ -44,7 +43,9 @@ struct HomepageView: View {
                             } else {
                                 LazyVStack(spacing: 32) {
                                     ForEach(sortedOffers()) { offerWithProperty in
-                                        NavigationLink(value: offerWithProperty) {
+                                        Button(action: {
+                                            selectedOffer = offerWithProperty  // Set selected offer
+                                        }) {
                                             OfferView(offer: offerWithProperty.offer, property: offerWithProperty.property)
                                                 .frame(height: 330)
                                                 .clipShape(RoundedRectangle(cornerRadius: 30))
@@ -57,10 +58,9 @@ struct HomepageView: View {
                         .onAppear {
                             fetchUserViewPreferences()
                         }
-                        // Agregamos el controlador de detección de shake
                         .background(
                             ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)
-                                .frame(width: 0, height: 0)  // Oculto, pero activo
+                                .frame(width: 0, height: 0)
                         )
                         .alert(isPresented: $showShakeAlert) {
                             Alert(title: Text("Shake Detected"), message: Text("Filters have been cleared🧹!"), dismissButton: .default(Text("OK")))
@@ -68,20 +68,25 @@ struct HomepageView: View {
                         .onReceive(shakeDetector.$didShake) { didShake in
                             if didShake {
                                 showShakeAlert = true
-                                refreshOffers()  // Llama a la función para refrescar las ofertas
-                                shakeDetector.resetShake()  // Reinicia el valor para que pueda detectar nuevos shakes
+                                refreshOffers()
+                                shakeDetector.resetShake()
                             }
                         }
-                        .navigationDestination(for: OfferWithProperty.self) { offerWithProperty in
-                            OfferDetailView(offer: offerWithProperty.offer, property: offerWithProperty.property)
-                                .navigationBarBackButtonHidden()
+                        // Manage navigation based on selected offer
+                        .navigationDestination(isPresented: Binding(
+                            get: { selectedOffer != nil },
+                            set: { _ in selectedOffer = nil }
+                        )) {
+                            if let offerWithProperty = selectedOffer {
+                                OfferDetailView(offer: offerWithProperty.offer, property: offerWithProperty.property)
+                                    .navigationBarBackButtonHidden()
+                            }
                         }
                     }
                 }
             }
             .navigationBarBackButtonHidden(true)
-        }
-        else {
+        } else {
             Text("Versión de iOS no soportada")
         }
     }
@@ -93,13 +98,12 @@ struct HomepageView: View {
             print("Error: No hay usuario logueado")
             return
         }
-        
+
         let userViewsRef = db.collection("user_views").document(userEmail)
         userViewsRef.getDocument { document, error in
             if let document = document, document.exists {
                 let roommateViews = document.data()?["roommates_views"] as? Int ?? 0
                 let noRoommateViews = document.data()?["no_roommates_views"] as? Int ?? 0
-                // Determinamos la preferencia
                 userRoommatePreference = roommateViews > noRoommateViews
             } else {
                 print("No se encontró el documento de preferencias de usuario")
@@ -107,16 +111,15 @@ struct HomepageView: View {
         }
     }
 
-    // Función para ordenar las ofertas basadas en la preferencia del usuario
     func sortedOffers() -> [OfferWithProperty] {
         guard let preference = userRoommatePreference else {
-            return offerViewModel.offersWithProperties  // Si no hay preferencia, devolvemos las ofertas tal cual
+            return offerViewModel.offersWithProperties
         }
-        
+
         return offerViewModel.offersWithProperties.sorted { first, second in
             let firstHasRoommates = first.offer.roommates > 0
             let secondHasRoommates = second.offer.roommates > 0
-            
+
             if preference {
                 return firstHasRoommates && !secondHasRoommates
             } else {
@@ -126,7 +129,6 @@ struct HomepageView: View {
     }
 
     func refreshOffers() {
-            offerViewModel.fetchOffers()
+        offerViewModel.fetchOffers()
     }
-
 }
