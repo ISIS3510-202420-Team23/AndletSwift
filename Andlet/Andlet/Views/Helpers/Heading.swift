@@ -45,6 +45,9 @@ struct Heading: View {
                     .frame(width: 67, height: 67)
                     .clipShape(Circle())
                     .shadow(radius: 5)
+                    .onTapGesture {
+                        isProfileViewActive = true
+                    }
             }
             
             // Navegación a la vista del perfil
