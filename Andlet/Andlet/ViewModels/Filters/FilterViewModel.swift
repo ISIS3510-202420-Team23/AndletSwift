@@ -1,4 +1,5 @@
 import SwiftUI
+import FirebaseAnalytics
 
 class FilterViewModel: ObservableObject {
     @Published var startDate: Date

@@ -91,6 +91,7 @@
 		A9DFF6D22CAA83FD0063E52C /* FilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFF6D12CAA83FD0063E52C /* FilterViewModel.swift */; };
 		A9DFF6D42CAA85210063E52C /* FilterSearchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFF6D32CAA85210063E52C /* FilterSearchOptions.swift */; };
 		A9ED6DB12CAC52700066E3EA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9ED6DB02CAC52700066E3EA /* Extensions.swift */; };
+		A9ED6DB42CAC77AC0066E3EA /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9ED6DB32CAC77AB0066E3EA /* AnalyticsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -190,6 +191,7 @@
 		A9DFF6D12CAA83FD0063E52C /* FilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewModel.swift; sourceTree = "<group>"; };
 		A9DFF6D32CAA85210063E52C /* FilterSearchOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSearchOptions.swift; sourceTree = "<group>"; };
 		A9ED6DB02CAC52700066E3EA /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		A9ED6DB32CAC77AB0066E3EA /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -332,6 +334,7 @@
 		9C1369632C9E30A10000B55C /* Andlet */ = {
 			isa = PBXGroup;
 			children = (
+				A9ED6DB22CAC77990066E3EA /* Analytics */,
 				9C1369F02C9E428D0000B55C /* Info.plist */,
 				9C1369D82C9E3F200000B55C /* GoogleService-Info.plist */,
 				9C1369D32C9E3B170000B55C /* Utils */,
@@ -486,6 +489,14 @@
 				A9DFF6D32CAA85210063E52C /* FilterSearchOptions.swift */,
 			);
 			path = Filters;
+			sourceTree = "<group>";
+		};
+		A9ED6DB22CAC77990066E3EA /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				A9ED6DB32CAC77AB0066E3EA /* AnalyticsView.swift */,
+			);
+			path = Analytics;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -687,6 +698,7 @@
 				A968E3E62C9F92CC00EE98F8 /* CustomInputField.swift in Sources */,
 				A968E3E12C9F92CC00EE98F8 /* HeaderView.swift in Sources */,
 				A968E3E42C9F92CC00EE98F8 /* IconInputFiled.swift in Sources */,
+				A9ED6DB42CAC77AC0066E3EA /* AnalyticsView.swift in Sources */,
 				9C1369CD2C9E35BE0000B55C /* ProfilePickerView.swift in Sources */,
 				9C1369D52C9E3B3D0000B55C /* ColorExtensions.swift in Sources */,
 				3781A9C12CA3D479000E0B86 /* OfferViewModel.swift in Sources */,
