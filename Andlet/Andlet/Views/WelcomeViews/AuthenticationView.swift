@@ -143,6 +143,7 @@ struct AuthenticationView: View {
                     EmptyView()  // Invisible NavigationLink
                 }
             }
+            .navigationBarBackButtonHidden(true)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(red: 197/255, green: 221/255, blue: 255/255))
             .transition(.opacity) // Añadir transición de opacidad
