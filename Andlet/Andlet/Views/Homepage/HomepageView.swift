@@ -57,7 +57,6 @@ struct HomepageView: View {
                         }
                         
                         .onAppear {
-                            requestNotificationPermission()
                             fetchUserViewPreferences()
                             checkDaysSinceLastContact()
                         }
