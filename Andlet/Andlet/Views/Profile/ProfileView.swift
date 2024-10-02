@@ -18,7 +18,7 @@ struct ProfileView: View {
                 Spacer()
 
                 // Load the user's image (from URL or default image)
-                if let userImageURL = userImageURL, let url = URL(string: userImageURL) {
+                if let userImageURL = userImageURL, userImageURL != "", let url = URL(string: userImageURL) {
                     AsyncImage(url: url) { phase in
                         switch phase {
                         case .success(let image):
