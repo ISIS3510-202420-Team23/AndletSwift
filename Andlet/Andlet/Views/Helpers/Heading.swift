@@ -1,17 +1,10 @@
-//
-//  Heading.swift
-//  SwiftApp
-//
-//  Created by Sofía Torres Ramírez on 16/09/24.
-//
-
 import SwiftUI
 import FirebaseAuth
 
 struct Heading: View {
-    // TODO: CHANGED TO THE PERSISTANT USER
-    let currentUser = Auth.auth().currentUser
+    @StateObject var authViewModel = AuthenticationViewModel() // Usamos el view model para obtener la info del usuario desde Firestore
     @State private var isProfileViewActive = false
+    
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
@@ -19,18 +12,18 @@ struct Heading: View {
                     .font(.custom("LeagueSpartan-ExtraBold", size: 32))
                     .foregroundColor(Color(hex: "0C356A"))
                     .fontWeight(.bold)
-                Text("\(currentUser?.displayName?.components(separatedBy: " ").first ?? "")")
+                
+                // Mostrar solo el primer nombre del usuario desde Firestore
+                Text(getFirstName(fullName: authViewModel.currentUser?.name ?? "Guest"))
                     .font(.custom("LeagueSpartan-ExtraBold", size: 32))
                     .foregroundColor(Color(hex: "FFB900"))
                     .fontWeight(.bold)
-                
             }
             Spacer()
-            // Imagen de perfil
-            let photoURL = currentUser?.photoURL
-            if  (photoURL != nil){
-    
-                AsyncImage(url: photoURL) { image in
+
+            // Imagen de perfil del usuario desde el authViewModel
+            if let photoURL = authViewModel.currentUser?.photo, !photoURL.isEmpty {
+                AsyncImage(url: URL(string: photoURL)) { image in
                     image
                         .resizable()
                         .frame(width: 67, height: 67)
@@ -46,24 +39,30 @@ struct Heading: View {
                         .frame(width: 67, height: 67)
                 }
             } else {
-                // Placeholder si no hay imagen disponible
+                // Placeholder si no hay imagen disponible (ícono predeterminado)
                 Image("Icon")
-                                    .resizable()
-                                    .frame(width: 67, height: 67)
-                                    .clipShape(Circle())
-                                    .shadow(radius: 5)
+                    .resizable()
+                    .frame(width: 67, height: 67)
+                    .clipShape(Circle())
+                    .shadow(radius: 5)
             }
-            NavigationLink(destination: ProfileView(authViewModel: AuthenticationViewModel()), isActive: $isProfileViewActive){
-                
+            
+            // Navegación a la vista del perfil
+            NavigationLink(destination: ProfileView(authViewModel: authViewModel), isActive: $isProfileViewActive) {
+                EmptyView()
             }
         }
         .padding(.horizontal)
         .padding(.bottom, 3)
         .padding(.top, 55)
-                }
-                
-               
-            }
-//#Preview {
-//    Heading()
-//}
+        .onAppear {
+            // Llama a la función de verificación de usuario al cargar la vista
+            authViewModel.checkIfUserIsLoggedIn()
+        }
+    }
+
+    // Función para obtener el primer nombre del usuario
+    func getFirstName(fullName: String) -> String {
+        return fullName.components(separatedBy: " ").first ?? fullName
+    }
+}
