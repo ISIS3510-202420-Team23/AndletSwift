@@ -59,11 +59,8 @@ class PropertyOfferData: ObservableObject, CustomStringConvertible {
 
     // Método para actualizar el valor de `roommates` según el valor de `numBeds`
     private func updateRoommates() {
-        if numBeds == 1 {
-            roommates = 0
-        } else {
-            roommates = numBeds
-        }
+        roommates = numBeds-1
+        
     }
 
     func offerDetails() -> String {
