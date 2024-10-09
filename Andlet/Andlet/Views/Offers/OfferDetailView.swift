@@ -187,6 +187,9 @@ struct OfferDetailView: View {
                                 .font(.custom("LeagueSpartan-Regular", size: 18))
                                 .padding(.top, 15)
                                 .padding(.horizontal, 18)
+                                .onTapGesture {
+                                                openEmailClient(to: offer.userId)
+                                            }
                         }
                     }
                     .transition(.move(edge: .bottom))
@@ -206,6 +209,25 @@ struct OfferDetailView: View {
             }
         } else {
             Text("Versión de iOS no soportada")
+        }
+    }
+    
+    private func openEmailClient(to email: String) {
+        
+        let subject = "Interested in \(property.title) property"
+        let body = "Hello \(viewModel.user.name),\n\nI would like to know more about the availability of the offer '\(property.title)' that you published on Andlet."
+        
+        // Codificamos los valores para que sean seguros en la URL
+        let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let encodedBody = body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        
+        // Formatear la URL con el *mailto:*, el subject y el body
+        let emailString = "mailto:\(email)?subject=\(encodedSubject)&body=\(encodedBody)"
+        
+        if let url = URL(string: emailString) {
+            UIApplication.shared.open(url)
+        } else {
+            print("Error al intentar abrir el cliente de correo.")
         }
     }
 
