@@ -186,6 +186,8 @@ struct OfferDetailView: View {
                             Text(offer.userId)
                                 .font(.custom("LeagueSpartan-Regular", size: 18))
                                 .padding(.top, 15)
+                                .underline()
+                                .foregroundColor(Color.blue)
                                 .padding(.horizontal, 18)
                                 .onTapGesture {
                                                 openEmailClient(to: offer.userId)
