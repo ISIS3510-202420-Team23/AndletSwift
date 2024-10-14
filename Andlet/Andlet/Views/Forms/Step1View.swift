@@ -159,20 +159,24 @@ struct Step1View: View {
                             .onTapGesture {
                                 // Validar campos obligatorios y mostrar advertencia si no se cumple la condición
                                 if propertyOfferData.placeTitle.isEmpty || propertyOfferData.placeAddress.isEmpty || propertyOfferData.selectedImagesData.isEmpty {
-                                    showWarningMessage = true
                                     warningMessageText = "Please fill in all the required fields and add at least one photo."
+                                    showWarningMessage = true
+                                } else if propertyOfferData.placeTitle.containsEmoji || propertyOfferData.placeDescription.containsEmoji || propertyOfferData.placeAddress.containsEmoji {
+                                    warningMessageText = "Please remove any emojis from the text fields."
+                                    showWarningMessage = true
+                                } else {
+                                    showWarningMessage = false
+                                    // Asignar el usuario autenticado y luego imprimir solo el ID (correo electrónico)
+                                    viewModel.assignAuthenticatedUser(to: propertyOfferData)
+                                    navigateToStep2 = true
+                                }
+
+                                if showWarningMessage {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                         withAnimation {
                                             showWarningMessage = false
                                         }
                                     }
-                                } else {
-                                    showWarningMessage = false
-
-                                    // Asignar el usuario autenticado y luego imprimir solo el ID (correo electrónico)
-                                    viewModel.assignAuthenticatedUser(to: propertyOfferData)
-
-                                    navigateToStep2 = true
                                 }
                             }
                     }
@@ -213,9 +217,3 @@ struct Step1View: View {
         }
     }
 }
-
-
-// Reemplazar la función Preview para probar con el ObservableObject
-//#Preview {
-//    Step1View(propertyOfferData: PropertyOfferData(), path: $nil)
-//}
