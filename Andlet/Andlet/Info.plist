@@ -31,6 +31,12 @@
 		<string>LeagueSpartan-SemiBold.ttf</string>
 		<string>Montserrat-ExtraLightItalic.ttf</string>
 	</array>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    	<string>We need your location to notify you about offers near the university.</string>
+   	<key>NSLocationWhenInUseUsageDescription</key>
+    	<string>We need your location to notify you about offers near the university.</string>
+    	<key>NSLocationAlwaysUsageDescription</key>
+    	<string>We need your location even when the app is in the background.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
