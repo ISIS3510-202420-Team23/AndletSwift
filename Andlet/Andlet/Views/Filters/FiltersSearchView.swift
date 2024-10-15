@@ -7,7 +7,6 @@ struct FilterSearchView: View {
     @ObservedObject var filterViewModel: FilterViewModel
     @ObservedObject var offerViewModel: OfferViewModel
 
-    // Variables locales para manejar temporalmente los valores de los filtros
     @State private var localStartDate: Date
     @State private var localEndDate: Date
     @State private var localMinPrice: Double
@@ -15,7 +14,6 @@ struct FilterSearchView: View {
     @State private var localMaxMinutes: Double
     @State private var selectedOption: FilterSearchOptions = .dates
 
-    // Custom initializer para inicializar las variables locales con los valores del ViewModel
     init(show: Binding<Bool>, filterViewModel: FilterViewModel, offerViewModel: OfferViewModel) {
         _show = show
         _localStartDate = State(initialValue: filterViewModel.startDate)
@@ -30,11 +28,10 @@ struct FilterSearchView: View {
     var body: some View {
         if #available(iOS 16.0, *) {
             VStack {
-                // Header con botón de cerrar (x) y botón de aplicar (Apply)
                 HStack {
                     Button {
                         withAnimation(.snappy) {
-                            show.toggle() // Cerrar vista de filtros sin aplicar cambios
+                            show.toggle()
                         }
                     } label: {
                         Image(systemName: "xmark")
@@ -49,7 +46,6 @@ struct FilterSearchView: View {
                     Spacer()
                     
                     Button(action: {
-                        // Actualizar los filtros en FilterViewModel con los valores locales
                         filterViewModel.updateFilters(
                             startDate: localStartDate,
                             endDate: localEndDate,
@@ -58,7 +54,6 @@ struct FilterSearchView: View {
                             maxMinutes: localMaxMinutes
                         )
 
-                        // Actualizar los filtros en OfferViewModel para reflejar los cambios aplicados
                         offerViewModel.updateFilters(
                             startDate: localStartDate,
                             endDate: localEndDate,
@@ -67,17 +62,12 @@ struct FilterSearchView: View {
                             maxMinutes: localMaxMinutes
                         )
 
-                        // Establecer que se han aplicado filtros
                         offerViewModel.filtersApplied = true
-
-                        // Llamar a la función para cargar las ofertas con filtros
                         offerViewModel.fetchOffersWithFilters()
-
-                        // Registrar el evento en Firestore
                         logFilterAppliedEvent()
 
                         withAnimation(.snappy) {
-                            show.toggle() // Cerrar vista de filtros al hacer clic en "Apply"
+                            show.toggle()
                         }
                     }) {
                         Text("Apply")
@@ -91,13 +81,10 @@ struct FilterSearchView: View {
                 .padding()
                 .padding(.horizontal)
                 .padding(.top, 55)
-
-                // Sincronizar los valores locales con los del ViewModel cada vez que se abra la vista
                 .onAppear {
                     loadValuesFromViewModel()
                 }
-                
-                // Sección para seleccionar fechas
+
                 VStack(alignment: .leading) {
                     Text("When?")
                         .font(.custom("LeagueSpartan-SemiBold", size: 28))
@@ -117,7 +104,6 @@ struct FilterSearchView: View {
                 .padding()
                 .shadow(radius: 10)
                 
-                // Sección para seleccionar rango de precios
                 VStack(alignment: .leading) {
                     if selectedOption == .prices {
                         Text("Price")
@@ -131,7 +117,6 @@ struct FilterSearchView: View {
                             Text("$\(Int(localMaxPrice))")
                         }
                         .padding(.horizontal)
-                        
                     } else {
                         CollapsedPickedView(title: "Price", description: "Select price")
                     }
@@ -145,8 +130,7 @@ struct FilterSearchView: View {
                 .onTapGesture {
                     withAnimation(.snappy) { selectedOption = .prices }
                 }
-                
-                // Sección para seleccionar minutos desde el campus
+
                 VStack(alignment: .leading) {
                     if selectedOption == .minutes {
                         Text("Minutes from campus")
@@ -174,27 +158,33 @@ struct FilterSearchView: View {
                 .onTapGesture {
                     withAnimation(.snappy) { selectedOption = .minutes }
                 }
-                
+
                 Spacer()
+
+                // Añadimos el mensaje centrado sobre cómo eliminar los filtros
+                Text("To remove selected filters after applying them, simply shake your phone.")
+                    .font(.custom("LeagueSpartan-Light", size: 12))
+                    .foregroundColor(Color(hex: "0C356A"))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                    .padding(.bottom, 45) // Un pequeño padding inferior para darle espacio
+
             }
             .toolbar(.hidden, for: .tabBar)
         }
     }
     
-    // Función para registrar evento de filtro aplicado en Firestore
     private func logFilterAppliedEvent() {
         guard let currentUser = Auth.auth().currentUser, let userEmail = currentUser.email else {
             print("Error: No se pudo obtener el email del usuario, el usuario no está autenticado.")
             return
         }
         
-        // Crear un identificador único para el documento usando el formato solicitado
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd_HH:mm:ss"
         let formattedDate = dateFormatter.string(from: Date())
         let documentID = "1_\(userEmail)_\(formattedDate)"
 
-        // Crear la estructura del documento
         let actionData: [String: Any] = [
             "action": "filter",
             "app": "swift",
@@ -202,7 +192,6 @@ struct FilterSearchView: View {
             "user_id": userEmail
         ]
 
-        // Registrar la acción en la colección "user_actions" en Firestore
         let db = Firestore.firestore()
         db.collection("user_actions").document(documentID).setData(actionData) { error in
             if let error = error {
@@ -213,7 +202,6 @@ struct FilterSearchView: View {
         }
     }
 
-    // Función para sincronizar los valores locales con los del ViewModel al cargar la vista
     private func loadValuesFromViewModel() {
         localStartDate = filterViewModel.startDate
         localEndDate = filterViewModel.endDate
@@ -222,8 +210,6 @@ struct FilterSearchView: View {
         localMaxMinutes = filterViewModel.maxMinutes
     }
 }
-
-
 
 
 #Preview {

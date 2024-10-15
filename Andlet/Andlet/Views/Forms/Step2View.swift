@@ -40,9 +40,9 @@ struct Step2View: View {
                             .padding(.top, 5)
 
                         VStack(spacing: 15) {
-                            IncrementDecrementView(title: "Rooms available for sublet", count: $propertyOfferData.numRooms)
-                            IncrementDecrementView(title: "Beds", count: $propertyOfferData.numBeds)
-                            IncrementDecrementView(title: "Bathrooms", count: $propertyOfferData.numBaths)
+                            IncrementDecrementView(title: "Rooms available for sublet", count: $propertyOfferData.numRooms, maxCount: 5)
+                            IncrementDecrementView(title: "Beds", count: $propertyOfferData.numBeds, maxCount: 5)
+                            IncrementDecrementView(title: "Bathrooms", count: $propertyOfferData.numBaths, maxCount: 5)
                         }
                         .padding(.bottom, 30)
 
@@ -150,8 +150,3 @@ struct Step2View: View {
         }
     }
 }
-
-// Reemplazar la función Preview para probar con el ObservableObject
-//#Preview {
-//    Step2View(propertyOfferData: PropertyOfferData())
-//}
