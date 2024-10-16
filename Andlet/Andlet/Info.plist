@@ -31,6 +31,8 @@
 		<string>LeagueSpartan-SemiBold.ttf</string>
 		<string>Montserrat-ExtraLightItalic.ttf</string>
 	</array>
+    <key>UIUserInterfaceStyle</key>
+    <string>Light</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     	<string>We need your location to notify you about offers near the university.</string>
    	<key>NSLocationWhenInUseUsageDescription</key>
