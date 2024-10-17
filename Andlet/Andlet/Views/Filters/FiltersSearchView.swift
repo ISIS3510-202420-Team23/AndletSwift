@@ -12,7 +12,6 @@ struct FilterSearchView: View {
     @State private var localMinPrice: Double
     @State private var localMaxPrice: Double
     @State private var localMaxMinutes: Double
-    @State private var selectedOption: FilterSearchOptions = .dates
 
     init(show: Binding<Bool>, filterViewModel: FilterViewModel, offerViewModel: OfferViewModel) {
         _show = show
@@ -105,7 +104,6 @@ struct FilterSearchView: View {
                 .shadow(radius: 10)
                 
                 VStack(alignment: .leading) {
-                    if selectedOption == .prices {
                         Text("Price")
                             .font(.custom("LeagueSpartan-SemiBold", size: 28))
                             .fontWeight(.semibold)
@@ -117,22 +115,16 @@ struct FilterSearchView: View {
                             Text("$\(Int(localMaxPrice))")
                         }
                         .padding(.horizontal)
-                    } else {
-                        CollapsedPickedView(title: "Price", description: "Select price")
-                    }
                 }
                 .padding()
-                .frame(height: selectedOption == .prices ? 120 : 64)
+                .frame(height: 120)
                 .background(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding()
                 .shadow(radius: 10)
-                .onTapGesture {
-                    withAnimation(.snappy) { selectedOption = .prices }
-                }
 
                 VStack(alignment: .leading) {
-                    if selectedOption == .minutes {
+
                         Text("Minutes from campus")
                             .font(.custom("LeagueSpartan-SemiBold", size: 28))
                             .fontWeight(.semibold)
@@ -145,19 +137,13 @@ struct FilterSearchView: View {
                         }
                         .padding(.horizontal)
                         
-                    } else {
-                        CollapsedPickedView(title: "Minutes from campus", description: "Select minutes")
-                    }
                 }
                 .padding()
-                .frame(height: selectedOption == .minutes ? 120 : 64)
+                .frame(height: 120 )
                 .background(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding()
                 .shadow(radius: 10)
-                .onTapGesture {
-                    withAnimation(.snappy) { selectedOption = .minutes }
-                }
 
                 Spacer()
 
