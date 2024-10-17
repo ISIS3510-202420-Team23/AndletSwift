@@ -50,7 +50,7 @@ class OfferViewModel: ObservableObject {
 
                 // Iterar sobre las claves dentro del documento de ofertas
                 for (key, value) in data {
-                    /*print("Clave: \(key), Valor: \(value)") */ // Imprimir cada clave y valor
+                
 
                     if let offerData = value as? [String: Any] {
                         // Filtrar por is_active == true dentro de los campos anidados

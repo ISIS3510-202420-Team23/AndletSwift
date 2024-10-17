@@ -205,7 +205,6 @@ class PropertyViewModel: ObservableObject {
     func assignAuthenticatedUser(to propertyOfferData: PropertyOfferData) {
         if let currentUser = Auth.auth().currentUser {
             propertyOfferData.userId = currentUser.email ?? "" // Asignar el correo electrónico como userId
-            print("Usuario autenticado asignado a PropertyOfferData: Email \(propertyOfferData.userId)")
         } else {
             print("No se encontró un usuario autenticado.")
         }
