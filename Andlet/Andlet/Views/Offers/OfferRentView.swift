@@ -44,6 +44,15 @@ struct OfferRentView: View {
                     Text(property.address)
                         .font(.custom("LeagueSpartan-ExtraLight", size: 16))
                         .foregroundColor(Color(hex: "000000"))
+                    
+                }
+                .foregroundColor(.gray)
+                
+                HStack {
+                
+                    Text("\(formattedDate(offer.initialDate)) - \(formattedDate(offer.finalDate))")
+                        .font(.custom("LeagueSpartan-Light", size: 16))
+                        .foregroundColor(Color(hex: "000000"))
                 }
                 .foregroundColor(.gray)
 
@@ -84,7 +93,7 @@ struct OfferRentView: View {
                         Circle()
                             .stroke(isSold ? Color.clear : Color.black, lineWidth: 1)
                             .background(isSold ? Circle().foregroundColor(.black) : nil)
-                            .frame(width: 16, height: 16)
+                            .frame(width: 20, height: 20)
 
                         Button(action: {
                             isSold.toggle() 
@@ -99,7 +108,7 @@ struct OfferRentView: View {
                             )
                         }) {
                             Text(isSold ? "Leased" : "Available")
-                                .font(.custom("LeagueSpartan-Medium", size: 16))
+                                .font(.custom("LeagueSpartan-Medium", size: 20))
                                 .foregroundColor(.black)
                         }
                     }
@@ -110,4 +119,11 @@ struct OfferRentView: View {
         }
         .padding()
     }
+    
+    // Función para formatear las fechas
+       func formattedDate(_ date: Date) -> String {
+           let dateFormatter = DateFormatter()
+           dateFormatter.dateStyle = .medium
+           return dateFormatter.string(from: date)
+       }
 }
