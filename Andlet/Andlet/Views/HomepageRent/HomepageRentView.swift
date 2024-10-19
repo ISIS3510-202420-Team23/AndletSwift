@@ -14,6 +14,7 @@ import UIKit
 struct HomepageRentView: View {
     @State private var showFilterSearchView = false
     @State private var showShakeAlert = false
+    @State private var showConfirmationAlert = false
     @StateObject private var viewModel = OfferRentViewModel()
     @StateObject private var shakeDetector = ShakeDetector()  // Detector de shake
 
@@ -57,14 +58,20 @@ struct HomepageRentView: View {
                             ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)
                                 .frame(width: 0, height: 0)  // Oculto pero activo
                         )
-                        .alert(isPresented: $showShakeAlert) {
-                            Alert(title: Text("Shake Detected"), message: Text("You have refreshed the offers!"), dismissButton: .default(Text("OK")))
-                        }
+                        .alert(isPresented: $showConfirmationAlert) {
+                                                    Alert(
+                                                        title: Text("Shake Detected"),
+                                                        message: Text("Do you want to refresh the offers?"),
+                                                        primaryButton: .destructive(Text("Yes")) {
+                                                            refreshOffers()
+                                                        },
+                                                        secondaryButton: .cancel(Text("No"))
+                                                    )
+                                                }
                         .onReceive(shakeDetector.$didShake) { didShake in
                             if didShake {
-                                showShakeAlert = true
-                                refreshOffers()  // Llama a la función para refrescar las ofertas
-                                shakeDetector.resetShake()  // Reinicia el valor para que pueda detectar nuevos shakes
+                                showConfirmationAlert = true
+                                shakeDetector.resetShake()
                             }
                         }
                     }
