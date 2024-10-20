@@ -95,7 +95,7 @@ struct HomepageView: View {
                         .alert(isPresented: $showNoConnectionAlert) {
                             Alert(
                                 title: Text("No Internet Connection"),
-                                message: Text("Please check your internet connection."),
+                                message: Text("Offers cannot be updated. Please check your internet connection."),
                                 dismissButton: .default(Text("OK"))
                             )
                         }

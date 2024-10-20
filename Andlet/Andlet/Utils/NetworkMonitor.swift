@@ -9,6 +9,7 @@ import Network
 import SwiftUI
 
 class NetworkMonitor: ObservableObject {
+    static let shared = NetworkMonitor()
     private var monitor: NWPathMonitor
     private let queue = DispatchQueue(label: "NetworkMonitor")
     
