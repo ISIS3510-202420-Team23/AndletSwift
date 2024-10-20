@@ -7,7 +7,9 @@ struct HomepageView: View {
     @State private var showFilterSearchView = false
     @State private var showShakeAlert = false
     @State private var showConfirmationAlert = false
+    @State private var showNoConnectionAlert = false  // Estado para mostrar la alerta de no conexión
     @StateObject private var offerViewModel = OfferViewModel()
+    @StateObject private var networkMonitor = NetworkMonitor()  // Monitoreo de red
     @State private var userRoommatePreference: Bool? = nil
     @StateObject private var filterViewModel = FilterViewModel(
         startDate: Date(),
@@ -58,37 +60,45 @@ struct HomepageView: View {
                                 
                         }
                         .safeAreaInset(edge: .bottom) {
-                        Color.clear.frame(height: 80)}
-                        
+                            Color.clear.frame(height: 80)
+                        }
                         .onAppear {
-                            
                             fetchUserViewPreferences()
                             let cache = URLCache.shared
                             print("Cache actual: \(cache.currentMemoryUsage) bytes en memoria y \(cache.currentDiskUsage) bytes en disco.")
-
-                            
                         }
                         .background(
                             ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)
                                 .frame(width: 0, height: 0)
                         )
                         .alert(isPresented: $showConfirmationAlert) {
-                                                    Alert(
-                                                        title: Text("Shake Detected"),
-                                                        message: Text("Do you want to clear the filters / refresh the offers?🧹"),
-                                                        primaryButton: .destructive(Text("Yes")) {
-                                                            refreshOffers()
-                                                        },
-                                                        secondaryButton: .cancel(Text("No"))
-                                                    )
-                                                }
+                            Alert(
+                                title: Text("Shake Detected"),
+                                message: Text("Do you want to clear the filters / refresh the offers?🧹"),
+                                primaryButton: .destructive(Text("Yes")) {
+                                    refreshOffers()
+                                },
+                                secondaryButton: .cancel(Text("No"))
+                            )
+                        }
                         .onReceive(shakeDetector.$didShake) { didShake in
                             if didShake {
                                 showConfirmationAlert = true
                                 shakeDetector.resetShake()
                             }
                         }
-                        // Manage navigation based on selected offer
+                        .onReceive(networkMonitor.$isConnected) { isConnected in
+                            if !isConnected {
+                                showNoConnectionAlert = true  // Mostrar alerta si no hay conexión
+                            }
+                        }
+                        .alert(isPresented: $showNoConnectionAlert) {
+                            Alert(
+                                title: Text("No Internet Connection"),
+                                message: Text("Please check your internet connection."),
+                                dismissButton: .default(Text("OK"))
+                            )
+                        }
                         .navigationDestination(isPresented: Binding(
                             get: { selectedOffer != nil },
                             set: { _ in selectedOffer = nil }
