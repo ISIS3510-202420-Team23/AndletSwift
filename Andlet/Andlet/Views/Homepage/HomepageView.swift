@@ -7,7 +7,7 @@ struct HomepageView: View {
     @State private var showFilterSearchView = false
     @State private var showShakeAlert = false
     @State private var showConfirmationAlert = false
-    @State private var showNoConnectionAlert = false  // Estado para mostrar la alerta de no conexión
+    @State private var showNoConnectionBanner = false  // Usamos un banner en lugar de una alerta
     @StateObject private var offerViewModel = OfferViewModel()
     @StateObject private var networkMonitor = NetworkMonitor()  // Monitoreo de red
     @State private var userRoommatePreference: Bool? = nil
@@ -37,7 +37,21 @@ struct HomepageView: View {
                                         showFilterSearchView.toggle()
                                     }
                                 }
-
+                            
+                            if showNoConnectionBanner {
+                                Text("⚠️ No Internet Connection, offers will not be updated")
+                                    .font(.system(size: 14, weight: .medium))
+                                    .padding(.vertical, 10)
+                                    .padding(.horizontal, 16)
+                                    .background(Color.red.opacity(0.8))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(8)
+                                    .frame(maxWidth: .infinity)
+                                    .multilineTextAlignment(.center)
+                                    .transition(.move(edge: .top))
+                                    .padding(.horizontal, 40)
+                            }
+                            
                             if offerViewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
                                     .font(.headline)
@@ -47,7 +61,7 @@ struct HomepageView: View {
                                 LazyVStack(spacing: 32) {
                                     ForEach(sortedOffers()) { offerWithProperty in
                                         Button(action: {
-                                            selectedOffer = offerWithProperty  // Set selected offer
+                                            selectedOffer = offerWithProperty
                                         }) {
                                             OfferView(offer: offerWithProperty.offer, property: offerWithProperty.property)
                                                 .frame(height: 330)
@@ -57,7 +71,8 @@ struct HomepageView: View {
                                 }
                                 .padding()
                             }
-                                
+                            
+                            
                         }
                         .safeAreaInset(edge: .bottom) {
                             Color.clear.frame(height: 80)
@@ -88,16 +103,9 @@ struct HomepageView: View {
                             }
                         }
                         .onReceive(networkMonitor.$isConnected) { isConnected in
-                            if !isConnected {
-                                showNoConnectionAlert = true  // Mostrar alerta si no hay conexión
+                            withAnimation {
+                                showNoConnectionBanner = !isConnected  // Mostrar el banner si no hay conexión
                             }
-                        }
-                        .alert(isPresented: $showNoConnectionAlert) {
-                            Alert(
-                                title: Text("No Internet Connection"),
-                                message: Text("Offers cannot be updated. Please check your internet connection."),
-                                dismissButton: .default(Text("OK"))
-                            )
                         }
                         .navigationDestination(isPresented: Binding(
                             get: { selectedOffer != nil },
@@ -116,7 +124,7 @@ struct HomepageView: View {
             Text("Versión de iOS no soportada")
         }
     }
-
+    
     // Función para obtener la preferencia del usuario desde Firestore
     func fetchUserViewPreferences() {
         let db = Firestore.firestore()
@@ -124,7 +132,7 @@ struct HomepageView: View {
             print("Error: No hay usuario logueado")
             return
         }
-
+        
         let userViewsRef = db.collection("user_views").document(userEmail)
         userViewsRef.getDocument { document, error in
             if let document = document, document.exists {
@@ -136,24 +144,25 @@ struct HomepageView: View {
             }
         }
     }
-
+    
     func sortedOffers() -> [OfferWithProperty] {
         guard let preference = userRoommatePreference else {
             return offerViewModel.offersWithProperties
         }
-
+        
         return offerViewModel.offersWithProperties.sorted { first, second in
             let firstHasRoommates = first.offer.roommates > 0
             let secondHasRoommates = second.offer.roommates > 0
-
+            
             if preference {
                 return firstHasRoommates && !secondHasRoommates
             } else {
                 return !firstHasRoommates && secondHasRoommates
+                
             }
         }
     }
-
+    
     func refreshOffers() {
         offerViewModel.fetchOffers()
     }
