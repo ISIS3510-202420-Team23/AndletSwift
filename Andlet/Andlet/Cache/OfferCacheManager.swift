@@ -12,30 +12,25 @@ import FirebaseStorage
 class OfferCacheManager {
     static let shared = OfferCacheManager()
     
-    // Cache para las ofertas
-    private let offerCacheKey = "cachedOffers"
+// Cache para las ofertas
+    private let offerCache = NSCache<NSString, NSArray>()  // Usamos NSCache para cachear ofertas
+    private let offerCacheKey = "cachedOffers" as NSString  // Clave para el cache
     
-    // Función para guardar ofertas en caché (máximo 10)
+    init() {
+        offerCache.countLimit = 10  // Limitar a un máximo de 10 elementos en el cache
+    }
+    
+    /// Función para guardar ofertas en caché (máximo 10)
     func saveOffersToCache(_ offers: [OfferWithProperty]) {
-        let encoder = JSONEncoder()
-        let offersArray = Array(offers.prefix(10))  // Convertir ArraySlice a Array
-        if let encoded = try? encoder.encode(offersArray) {  // Guardar máximo 10 ofertas
-            UserDefaults.standard.set(encoded, forKey: offerCacheKey)
-            print("🔴Ofertas guardadas en caché correctamente: \(offersArray.count) ofertas.")  // Debug
-        } else {
-            print("🔴Error al guardar ofertas en caché.")
-        }
+        let offersArray = Array(offers.prefix(10))  // Limitar a un máximo de 10 ofertas
+        offerCache.setObject(offersArray as NSArray, forKey: offerCacheKey)
+        print("🔴Ofertas guardadas en caché correctamente: \(offersArray.count) ofertas.")  // Debug
     }
     
     // Función para obtener las ofertas desde el caché
     func loadOffersFromCache() -> [OfferWithProperty] {
-        if let savedOffers = UserDefaults.standard.object(forKey: offerCacheKey) as? Data {
-            let decoder = JSONDecoder()
-            if let loadedOffers = try? decoder.decode([OfferWithProperty].self, from: savedOffers) {
-                return loadedOffers
-            } else {
-                print("🔴Error al decodificar las ofertas del caché.")
-            }
+        if let cachedOffers = offerCache.object(forKey: offerCacheKey) as? [OfferWithProperty] {
+            return cachedOffers
         } else {
             print("🔴No hay ofertas guardadas en caché.")
         }
@@ -44,6 +39,7 @@ class OfferCacheManager {
     
     // Función para limpiar el caché (opcional)
     func clearCache() {
-        UserDefaults.standard.removeObject(forKey: offerCacheKey)
+        offerCache.removeObject(forKey: offerCacheKey)
+        print("🔴Cache de ofertas limpiado.")
     }
 }
