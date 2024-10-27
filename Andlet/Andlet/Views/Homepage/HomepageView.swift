@@ -52,6 +52,14 @@ struct HomepageView: View {
                                     .padding(.horizontal, 40)
                             }
                             
+                            Text("To refresh offers, simply shake your phone😉")
+                                .font(.custom("LeagueSpartan-Light", size: 16))
+                                .foregroundColor(Color(hex: "0C356A"))
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal)
+                                .padding(.top, 3)
+                                 
+                            
                             if offerViewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
                                     .font(.headline)
@@ -104,7 +112,7 @@ struct HomepageView: View {
                         }
                         .onReceive(networkMonitor.$isConnected) { isConnected in
                             withAnimation {
-                                showNoConnectionBanner = !isConnected  // Mostrar el banner si no hay conexión
+                                showNoConnectionBanner = !isConnected
                             }
                         }
                         .navigationDestination(isPresented: Binding(
