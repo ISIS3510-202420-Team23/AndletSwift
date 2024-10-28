@@ -19,9 +19,9 @@ struct HomepageRentView: View {
     @StateObject private var viewModel = OfferRentViewModel()
     @StateObject private var shakeDetector = ShakeDetector()
     @StateObject private var networkMonitor = NetworkMonitor()// Detector de shake
-
+    
     let currentUser = Auth.auth().currentUser
-
+    
     var body: some View {
         if #available(iOS 16.0, *) {
             NavigationStack {
@@ -31,8 +31,8 @@ struct HomepageRentView: View {
                     ScrollView {
                         VStack {
                             Heading()
-                          
-                        
+                            
+                            
                             if showNoConnectionBanner {
                                 Text("⚠️ No Internet Connection,you cannot create an offer or change an offer status if you are offline")
                                     .font(.system(size: 14, weight: .medium))
@@ -45,7 +45,7 @@ struct HomepageRentView: View {
                                     .multilineTextAlignment(.center)
                                     .transition(.move(edge: .top))
                                     .padding(.horizontal, 40)
-                                    
+                                
                             }
                             else{
                                 CreateMoreButton()
@@ -77,23 +77,25 @@ struct HomepageRentView: View {
                             let cache = URLCache.shared
                             print("Cache actual: \(cache.currentMemoryUsage) bytes en memoria y \(cache.currentDiskUsage) bytes en disco.")
                         }
-                      
+                        
                         .background(
                             ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)
                                 .frame(width: 0, height: 0)  // Oculto pero activo
                         )
+                        
                         .alert(isPresented: $showConfirmationAlert) {
-                                                    Alert(
-                                                        title: Text("Shake Detected"),
-                                                        message: Text("Do you want to refresh the offers?"),
-                                                        primaryButton: .destructive(Text("Yes")) {
-                                                            refreshOffers()
-                                                        },
-                                                        secondaryButton: .cancel(Text("No"))
-                                                    )
-                                                }
+                            Alert(
+                                title: Text("Shake Detected"),
+                                message: Text("Do you want to refresh the offers?"),
+                                primaryButton: .destructive(Text("Yes")) {
+                                    refreshOffers()
+                                },
+                                secondaryButton: .cancel(Text("No"))
+                            )
+                        }
+                        
                         .onReceive(shakeDetector.$didShake) { didShake in
-                            if didShake {
+                            if didShake && networkMonitor.isConnected {
                                 showConfirmationAlert = true
                                 shakeDetector.resetShake()
                             }
@@ -115,7 +117,7 @@ struct HomepageRentView: View {
             // Fallback en versiones anteriores
         }
     }
-
+    
     // Función para refrescar las ofertas
     func refreshOffers() {
         print("Dispositivo agitado. Refrescando ofertas para el landlord...")

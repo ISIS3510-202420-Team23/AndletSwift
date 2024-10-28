@@ -52,14 +52,16 @@ struct HomepageView: View {
                                     .padding(.horizontal, 40)
                             }
                             
-                            Text("To refresh offers, simply shake your phone😉")
-                                .font(.custom("LeagueSpartan-Light", size: 16))
-                                .foregroundColor(Color(hex: "0C356A"))
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal)
-                                .padding(.top, 3)
-                                 
-                            
+                            else{
+                                
+                                Text("To refresh offers, simply shake your phone😉")
+                                    .font(.custom("LeagueSpartan-Light", size: 16))
+                                    .foregroundColor(Color(hex: "0C356A"))
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal)
+                                    .padding(.top, 3)
+                                
+                            }
                             if offerViewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
                                     .font(.headline)
@@ -86,10 +88,13 @@ struct HomepageView: View {
                             Color.clear.frame(height: 80)
                         }
                         .onAppear {
-                            fetchUserViewPreferences()
-                            let cache = URLCache.shared
-                            print("Cache actual: \(cache.currentMemoryUsage) bytes en memoria y \(cache.currentDiskUsage) bytes en disco.")
+                            if NetworkMonitor.shared.isConnected {
+                                offerViewModel.fetchOffers()  // Intentar cargar desde red si hay conexión
+                            } else {
+                                offerViewModel.offersWithProperties = OfferCacheManager.shared.loadOffersFromCache()  // Cargar desde caché
+                            }
                         }
+
                         .background(
                             ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)
                                 .frame(width: 0, height: 0)

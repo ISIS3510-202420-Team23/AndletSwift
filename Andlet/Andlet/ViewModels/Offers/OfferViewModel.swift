@@ -30,63 +30,52 @@ class OfferViewModel: ObservableObject {
 
     // Obtener ofertas y asegurarse de que tienen una propiedad asociada
     func fetchOffers() {
-            guard NetworkMonitor.shared.isConnected else {
-                // No hay conexión, cargar desde caché
-                offersWithProperties = OfferCacheManager.shared.loadOffersFromCache()
-                return
-            }
-            
+        if NetworkMonitor.shared.isConnected {
+            // Con conexión, cargamos desde la base de datos y actualizamos el caché
             db.collection("offers").getDocuments { snapshot, error in
-                if let error = error {
-                    print("Error al obtener las ofertas: \(error)")
+                guard error == nil, let documents = snapshot?.documents else {
+                    print("Error al obtener las ofertas: \(error?.localizedDescription ?? "desconocido")")
                     return
                 }
-
-                guard let documents = snapshot?.documents else {
-                    print("No se encontraron documentos en la colección 'offers'")
-                    return
-                }
-
+                
+                // Procesamos los documentos como en tu código original
                 var tempOffersWithProperties: [OfferWithProperty] = []
                 let group = DispatchGroup()
-
-                // Iterar sobre los documentos en la colección "offers"
+                
                 for document in documents {
                     let data = document.data()
                     for (key, value) in data {
-                        if let offerData = value as? [String: Any] {
-                            if let isActive = offerData["is_active"] as? Bool, isActive == true {
-                                if let idProperty = offerData["id_property"] as? Int {
-                                    let idPropertyString = "\(idProperty)"
-                                    let offerId = "\(document.documentID)_\(key)"
-                                    let offer = self.mapOfferDataToModel(data: offerData, documentId: document.documentID, key: key)
-
-                                    group.enter()
-
-                                    self.fetchPropertyForOffer(idProperty: idPropertyString) { property in
-                                        if let property = property {
-                                            let offerWithProperty = OfferWithProperty(id: offerId, offer: offer, property: property)
-                                            tempOffersWithProperties.append(offerWithProperty)
-                                            
-                                            // Descargar y cachear la imagen asociada
-                                            for photo in property.photos {
-                                                ImageCacheManager.shared.getImage(forKey: photo) { _ in }
-                                            }
-                                        }
-                                        group.leave()
-                                    }
+                        if let offerData = value as? [String: Any],
+                           let isActive = offerData["is_active"] as? Bool, isActive {
+                            
+                            let idPropertyString = "\(offerData["id_property"] as? Int ?? 0)"
+                            let offerId = "\(document.documentID)_\(key)"
+                            let offer = self.mapOfferDataToModel(data: offerData, documentId: document.documentID, key: key)
+                            
+                            group.enter()
+                            
+                            self.fetchPropertyForOffer(idProperty: idPropertyString) { property in
+                                if let property = property {
+                                    let offerWithProperty = OfferWithProperty(id: offerId, offer: offer, property: property)
+                                    tempOffersWithProperties.append(offerWithProperty)
                                 }
+                                group.leave()
                             }
                         }
                     }
                 }
-
+                
                 group.notify(queue: .main) {
                     self.offersWithProperties = tempOffersWithProperties
-                    OfferCacheManager.shared.saveOffersToCache(tempOffersWithProperties)  // Guardar las ofertas principales en caché
+                    OfferCacheManager.shared.saveOffersToCache(tempOffersWithProperties)  // Cacheamos las ofertas principales
                 }
             }
+        } else {
+            // Sin conexión, cargar siempre desde caché
+            offersWithProperties = OfferCacheManager.shared.loadOffersFromCache()
         }
+    }
+
     
     // Calcular el porcentaje de propiedades activas con descripción vacía
     func calculateEmptyDescriptionPercentage() {
