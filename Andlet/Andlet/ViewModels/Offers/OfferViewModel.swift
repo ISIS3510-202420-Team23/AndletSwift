@@ -112,127 +112,159 @@ class OfferViewModel: ObservableObject {
     
     func fetchOffersWithFilters() {
         var tempOffersWithProperties: [OfferWithProperty] = []
-
-        // Obtener todas las propiedades primero
-        db.collection("properties").getDocuments { snapshot, error in
-            if let error = error {
-                print("Error al obtener propiedades: \(error)")
-                return
-            }
-
-            guard let documents = snapshot?.documents else {
-                print("No se encontraron documentos en la colección 'properties'")
-                return
-            }
-
-            // Mapeo de propiedades: [String: PropertyModel]
-            var propertyMap: [String: PropertyModel] = [:]
-
-            for document in documents {
-                let propertyData = document.data()
-
-                for (propertyKey, propertyValue) in propertyData {
-                    if let propertyDetails = propertyValue as? [String: Any] {
-                        let property = self.mapPropertyDataToModel(data: propertyDetails)
-                        propertyMap[propertyKey] = property
-                    }
-                }
-            }
-
-            print("Mapa de propiedades completo: \(propertyMap)")
-
-            // Obtener todas las ofertas y asociarlas con sus propiedades
-            self.db.collection("offers").getDocuments { snapshot, error in
+        if NetworkMonitor.shared.isConnected {
+            
+            // Obtener todas las propiedades primero
+            db.collection("properties").getDocuments { snapshot, error in
                 if let error = error {
-                    print("Error al obtener las ofertas: \(error)")
+                    print("Error al obtener propiedades: \(error)")
                     return
                 }
-
+                
                 guard let documents = snapshot?.documents else {
-                    print("No se encontraron documentos en la colección 'offers'")
+                    print("No se encontraron documentos en la colección 'properties'")
                     return
                 }
-
+                
+                // Mapeo de propiedades: [String: PropertyModel]
+                var propertyMap: [String: PropertyModel] = [:]
+                
                 for document in documents {
-                    let offerData = document.data()
-
-                    // Iterar sobre las ofertas dentro del documento
-                    for (offerKey, offerValue) in offerData {
-                        if let offerDetails = offerValue as? [String: Any],
-                           let isActive = offerDetails["is_active"] as? Bool, isActive {
-
-                            // Convertir id_property a String para asegurar coincidencia con propertyMap
-                            let idPropertyString: String
-                            if let idPropertyInt = offerDetails["id_property"] as? Int {
-                                idPropertyString = "\(idPropertyInt)"
-                            } else if let idProperty = offerDetails["id_property"] as? String {
-                                idPropertyString = idProperty
-                            } else {
-                                print("Error: id_property no se pudo convertir a String.")
-                                continue
-                            }
-
-                            // Verificar si se encuentra la propiedad en propertyMap
-                            guard let property = propertyMap[idPropertyString] else {
-                                print("No se encontró la propiedad con id \(idPropertyString) en el mapa de propiedades.")
-                                continue
-                            }
-
-                            // Crear objeto OfferModel
-                            let offer = self.mapOfferDataToModel(
-                                data: offerDetails,
-                                documentId: document.documentID,  // ID del documento actual
-                                key: offerKey  // La clave actual de la oferta
-                            )
-
-                            let offerId = "\(document.documentID)_\(offerKey)"  // Generar ID único para la oferta
-
-                            // Verificar condiciones de fechas y precios antes de agregar la oferta a la lista
-                            guard let initialDate = offerDetails["initial_date"] as? Timestamp,
-                                  let finalDate = offerDetails["final_date"] as? Timestamp,
-                                  let pricePerMonth = offerDetails["price_per_month"] as? Double else {
-                                print("Datos faltantes o en formato incorrecto para la oferta con clave \(offerKey).")
-                                continue
-                            }
-
-                            // Convertir las fechas de Timestamp a Date y luego normalizarlas a año, mes y día
-                            let propertyStartDate = self.normalizeDate(initialDate.dateValue())
-                            let propertyEndDate = self.normalizeDate(finalDate.dateValue())
-                            let userStartDate = self.normalizeDate(self.startDate)
-                            let userEndDate = self.normalizeDate(self.endDate)
-
-                            // Condición para verificar que el rango de fechas del usuario esté dentro del rango de fechas de la propiedad
-                            if userStartDate >= propertyStartDate && userEndDate <= propertyEndDate &&
-                                pricePerMonth >= self.minPrice && pricePerMonth <= self.maxPrice {
-
-                                // Crear OfferWithProperty solo si cumple con las condiciones de filtro
-                                let offerWithProperty = OfferWithProperty(
-                                    id: offerId,
-                                    offer: offer,
-                                    property: property
-                                )
-
-                                tempOffersWithProperties.append(offerWithProperty)
-                            } else {
-                                print("La oferta con clave \(offerKey) no cumple con los filtros de fechas o precio.")
-                            }
-                        } else {
-                            print("Error al crear OfferWithProperty para la oferta con clave \(offerKey).")
+                    let propertyData = document.data()
+                    
+                    for (propertyKey, propertyValue) in propertyData {
+                        if let propertyDetails = propertyValue as? [String: Any] {
+                            let property = self.mapPropertyDataToModel(data: propertyDetails)
+                            propertyMap[propertyKey] = property
                         }
                     }
                 }
+                
+                print("Mapa de propiedades completo: \(propertyMap)")
+                
+                // Obtener todas las ofertas y asociarlas con sus propiedades
+                self.db.collection("offers").getDocuments { snapshot, error in
+                    if let error = error {
+                        print("Error al obtener las ofertas: \(error)")
+                        return
+                    }
+                    
+                    guard let documents = snapshot?.documents else {
+                        print("No se encontraron documentos en la colección 'offers'")
+                        return
+                    }
+                    
+                    for document in documents {
+                        let offerData = document.data()
+                        
+                        // Iterar sobre las ofertas dentro del documento
+                        for (offerKey, offerValue) in offerData {
+                            if let offerDetails = offerValue as? [String: Any],
+                               let isActive = offerDetails["is_active"] as? Bool, isActive {
+                                
+                                // Convertir id_property a String para asegurar coincidencia con propertyMap
+                                let idPropertyString: String
+                                if let idPropertyInt = offerDetails["id_property"] as? Int {
+                                    idPropertyString = "\(idPropertyInt)"
+                                } else if let idProperty = offerDetails["id_property"] as? String {
+                                    idPropertyString = idProperty
+                                } else {
+                                    print("Error: id_property no se pudo convertir a String.")
+                                    continue
+                                }
+                                
+                                // Verificar si se encuentra la propiedad en propertyMap
+                                guard let property = propertyMap[idPropertyString] else {
+                                    print("No se encontró la propiedad con id \(idPropertyString) en el mapa de propiedades.")
+                                    continue
+                                }
+                                
+                                // Crear objeto OfferModel
+                                let offer = self.mapOfferDataToModel(
+                                    data: offerDetails,
+                                    documentId: document.documentID,  // ID del documento actual
+                                    key: offerKey  // La clave actual de la oferta
+                                )
+                                
+                                let offerId = "\(document.documentID)_\(offerKey)"  // Generar ID único para la oferta
+                                
+                                // Verificar condiciones de fechas y precios antes de agregar la oferta a la lista
+                                guard let initialDate = offerDetails["initial_date"] as? Timestamp,
+                                      let finalDate = offerDetails["final_date"] as? Timestamp,
+                                      let pricePerMonth = offerDetails["price_per_month"] as? Double else {
+                                    print("Datos faltantes o en formato incorrecto para la oferta con clave \(offerKey).")
+                                    continue
+                                }
+                                
+                                // Convertir las fechas de Timestamp a Date y luego normalizarlas a año, mes y día
+                                let propertyStartDate = self.normalizeDate(initialDate.dateValue())
+                                let propertyEndDate = self.normalizeDate(finalDate.dateValue())
+                                let userStartDate = self.normalizeDate(self.startDate)
+                                let userEndDate = self.normalizeDate(self.endDate)
+                                
+                                // Condición para verificar que el rango de fechas del usuario esté dentro del rango de fechas de la propiedad
+                                if userStartDate >= propertyStartDate && userEndDate <= propertyEndDate &&
+                                    pricePerMonth >= self.minPrice && pricePerMonth <= self.maxPrice {
+                                    
+                                    // Crear OfferWithProperty solo si cumple con las condiciones de filtro
+                                    let offerWithProperty = OfferWithProperty(
+                                        id: offerId,
+                                        offer: offer,
+                                        property: property
+                                    )
+                                    
+                                    tempOffersWithProperties.append(offerWithProperty)
+                                } else {
+                                    print("La oferta con clave \(offerKey) no cumple con los filtros de fechas o precio.")
+                                }
+                            } else {
+                                print("Error al crear OfferWithProperty para la oferta con clave \(offerKey).")
+                            }
+                        }
+                    }
+                    
+                    // Filtrar por minutos desde el campus
+                    let filteredOffers = tempOffersWithProperties.filter { offerWithProperty in
+                        let property = offerWithProperty.property
+                        return property.minutes_from_campus <= Int(self.maxMinutesFromCampus)
+                    }
+                    
+                    // Actualizar las ofertas con los filtros aplicados
+                    DispatchQueue.main.async {
+                        self.offersWithProperties = filteredOffers
+                    }
+                }
+            }
+        }
+        else {
+            let cachedOffers = OfferCacheManager.shared.loadOffersFromCache()  // Cargar ofertas desde caché
 
-                // Filtrar por minutos desde el campus
-                let filteredOffers = tempOffersWithProperties.filter { offerWithProperty in
+                for offerWithProperty in cachedOffers {
+                    let offer = offerWithProperty.offer
                     let property = offerWithProperty.property
-                    return property.minutes_from_campus <= Int(self.maxMinutesFromCampus)
+
+                    // Normalizar fechas de oferta y usuario
+                    let propertyStartDate = normalizeDate(offer.initialDate)
+                    let propertyEndDate = normalizeDate(offer.finalDate)
+                    let userStartDate = normalizeDate(self.startDate)
+                    let userEndDate = normalizeDate(self.endDate)
+
+                    // Aplicar condiciones de filtro (fecha, precio, minutos desde el campus)
+                    if userStartDate >= propertyStartDate &&
+                       userEndDate <= propertyEndDate &&
+                       offer.pricePerMonth >= self.minPrice &&
+                       offer.pricePerMonth <= self.maxPrice &&
+                       property.minutes_from_campus <= Int(self.maxMinutesFromCampus) {
+                        
+                        // Agregar oferta que cumple con los filtros a la lista temporal
+                        tempOffersWithProperties.append(offerWithProperty)
+                    }
                 }
 
                 // Actualizar las ofertas con los filtros aplicados
                 DispatchQueue.main.async {
-                    self.offersWithProperties = filteredOffers
+                    self.offersWithProperties = tempOffersWithProperties
                 }
-            }
         }
     }
 

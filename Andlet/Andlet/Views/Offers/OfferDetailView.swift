@@ -147,15 +147,15 @@ struct OfferDetailView: View {
                         }
                         
                         VStack(alignment: .leading) {
-                            if viewModel.isLoading {
-                                Text("Loading...")
-                                    .font(.custom("LeagueSpartan-SemiBold", size: 18))
-                                    .foregroundColor(Color(hex: "0C356A"))
-                            } else {
+//                            if viewModel.isLoading {
+//                                Text("Loading...")
+//                                    .font(.custom("LeagueSpartan-SemiBold", size: 18))
+//                                    .foregroundColor(Color(hex: "0C356A"))
+//                            } else {
                                 Text(viewModel.user.name)
                                     .font(.custom("LeagueSpartan-SemiBold", size: 18))
                                     .foregroundColor(Color(hex: "0C356A"))
-                            }
+//                            }
                             Text("Property agent")
                                 .font(.custom("LeagueSpartan-SemiBold", size: 18))
                                 .foregroundColor(Color(hex: "3D4D62"))
@@ -190,8 +190,8 @@ struct OfferDetailView: View {
                                 .foregroundColor(Color.blue)
                                 .padding(.horizontal, 18)
                                 .onTapGesture {
-                                                openEmailClient(to: offer.userId)
-                                            }
+                                    openEmailClient(to: offer.userId)
+                                }
                         }
                     }
                     .transition(.move(edge: .bottom))
@@ -232,7 +232,7 @@ struct OfferDetailView: View {
             print("Error al intentar abrir el cliente de correo.")
         }
     }
-
+    
     // Nueva función para registrar la acción de contacto en Firestore
     private func logContactAction() {
         guard let currentUser = Auth.auth().currentUser, let userEmail = currentUser.email else {
@@ -245,7 +245,7 @@ struct OfferDetailView: View {
         dateFormatter.dateFormat = "yyyy-MM-dd_HH:mm:ss"
         let formattedDate = dateFormatter.string(from: Date())
         let documentID = "2_\(userEmail)_\(formattedDate)"  // Identificador que empieza con "2"
-
+        
         // Crear la estructura del documento
         let actionData: [String: Any] = [
             "action": "contact",
@@ -253,7 +253,7 @@ struct OfferDetailView: View {
             "date": Date(),
             "user_id": userEmail
         ]
-
+        
         // Registrar la acción en la colección "user_actions" en Firestore
         let db = Firestore.firestore()
         db.collection("user_actions").document(documentID).setData(actionData) { error in
@@ -264,7 +264,7 @@ struct OfferDetailView: View {
             }
         }
     }
-
+    
     func updateUserViewCount() {
         let db = Firestore.firestore()
         guard let userEmail = Auth.auth().currentUser?.email else {

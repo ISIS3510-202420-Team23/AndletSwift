@@ -7,9 +7,9 @@ struct HomepageView: View {
     @State private var showFilterSearchView = false
     @State private var showShakeAlert = false
     @State private var showConfirmationAlert = false
-    @State private var showNoConnectionBanner = false  // Usamos un banner en lugar de una alerta
+    @State private var showNoConnectionBanner = false
     @StateObject private var offerViewModel = OfferViewModel()
-    @StateObject private var networkMonitor = NetworkMonitor()  // Monitoreo de red
+    @StateObject private var networkMonitor = NetworkMonitor()
     @State private var userRoommatePreference: Bool? = nil
     @StateObject private var filterViewModel = FilterViewModel(
         startDate: Date(),
@@ -37,7 +37,6 @@ struct HomepageView: View {
                                         showFilterSearchView.toggle()
                                     }
                                 }
-                            
                             if showNoConnectionBanner {
                                 Text("⚠️ No Internet Connection, offers will not be updated")
                                     .font(.system(size: 14, weight: .medium))
@@ -62,6 +61,7 @@ struct HomepageView: View {
                                     .padding(.top, 3)
                                 
                             }
+                            
                             if offerViewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
                                     .font(.headline)
@@ -71,7 +71,7 @@ struct HomepageView: View {
                                 LazyVStack(spacing: 32) {
                                     ForEach(sortedOffers()) { offerWithProperty in
                                         Button(action: {
-                                            selectedOffer = offerWithProperty
+                                            selectedOffer = offerWithProperty  // Set selected offer
                                         }) {
                                             OfferView(offer: offerWithProperty.offer, property: offerWithProperty.property)
                                                 .frame(height: 330)
@@ -82,19 +82,18 @@ struct HomepageView: View {
                                 .padding()
                             }
                             
-                            
                         }
                         .safeAreaInset(edge: .bottom) {
-                            Color.clear.frame(height: 80)
-                        }
+                            Color.clear.frame(height: 80)}
+                        
                         .onAppear {
-                            if NetworkMonitor.shared.isConnected {
-                                offerViewModel.fetchOffers()  // Intentar cargar desde red si hay conexión
-                            } else {
-                                offerViewModel.offersWithProperties = OfferCacheManager.shared.loadOffersFromCache()  // Cargar desde caché
-                            }
+                            
+                            fetchUserViewPreferences()
+                            let cache = URLCache.shared
+                            print("Cache actual: \(cache.currentMemoryUsage) bytes en memoria y \(cache.currentDiskUsage) bytes en disco.")
+                            
+                            
                         }
-
                         .background(
                             ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)
                                 .frame(width: 0, height: 0)
@@ -120,6 +119,7 @@ struct HomepageView: View {
                                 showNoConnectionBanner = !isConnected
                             }
                         }
+                        // Manage navigation based on selected offer
                         .navigationDestination(isPresented: Binding(
                             get: { selectedOffer != nil },
                             set: { _ in selectedOffer = nil }
@@ -171,7 +171,6 @@ struct HomepageView: View {
                 return firstHasRoommates && !secondHasRoommates
             } else {
                 return !firstHasRoommates && secondHasRoommates
-                
             }
         }
     }
