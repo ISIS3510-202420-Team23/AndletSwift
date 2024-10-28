@@ -84,6 +84,9 @@ final class AuthenticationViewModel: ObservableObject{
              return true
           }
           catch {
+              if let error = error as NSError?, error.code == GIDSignInError.canceled.rawValue {
+                  return false
+              }
             print(error.localizedDescription)
             self.errorMessage = error.localizedDescription
             return false

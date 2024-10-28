@@ -8,6 +8,7 @@ struct AuthenticationView: View {
     @ObservedObject var authViewModel: AuthenticationViewModel
     @State private var isLoading: Bool = false
     @State private var destination: NavigationDestination?  // Manage navigation state
+    @State private var errorMessage: String? = nil  // To display errors
 
     // Enum to manage different navigation destinations
     enum NavigationDestination: Hashable {
@@ -49,7 +50,6 @@ struct AuthenticationView: View {
                         Text("Register now")
                             .foregroundColor(Color(hex: "#0C356A"))
                             .font(.custom("Montserrat-Bold", size: 15))
-                            .underline()
                     }
 
                     // Google Sign-In Button
@@ -114,18 +114,21 @@ struct AuthenticationView: View {
                 .padding(.trailing, 20)
                 .padding(.leading, 20)
 
-                // Programmatic NavigationLink
-                
             }
             .padding()
             .background(Color(hex: "#C5DDFF"))
             .edgesIgnoringSafeArea(.all)
             .navigationBarHidden(true)
-            
-        }
-        else{
+            .alert(isPresented: Binding(get: { errorMessage != nil }, set: { _ in errorMessage = nil })) {
+                Alert(
+                    title: Text("Authentication Error"),
+                    message: Text(errorMessage ?? "Unknown error"),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
+        } else {
             VStack {
-                ProgressView("Atuhenticating...")
+                ProgressView("Authenticating...")
                     .progressViewStyle(CircularProgressViewStyle(tint: Color(red: 12/255, green: 53/255, blue: 106/255)))
                     .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
                     .font(.headline)
@@ -134,7 +137,7 @@ struct AuthenticationView: View {
                     .cornerRadius(15)
                     .shadow(radius: 10)
                 NavigationLink(
-                    destination: getDestinationView(),  // Navigate based on destination
+                    destination: getDestinationView(),
                     isActive: Binding(
                         get: { destination != nil },
                         set: { _ in destination = nil }  // Reset after navigation
@@ -146,17 +149,17 @@ struct AuthenticationView: View {
             .navigationBarBackButtonHidden(true)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(red: 197/255, green: 221/255, blue: 255/255))
-            .transition(.opacity) // Añadir transición de opacidad
+            .transition(.opacity)
         }
-        
-        
     }
 
-    // Google Sign-In logic
+    // Google Sign-In logic with error handling
     private func signInWithGoogle() {
         Task {
             isLoading = true
+            errorMessage = nil  // Reset any previous error message
             let isSuccess = await authViewModel.signInWithGoogle()
+            
             if isSuccess {
                 // Set the destination based on user role after sign-in
                 if let user = authViewModel.currentUser {
@@ -168,6 +171,19 @@ struct AuthenticationView: View {
                     case .landlord:
                         destination = .landlordHome
                     }
+                }
+            } else {
+                // If sign-in failed, reset loading and show an error message
+                isLoading = false
+                if !authViewModel.errorMessage.isEmpty {
+                    if authViewModel.errorMessage.contains("Network error") {
+                        errorMessage = "There was a connection issue. Please try again later."
+                        
+                    }
+                    else{
+                        errorMessage = authViewModel.errorMessage
+                    }
+                    
                 }
             }
         }
