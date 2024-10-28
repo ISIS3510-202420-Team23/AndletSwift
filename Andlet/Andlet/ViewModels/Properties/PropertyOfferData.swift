@@ -10,13 +10,13 @@ class PropertyOfferData: ObservableObject, CustomStringConvertible {
     @Published var selectedImagesData: [Data] = []
 
     // Datos capturados en Step 2
-    @Published var numBaths: Int = 0
-    @Published var numBeds: Int = 0 {
+    @Published var numBaths: Int = 1
+    @Published var numBeds: Int = 1 {
         didSet {
             updateRoommates()
         }
     }
-    @Published var numRooms: Int = 0
+    @Published var numRooms: Int = 1
     @Published var pricePerMonth: Double = 0.0
     @Published var type: OfferType = .aRoom
 

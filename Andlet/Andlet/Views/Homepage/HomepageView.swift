@@ -7,18 +7,18 @@ struct HomepageView: View {
     @State private var showFilterSearchView = false
     @State private var showShakeAlert = false
     @State private var showConfirmationAlert = false
-    @StateObject private var offerViewModel = OfferViewModel()
+    @StateObject private var offerViewModel: OfferViewModel
     @State private var userRoommatePreference: Bool? = nil
-    @StateObject private var filterViewModel = FilterViewModel(
-        startDate: Date(),
-        endDate: Date().addingTimeInterval(24 * 60 * 60),
-        minPrice: 0,
-        maxPrice: 10000000,
-        maxMinutes: 30
-    )
+    @StateObject private var filterViewModel: FilterViewModel
     @StateObject private var shakeDetector = ShakeDetector()
     @State private var selectedOffer: OfferWithProperty?  // Add a state to track selected offer
     
+    init() {
+        let filterVM = FilterViewModel()  // Inicia FilterViewModel con AppStorage
+        _filterViewModel = StateObject(wrappedValue: filterVM)
+        _offerViewModel = StateObject(wrappedValue: OfferViewModel(filterViewModel: filterVM))
+    }
+
     var body: some View {
         if #available(iOS 16.0, *) {
             NavigationStack {
@@ -55,40 +55,39 @@ struct HomepageView: View {
                                 }
                                 .padding()
                             }
-                                
                         }
                         .safeAreaInset(edge: .bottom) {
-                        Color.clear.frame(height: 80)}
-                        
+                            Color.clear.frame(height: 80)
+                        }
                         .onAppear {
-                            
                             fetchUserViewPreferences()
-                            let cache = URLCache.shared
-                            print("Cache actual: \(cache.currentMemoryUsage) bytes en memoria y \(cache.currentDiskUsage) bytes en disco.")
-
-                            
+                            if filterViewModel.filtersApplied {
+                                offerViewModel.fetchOffersWithFilters()
+                            } else {
+                                offerViewModel.fetchOffers()
+                            }
                         }
                         .background(
                             ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)
                                 .frame(width: 0, height: 0)
                         )
                         .alert(isPresented: $showConfirmationAlert) {
-                                                    Alert(
-                                                        title: Text("Shake Detected"),
-                                                        message: Text("Do you want to clear the filters / refresh the offers?🧹"),
-                                                        primaryButton: .destructive(Text("Yes")) {
-                                                            refreshOffers()
-                                                        },
-                                                        secondaryButton: .cancel(Text("No"))
-                                                    )
-                                                }
+                            Alert(
+                                title: Text("Shake Detected"),
+                                message: Text("Do you want to clear the filters / refresh the offers?🧹"),
+                                primaryButton: .destructive(Text("Yes")) {
+                                    filterViewModel.clearFilters()
+                                    offerViewModel.fetchOffers()
+                                },
+                                secondaryButton: .cancel(Text("No"))
+                            )
+                        }
                         .onReceive(shakeDetector.$didShake) { didShake in
                             if didShake {
                                 showConfirmationAlert = true
                                 shakeDetector.resetShake()
                             }
                         }
-                        // Manage navigation based on selected offer
                         .navigationDestination(isPresented: Binding(
                             get: { selectedOffer != nil },
                             set: { _ in selectedOffer = nil }
@@ -142,9 +141,5 @@ struct HomepageView: View {
                 return !firstHasRoommates && secondHasRoommates
             }
         }
-    }
-
-    func refreshOffers() {
-        offerViewModel.fetchOffers()
     }
 }

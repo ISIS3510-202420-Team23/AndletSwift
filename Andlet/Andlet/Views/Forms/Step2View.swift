@@ -3,11 +3,11 @@ import SwiftUI
 struct Step2View: View {
     @ObservedObject var propertyOfferData: PropertyOfferData
 
-    @State private var showWarning = false
     @State private var showWarningMessage = false
+    @State private var warningMessageText = "" // Mensaje de advertencia
     @State private var navigateToStep3 = false
 
-    let maxPriceCharacters = 9
+    let maxPriceCharacters = 8
 
     var body: some View {
         NavigationStack {
@@ -15,11 +15,9 @@ struct Step2View: View {
                 Color.white.ignoresSafeArea()
 
                 VStack(alignment: .leading) {
-                    // Header para el formulario
                     HeaderView(step: "Step 2", title: "Tell us about your place")
 
                     VStack(alignment: .leading, spacing: 5) {
-                        // Modificar SelectableOptionsView para trabajar con el tipo OfferType
                         SelectableOptionsView(
                             selectedOption: Binding<String?>(
                                 get: { propertyOfferData.type.rawValue },
@@ -71,7 +69,6 @@ struct Step2View: View {
                     Spacer()
 
                     HStack {
-                        // Back link (Blanco con bordes azules y texto azul)
                         NavigationLink(destination: Step1View(propertyOfferData: propertyOfferData)
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true)) {
@@ -89,7 +86,6 @@ struct Step2View: View {
 
                         Spacer()
 
-                        // Botón Next con validación antes de permitir la navegación
                         NavigationLink(destination: Step3View(propertyOfferData: propertyOfferData)
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true),
@@ -104,17 +100,22 @@ struct Step2View: View {
                             .cornerRadius(15)
                             .onTapGesture {
                                 if propertyOfferData.type.rawValue.isEmpty || propertyOfferData.pricePerMonth <= 0.0 {
-                                    showWarning = true
+                                    warningMessageText = "Please fill out all required fields before proceeding."
                                     showWarningMessage = true
+                                } else if propertyOfferData.pricePerMonth > 10000000 {
+                                    warningMessageText = "Price cannot exceed 10 million."
+                                    showWarningMessage = true
+                                } else {
+                                    showWarningMessage = false
+                                    navigateToStep3 = true
+                                }
 
+                                if showWarningMessage {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                         withAnimation {
                                             showWarningMessage = false
                                         }
                                     }
-                                } else {
-                                    showWarning = false
-                                    navigateToStep3 = true
                                 }
                             }
                     }
@@ -127,7 +128,7 @@ struct Step2View: View {
                     VStack {
                         Spacer()
                             .frame(height: 10)
-                        Text("Please fill out all required fields before proceeding")
+                        Text(warningMessageText)
                             .foregroundColor(.white)
                             .font(.subheadline)
                             .padding()
@@ -143,9 +144,9 @@ struct Step2View: View {
                 }
             }
             .navigationBarHidden(true)
-            .contentShape(Rectangle())  // Detecta toques en toda la vista
+            .contentShape(Rectangle())
             .onTapGesture {
-                self.hideKeyboard()  // Llama a la extensión para ocultar el teclado
+                self.hideKeyboard()
             }
         }
     }
