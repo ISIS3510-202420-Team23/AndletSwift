@@ -29,7 +29,7 @@ struct HomepageView: View {
                         VStack {
                             Spacer()
                             Heading()
-                            SearchAndFilterBar()
+                            SearchAndFilterBar(filterViewModel: filterViewModel, offerViewModel: offerViewModel)
                                 .onTapGesture {
                                     withAnimation(.snappy) {
                                         showFilterSearchView.toggle()

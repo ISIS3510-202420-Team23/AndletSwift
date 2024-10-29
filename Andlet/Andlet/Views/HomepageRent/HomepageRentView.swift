@@ -65,6 +65,7 @@ struct HomepageRentView: View {
                                 showShakeAlert = true
                                 refreshOffers()  // Llama a la función para refrescar las ofertas
                                 shakeDetector.resetShake()  // Reinicia el valor para que pueda detectar nuevos shakes
+                                
                             }
                         }
                     }
