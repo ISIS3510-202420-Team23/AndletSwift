@@ -41,23 +41,24 @@ struct SearchAndFilterBar: View {
             
             // Filter tags section
             if filterViewModel.filtersApplied {
-                            VStack(spacing: 8) {
-                                HStack(spacing: 8) {                            
-                                    if filterViewModel.maxPrice < 10000000 {
-                                        FilterTagView(text: "Price: $\(Int(filterViewModel.maxPrice))")
-                                    }
-                                    if filterViewModel.maxMinutes > 0 {
-                                        FilterTagView(text: "Minutes: \(Int(filterViewModel.maxMinutes))")
-                                    }
+                            // Ensure all tags fit in the same row if possible
+                            HStack(spacing: 8) {
+                                if filterViewModel.maxPrice < 10000000 {
+                                    FilterTagView(text: "Price: $\(Int(filterViewModel.maxPrice))")
+                                    
                                 }
-                                
+                                if filterViewModel.maxMinutes > 0 {
+                                    FilterTagView(text: "Minutes: \(Int(filterViewModel.maxMinutes))")
+                                    
+                                }
                                 if filterViewModel.startDate != Date() || filterViewModel.endDate != Date().addingTimeInterval(24 * 60 * 60) {
-                                    HStack {
-                                        FilterTagView(text: "Date: \(formattedDateRange())")
-                                    }
+                                    FilterTagView(text: "Date: \(formattedDateRange())")
+                                    
                                 }
+                                Spacer() // Spacer to push tags left and adjust for flexible layout
                             }
                             .padding(.horizontal)
+                            .lineLimit(1) // Enforce single-line layout if space permits
                             .transition(.opacity)
                         }
         }
@@ -65,7 +66,6 @@ struct SearchAndFilterBar: View {
     
     // Helper function to format date range
     private func formattedDateRange() -> String {
-        print("Entre aqui de alguna forma EPAAAAAAA")
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .short
         let startDate = dateFormatter.string(from: filterViewModel.startDate)
@@ -82,7 +82,7 @@ struct FilterTagView: View {
         Text(text)
             .font(.caption)
             .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .padding(.vertical, 7)
             .background(Color(hex: "C5DDFF"))
             .cornerRadius(8)
             .foregroundColor(.black)
