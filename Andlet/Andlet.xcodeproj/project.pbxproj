@@ -256,13 +256,6 @@
 			path = Offers;
 			sourceTree = "<group>";
 		};
-		3784CC3B2CC3376A00A0B7E9 /* New Group */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "New Group";
-			sourceTree = "<group>";
-		};
 		3784CC3D2CC3379A00A0B7E9 /* Cache */ = {
 			isa = PBXGroup;
 			children = (
@@ -368,7 +361,6 @@
 		9C1369632C9E30A10000B55C /* Andlet */ = {
 			isa = PBXGroup;
 			children = (
-				3784CC3B2CC3376A00A0B7E9 /* New Group */,
 				A9ED6DB22CAC77990066E3EA /* Analytics */,
 				9C1369F02C9E428D0000B55C /* Info.plist */,
 				9C1369D82C9E3F200000B55C /* GoogleService-Info.plist */,

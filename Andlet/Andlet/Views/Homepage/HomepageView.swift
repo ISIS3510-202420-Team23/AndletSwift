@@ -8,19 +8,19 @@ struct HomepageView: View {
     @State private var showShakeAlert = false
     @State private var showConfirmationAlert = false
     @State private var showNoConnectionBanner = false
-    @StateObject private var offerViewModel = OfferViewModel()
     @StateObject private var networkMonitor = NetworkMonitor()
+    @StateObject private var offerViewModel: OfferViewModel
     @State private var userRoommatePreference: Bool? = nil
-    @StateObject private var filterViewModel = FilterViewModel(
-        startDate: Date(),
-        endDate: Date().addingTimeInterval(24 * 60 * 60),
-        minPrice: 0,
-        maxPrice: 10000000,
-        maxMinutes: 30
-    )
+    @StateObject private var filterViewModel: FilterViewModel
     @StateObject private var shakeDetector = ShakeDetector()
     @State private var selectedOffer: OfferWithProperty?  // Add a state to track selected offer
     
+    init() {
+        let filterVM = FilterViewModel()  // Inicia FilterViewModel con AppStorage
+        _filterViewModel = StateObject(wrappedValue: filterVM)
+        _offerViewModel = StateObject(wrappedValue: OfferViewModel(filterViewModel: filterVM))
+    }
+
     var body: some View {
         if #available(iOS 16.0, *) {
             NavigationStack {
@@ -87,12 +87,16 @@ struct HomepageView: View {
                             Color.clear.frame(height: 80)}
                         
                         .onAppear {
-                            
                             fetchUserViewPreferences()
                             let cache = URLCache.shared
                             print("Cache actual: \(cache.currentMemoryUsage) bytes en memoria y \(cache.currentDiskUsage) bytes en disco.")
                             
                             
+                            if filterViewModel.filtersApplied {
+                                offerViewModel.fetchOffersWithFilters()
+                            } else {
+                                offerViewModel.fetchOffers()
+                            }
                         }
                         .background(
                             ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)
@@ -103,7 +107,8 @@ struct HomepageView: View {
                                 title: Text("Shake Detected"),
                                 message: Text("Do you want to clear the filters / refresh the offers?🧹"),
                                 primaryButton: .destructive(Text("Yes")) {
-                                    refreshOffers()
+                                    filterViewModel.clearFilters()
+                                    offerViewModel.fetchOffers()
                                 },
                                 secondaryButton: .cancel(Text("No"))
                             )

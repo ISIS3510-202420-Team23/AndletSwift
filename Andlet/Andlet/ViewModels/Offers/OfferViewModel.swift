@@ -5,7 +5,10 @@ import SwiftUI
 
 
 class OfferViewModel: ObservableObject {
-    @Published var offersWithProperties: [OfferWithProperty] = []
+   @Published var offersWithProperties: [OfferWithProperty] = []
+
+    // Instancia de FilterViewModel
+   @ObservedObject var filterViewModel: FilterViewModel
     
     // Propiedades para almacenar los filtros seleccionados
    @Published var startDate: Date = Date()
@@ -19,14 +22,14 @@ class OfferViewModel: ObservableObject {
     // Variable para rastrear si se aplicaron filtros
     var filtersApplied = false
 
-    init() {
-        // Verifica si los filtros se han aplicado y llama a la función adecuada.
-        if filtersApplied {
-            fetchOffersWithFilters()
-        } else {
-            fetchOffers()
-        }
-    }
+    init(filterViewModel: FilterViewModel) {
+       self.filterViewModel = filterViewModel
+       if filterViewModel.filtersApplied {
+           fetchOffersWithFilters()
+       } else {
+           fetchOffers()
+       }
+   }
 
     // Obtener ofertas y asegurarse de que tienen una propiedad asociada
     func fetchOffers() {
@@ -111,6 +114,18 @@ class OfferViewModel: ObservableObject {
     }
     
     func fetchOffersWithFilters() {
+        let startDate = filterViewModel.startDate
+        let endDate = filterViewModel.endDate
+        let minPrice = filterViewModel.minPrice
+        let maxPrice = filterViewModel.maxPrice
+        let maxMinutesFromCampus = filterViewModel.maxMinutes
+
+        print("Fetching offers with filters:")
+        print("Start Date:", startDate)
+        print("End Date:", endDate)
+        print("Min Price:", minPrice)
+        print("Max Price:", maxPrice)
+        print("Max Minutes from Campus:", maxMinutesFromCampus)
         var tempOffersWithProperties: [OfferWithProperty] = []
         if NetworkMonitor.shared.isConnected {
             
@@ -140,7 +155,6 @@ class OfferViewModel: ObservableObject {
                     }
                 }
                 
-                print("Mapa de propiedades completo: \(propertyMap)")
                 
                 // Obtener todas las ofertas y asociarlas con sus propiedades
                 self.db.collection("offers").getDocuments { snapshot, error in
@@ -199,12 +213,12 @@ class OfferViewModel: ObservableObject {
                                 // Convertir las fechas de Timestamp a Date y luego normalizarlas a año, mes y día
                                 let propertyStartDate = self.normalizeDate(initialDate.dateValue())
                                 let propertyEndDate = self.normalizeDate(finalDate.dateValue())
-                                let userStartDate = self.normalizeDate(self.startDate)
-                                let userEndDate = self.normalizeDate(self.endDate)
+                                let userStartDate = self.normalizeDate(startDate)
+                                let userEndDate = self.normalizeDate(endDate)
                                 
                                 // Condición para verificar que el rango de fechas del usuario esté dentro del rango de fechas de la propiedad
                                 if userStartDate >= propertyStartDate && userEndDate <= propertyEndDate &&
-                                    pricePerMonth >= self.minPrice && pricePerMonth <= self.maxPrice {
+                                    pricePerMonth >= minPrice && pricePerMonth <= maxPrice {
                                     
                                     // Crear OfferWithProperty solo si cumple con las condiciones de filtro
                                     let offerWithProperty = OfferWithProperty(
@@ -246,15 +260,15 @@ class OfferViewModel: ObservableObject {
                     // Normalizar fechas de oferta y usuario
                     let propertyStartDate = normalizeDate(offer.initialDate)
                     let propertyEndDate = normalizeDate(offer.finalDate)
-                    let userStartDate = normalizeDate(self.startDate)
-                    let userEndDate = normalizeDate(self.endDate)
+                    let userStartDate = normalizeDate(startDate)
+                    let userEndDate = normalizeDate(endDate)
 
                     // Aplicar condiciones de filtro (fecha, precio, minutos desde el campus)
                     if userStartDate >= propertyStartDate &&
                        userEndDate <= propertyEndDate &&
-                       offer.pricePerMonth >= self.minPrice &&
-                       offer.pricePerMonth <= self.maxPrice &&
-                       property.minutes_from_campus <= Int(self.maxMinutesFromCampus) {
+                       offer.pricePerMonth >= minPrice &&
+                       offer.pricePerMonth <= maxPrice &&
+                       property.minutes_from_campus <= Int(maxMinutesFromCampus) {
                         
                         // Agregar oferta que cumple con los filtros a la lista temporal
                         tempOffersWithProperties.append(offerWithProperty)
@@ -268,6 +282,7 @@ class OfferViewModel: ObservableObject {
         }
     }
 
+
     // Función para normalizar una fecha a año, mes y día
     private func normalizeDate(_ date: Date) -> Date {
         let calendar = Calendar.current
@@ -275,15 +290,10 @@ class OfferViewModel: ObservableObject {
         return calendar.date(from: components) ?? date
     }
     
-    // Función para actualizar los filtros en OfferViewModel
-        func updateFilters(startDate: Date, endDate: Date, minPrice: Double, maxPrice: Double, maxMinutes: Double) {
-            self.startDate = startDate
-            self.endDate = endDate
-            self.minPrice = minPrice
-            self.maxPrice = maxPrice
-            self.maxMinutesFromCampus = maxMinutes
-        }
-
+    func updateFilters(startDate: Date, endDate: Date, minPrice: Double, maxPrice: Double, maxMinutes: Double) {
+        self.filterViewModel.updateFilters(startDate: startDate, endDate: endDate, minPrice: minPrice, maxPrice: maxPrice, maxMinutes: maxMinutes)
+        fetchOffersWithFilters()
+    }
 
 
     // Obtener la propiedad asociada usando el id_property
@@ -385,4 +395,5 @@ class OfferViewModel: ObservableObject {
             title: title
         )
     }
+    
 }

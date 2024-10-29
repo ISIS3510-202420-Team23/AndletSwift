@@ -37,6 +37,9 @@ struct Heading: View {
                     Circle()
                         .fill(Color.gray.opacity(0.3))
                         .frame(width: 67, height: 67)
+                        .onTapGesture {
+                            isProfileViewActive = true
+                        }
                 }
             } else {
                 // Placeholder si no hay imagen disponible (ícono predeterminado)

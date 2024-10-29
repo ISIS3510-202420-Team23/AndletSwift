@@ -1,17 +1,15 @@
 import SwiftUI
 
 struct Step1View: View {
-    @ObservedObject var propertyOfferData: PropertyOfferData // Usamos el ObservableObject
-    @StateObject private var viewModel = PropertyViewModel() // Crear instancia del ViewModel
+    @ObservedObject var propertyOfferData: PropertyOfferData
+    @StateObject private var viewModel = PropertyViewModel()
 
     @State private var showImagePicker1 = false
     @State private var showImagePicker2 = false
-    @State private var showWarning = false
-    @State private var navigateToStep2 = false
     @State private var showWarningMessage = false
-    @State private var warningMessageText = "" // Almacena el mensaje de advertencia
-    @State private var navigateBack = false
-    
+    @State private var warningMessageText = ""
+    @State private var navigateToStep2 = false
+
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
@@ -116,21 +114,20 @@ struct Step1View: View {
                         NavigationLink(destination: MainTabLandlordView()
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true)) {
-                                Text("Back")
-                                    .font(.headline)
-                                    .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
-                                    .frame(width: 120, height: 50)
-                                    .background(Color.white)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 15)
-                                            .stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2)
-                                    )
-                                    .cornerRadius(15)
+                            Text("Back")
+                                .font(.headline)
+                                .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                                .frame(width: 120, height: 50)
+                                .background(Color.white)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2)
+                                )
+                                .cornerRadius(15)
                         }
 
                         Spacer()
 
-                        // Cambiar NavigationLink según la versión de iOS
                         if #available(iOS 16.0, *) {
                             NavigationLink(
                                 value: navigateToStep2,
@@ -157,16 +154,25 @@ struct Step1View: View {
                             .background(Color(red: 12/255, green: 53/255, blue: 106/255))
                             .cornerRadius(15)
                             .onTapGesture {
-                                // Validar campos obligatorios y mostrar advertencia si no se cumple la condición
-                                if propertyOfferData.placeTitle.isEmpty || propertyOfferData.placeAddress.isEmpty || propertyOfferData.selectedImagesData.isEmpty {
+                                // Validación inicial sin modificar los campos
+                                if propertyOfferData.placeTitle.isOnlyWhitespace || propertyOfferData.placeAddress.isOnlyWhitespace {
+                                    warningMessageText = "Please do not use only spaces in the title or address fields."
+                                    showWarningMessage = true
+                                } else if !propertyOfferData.placeDescription.isEmpty && propertyOfferData.placeDescription.isOnlyWhitespace {
+                                    warningMessageText = "Description cannot contain only spaces."
+                                    showWarningMessage = true
+                                } else if propertyOfferData.placeTitle.isEmpty || propertyOfferData.placeAddress.isEmpty || propertyOfferData.selectedImagesData.isEmpty {
                                     warningMessageText = "Please fill in all the required fields and add at least one photo."
                                     showWarningMessage = true
-                                } else if propertyOfferData.placeTitle.containsEmoji || propertyOfferData.placeDescription.containsEmoji || propertyOfferData.placeAddress.containsEmoji {
+                                } else if propertyOfferData.placeTitle.containsEmoji || propertyOfferData.placeAddress.containsEmoji || propertyOfferData.placeDescription.containsEmoji {
                                     warningMessageText = "Please remove any emojis from the text fields."
                                     showWarningMessage = true
                                 } else {
+                                    // Limpia espacios extra antes de navegar al Step 2
+                                    propertyOfferData.placeTitle = propertyOfferData.placeTitle.removingExtraSpaces()
+                                    propertyOfferData.placeDescription = propertyOfferData.placeDescription.removingExtraSpaces()
+                                    propertyOfferData.placeAddress = propertyOfferData.placeAddress.removingExtraSpaces()
                                     showWarningMessage = false
-                                    // Asignar el usuario autenticado y luego imprimir solo el ID (correo electrónico)
                                     viewModel.assignAuthenticatedUser(to: propertyOfferData)
                                     navigateToStep2 = true
                                 }
@@ -185,7 +191,6 @@ struct Step1View: View {
                 }
                 .padding()
 
-                // Mostrar mensaje de advertencia cuando `showWarningMessage` esté activo
                 if showWarningMessage {
                     VStack {
                         Spacer()
@@ -206,13 +211,12 @@ struct Step1View: View {
                 }
             }
             .navigationBarHidden(true)
-            .contentShape(Rectangle())  // Agregar contentShape para reconocer toques en toda la vista
+            .contentShape(Rectangle())
             .onTapGesture {
-                hideKeyboard()  // Ocultar teclado al hacer clic en cualquier parte de la pantalla
+                hideKeyboard()
             }
         }
         .onAppear {
-            // Asignar el usuario autenticado cuando se carga la vista
             viewModel.assignAuthenticatedUser(to: propertyOfferData)
         }
     }
