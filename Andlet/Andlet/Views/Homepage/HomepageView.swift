@@ -20,7 +20,7 @@ struct HomepageView: View {
         _filterViewModel = StateObject(wrappedValue: filterVM)
         _offerViewModel = StateObject(wrappedValue: OfferViewModel(filterViewModel: filterVM))
     }
-
+    
     var body: some View {
         if #available(iOS 16.0, *) {
             NavigationStack {
@@ -51,7 +51,7 @@ struct HomepageView: View {
                                     .padding(.horizontal, 40)
                             }
                             
-                        
+                            
                             
                             if offerViewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
@@ -114,6 +114,9 @@ struct HomepageView: View {
                             withAnimation {
                                 showNoConnectionBanner = !isConnected
                             }
+                            if isConnected {
+                                offerViewModel.syncOfflineViews()
+                            }
                         }
                         // Manage navigation based on selected offer
                         .navigationDestination(isPresented: Binding(
@@ -134,7 +137,6 @@ struct HomepageView: View {
         }
     }
     
-    // Función para obtener la preferencia del usuario desde Firestore
     func fetchUserViewPreferences() {
         let db = Firestore.firestore()
         guard let userEmail = Auth.auth().currentUser?.email else {
@@ -147,6 +149,11 @@ struct HomepageView: View {
             if let document = document, document.exists {
                 let roommateViews = document.data()?["roommates_views"] as? Int ?? 0
                 let noRoommateViews = document.data()?["no_roommates_views"] as? Int ?? 0
+                
+                // Guardamos en UserDefaults
+                UserDefaults.standard.roommateViews = roommateViews
+                UserDefaults.standard.noRoommateViews = noRoommateViews
+                
                 userRoommatePreference = roommateViews > noRoommateViews
             } else {
                 print("No se encontró el documento de preferencias de usuario")
@@ -154,9 +161,17 @@ struct HomepageView: View {
         }
     }
     
+    
     func sortedOffers() -> [OfferWithProperty] {
-        guard let preference = userRoommatePreference else {
-            return offerViewModel.offersWithProperties
+        // Comprobamos si hay conexión
+        let isConnected = networkMonitor.isConnected
+        
+        // Usar la preferencia desde Firestore o UserDefaults
+        let preference: Bool
+        if isConnected, let userPreference = userRoommatePreference {
+            preference = userPreference
+        } else {
+            preference = UserDefaults.standard.roommateViews > UserDefaults.standard.noRoommateViews
         }
         
         return offerViewModel.offersWithProperties.sorted { first, second in
@@ -170,6 +185,7 @@ struct HomepageView: View {
             }
         }
     }
+    
     
     func refreshOffers() {
         offerViewModel.fetchOffers()

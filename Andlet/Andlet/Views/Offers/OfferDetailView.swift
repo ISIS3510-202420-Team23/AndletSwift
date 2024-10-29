@@ -202,15 +202,20 @@ struct OfferDetailView: View {
             .onAppear {
                 viewModel.fetchUser(userEmail: offer.userId)
                 updateUserViewCount()
-                let documentId = "E2amoJzmIbhtLq65ScpY"
-                if let offerKey = offer.id.split(separator: "_").last.map(String.init) {
-                    viewModel.updateViewsOffer(documentId: documentId, offerKey: offerKey)
+                
+                if NetworkMonitor.shared.isConnected {
+                    // Si hay conexión, actualizamos directamente en Firestore
+                    let documentId = "E2amoJzmIbhtLq65ScpY"
+                    if let offerKey = offer.id.split(separator: "_").last.map(String.init) {
+                        viewModel.updateViewsOffer(documentId: documentId, offerKey: offerKey)
+                    }
                 } else {
-                    print("No se encontró un offerKey válido para la oferta")
+                    // Si no hay conexión, incrementamos el contador offline
+                    UserDefaults.standard.incrementOfflineView(for: offer.id)
+                    print("Visualización almacenada localmente para \(offer.id)")
                 }
             }
-        } else {
-            Text("Versión de iOS no soportada")
+
         }
     }
     

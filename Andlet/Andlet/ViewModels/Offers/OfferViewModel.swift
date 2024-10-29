@@ -326,6 +326,26 @@ class OfferViewModel: ObservableObject {
             completion(nil)  // Si no se encuentra la propiedad, devolvemos nil
         }
     }
+    
+    func syncOfflineViews() {
+            let offlineViews = UserDefaults.standard.offlineOfferViews
+            for (offerId, viewCount) in offlineViews where viewCount > 0 {
+                let documentId = "E2amoJzmIbhtLq65ScpY"
+                if let offerKey = offerId.split(separator: "_").last.map(String.init) {
+                    db.collection("offers").document(documentId).updateData([
+                        "\(offerKey).views": FieldValue.increment(Int64(viewCount))
+                    ]) { error in
+                        if let error = error {
+                            print("Error al sincronizar vistas para \(offerId): \(error.localizedDescription)")
+                        } else {
+                            print("Vistas sincronizadas para \(offerId): \(viewCount)")
+                            // Reiniciar el contador local una vez sincronizado
+                            UserDefaults.standard.resetOfflineViews(for: offerId)
+                        }
+                    }
+                }
+            }
+        }
 
     // Función para mapear datos de la oferta al modelo OfferModel
     private func mapOfferDataToModel(data: [String: Any], documentId: String, key: String) -> OfferModel {
