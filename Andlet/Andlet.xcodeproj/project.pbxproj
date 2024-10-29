@@ -19,6 +19,8 @@
 		3781D2642CA64C5400C43924 /* OfferRentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3781D2632CA64C4B00C43924 /* OfferRentViewModel.swift */; };
 		3781D2662CA650D900C43924 /* OfferWithProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3781D2652CA650CC00C43924 /* OfferWithProperty.swift */; };
 		3784CC3E2CC3379A00A0B7E9 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3784CC3C2CC3379A00A0B7E9 /* ImageCacheManager.swift */; };
+		3784CC482CC4B09900A0B7E9 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3784CC472CC4B08C00A0B7E9 /* NetworkMonitor.swift */; };
+		3784CC4A2CC4B7B100A0B7E9 /* OfferCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3784CC492CC4B7AA00A0B7E9 /* OfferCacheManager.swift */; };
 		37A512E52CACD46300B62788 /* UserActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A512E42CACD45D00B62788 /* UserActions.swift */; };
 		37A512E72CACD8F500B62788 /* CheckDaysSinceLastContact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A512E62CACD8E400B62788 /* CheckDaysSinceLastContact.swift */; };
 		37C0E28C2C9E58F500099A90 /* FiltersSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C0E28B2C9E58F500099A90 /* FiltersSearchView.swift */; };
@@ -127,6 +129,8 @@
 		3781D2632CA64C4B00C43924 /* OfferRentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferRentViewModel.swift; sourceTree = "<group>"; };
 		3781D2652CA650CC00C43924 /* OfferWithProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferWithProperty.swift; sourceTree = "<group>"; };
 		3784CC3C2CC3379A00A0B7E9 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
+		3784CC472CC4B08C00A0B7E9 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		3784CC492CC4B7AA00A0B7E9 /* OfferCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferCacheManager.swift; sourceTree = "<group>"; };
 		37A512E42CACD45D00B62788 /* UserActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActions.swift; sourceTree = "<group>"; };
 		37A512E62CACD8E400B62788 /* CheckDaysSinceLastContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckDaysSinceLastContact.swift; sourceTree = "<group>"; };
 		37C0E28B2C9E58F500099A90 /* FiltersSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersSearchView.swift; sourceTree = "<group>"; };
@@ -255,6 +259,7 @@
 		3784CC3D2CC3379A00A0B7E9 /* Cache */ = {
 			isa = PBXGroup;
 			children = (
+				3784CC492CC4B7AA00A0B7E9 /* OfferCacheManager.swift */,
 				3784CC3C2CC3379A00A0B7E9 /* ImageCacheManager.swift */,
 			);
 			path = Cache;
@@ -483,6 +488,7 @@
 		9C1369D32C9E3B170000B55C /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				3784CC472CC4B08C00A0B7E9 /* NetworkMonitor.swift */,
 				9C1369D42C9E3B3D0000B55C /* ColorExtensions.swift */,
 				9C528C1E2CACE0B5007F6A76 /* LocationManager.swift */,
 			);
@@ -697,6 +703,7 @@
 				3781A9AC2CA275E9000E0B86 /* PropertyModel.swift in Sources */,
 				A9ED6DB12CAC52700066E3EA /* Extensions.swift in Sources */,
 				9C1369EF2C9E422C0000B55C /* AuthenticationViewModel.swift in Sources */,
+				3784CC482CC4B09900A0B7E9 /* NetworkMonitor.swift in Sources */,
 				A9DFF6D22CAA83FD0063E52C /* FilterViewModel.swift in Sources */,
 				37C0E2A42C9E59BA00099A90 /* OfferView.swift in Sources */,
 				3781D2622CA530AD00C43924 /* OfferDetailViewModel.swift in Sources */,
@@ -742,6 +749,7 @@
 				3781A9C12CA3D479000E0B86 /* OfferViewModel.swift in Sources */,
 				A9DFF6D42CAA85210063E52C /* FilterSearchOptions.swift in Sources */,
 				9C1369EB2C9E42140000B55C /* AuthenticationResultModel.swift in Sources */,
+				3784CC4A2CC4B7B100A0B7E9 /* OfferCacheManager.swift in Sources */,
 				9C1369CF2C9E35BE0000B55C /* WelcomePageView.swift in Sources */,
 				3781A9B62CA3A7F9000E0B86 /* UserModel.swift in Sources */,
 				9C1369652C9E30A10000B55C /* AndletApp.swift in Sources */,
@@ -914,7 +922,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Andlet/Preview Content\"";
-				DEVELOPMENT_TEAM = 62CHFB9B3W;
+				DEVELOPMENT_TEAM = 25L8P5DHHR;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -939,7 +947,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet.daniel;
+				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet.sofia;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -958,7 +966,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Andlet/Preview Content\"";
-				DEVELOPMENT_TEAM = 62CHFB9B3W;
+				DEVELOPMENT_TEAM = 25L8P5DHHR;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -983,7 +991,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet.daniel;
+				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet.sofia;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";

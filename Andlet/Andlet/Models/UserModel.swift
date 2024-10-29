@@ -19,7 +19,7 @@ struct UserModel: Codable, Identifiable {
     @DocumentID var id: String?  // Firestore will auto-handle document ID
     let favoriteOffers: [Int]?  // Optional list of favorite offer IDs (nullable)
     let isAndes: Bool
-    let name: String
+    var name: String
     let phone: String
     let photo: String
     var typeUser: UserType
