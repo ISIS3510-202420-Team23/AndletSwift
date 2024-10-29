@@ -20,7 +20,7 @@ struct HomepageView: View {
         _filterViewModel = StateObject(wrappedValue: filterVM)
         _offerViewModel = StateObject(wrappedValue: OfferViewModel(filterViewModel: filterVM))
     }
-
+    
     var body: some View {
         if #available(iOS 16.0, *) {
             NavigationStack {
@@ -51,7 +51,7 @@ struct HomepageView: View {
                                     .padding(.horizontal, 40)
                             }
                             
-                        
+                            
                             
                             if offerViewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
@@ -114,6 +114,9 @@ struct HomepageView: View {
                             withAnimation {
                                 showNoConnectionBanner = !isConnected
                             }
+                            if isConnected {
+                                offerViewModel.syncOfflineViews()
+                            }
                         }
                         // Manage navigation based on selected offer
                         .navigationDestination(isPresented: Binding(
@@ -157,7 +160,7 @@ struct HomepageView: View {
             }
         }
     }
-
+    
     
     func sortedOffers() -> [OfferWithProperty] {
         // Comprobamos si hay conexión
@@ -182,7 +185,7 @@ struct HomepageView: View {
             }
         }
     }
-
+    
     
     func refreshOffers() {
         offerViewModel.fetchOffers()
