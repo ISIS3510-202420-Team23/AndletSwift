@@ -10,7 +10,7 @@ import SwiftUI
 
 
 // Definir una estructura para vincular oferta y propiedad
-struct OfferWithProperty: Identifiable, Hashable, Equatable {
+struct OfferWithProperty: Identifiable, Hashable, Equatable, Codable {
     let id: String  // ID compuesto de la oferta
     let offer: OfferModel
     let property: PropertyModel

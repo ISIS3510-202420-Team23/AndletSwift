@@ -17,11 +17,17 @@ class OfferDetailViewModel: ObservableObject {
     
     func fetchUser(userEmail: String) {
         isLoading = true
-        
-        // Reemplazamos los puntos por guiones bajos en el email
+        user = UserModel(id: "loading@example.com", favoriteOffers: [], isAndes: false, name: "Loading...", phone: "0000000000", typeUser: .landlord, photo: "")
+
         let formattedUserEmail = userEmail.replacingOccurrences(of: ".", with: "_")
         
-        // Acceder al documento 'users'
+        if let cachedName = UserDefaults.standard.string(forKey: formattedUserEmail) {
+            self.user.name = cachedName
+            self.isLoading = false
+            print("Nombre obtenido de caché: \(cachedName)")
+            return
+        }
+
         db.collection("users").document("eBbttobInFQe6i9wLHSF").getDocument { document, error in
             if let error = error {
                 print("Error al obtener el usuario: \(error)")
@@ -35,12 +41,12 @@ class OfferDetailViewModel: ObservableObject {
                 return
             }
             
-            // Obtener los datos del usuario basado en el `formattedUserEmail`
             if let userData = data[formattedUserEmail] as? [String: Any] {
                 let user = self.mapUserDataToModel(data: userData, userEmail: userEmail)
                 DispatchQueue.main.async {
                     self.user = user
                     self.isLoading = false
+                    UserDefaults.standard.set(user.name, forKey: formattedUserEmail)
                 }
             } else {
                 print("Usuario con email \(formattedUserEmail) no encontrado.")
@@ -48,6 +54,7 @@ class OfferDetailViewModel: ObservableObject {
             }
         }
     }
+
     
     private func mapUserDataToModel(data: [String: Any], userEmail: String) -> UserModel {
         let isAndes = data["is_andes"] as? Bool ?? false

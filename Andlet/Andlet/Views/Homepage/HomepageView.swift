@@ -7,6 +7,8 @@ struct HomepageView: View {
     @State private var showFilterSearchView = false
     @State private var showShakeAlert = false
     @State private var showConfirmationAlert = false
+    @State private var showNoConnectionBanner = false
+    @StateObject private var networkMonitor = NetworkMonitor()
     @StateObject private var offerViewModel: OfferViewModel
     @State private var userRoommatePreference: Bool? = nil
     @StateObject private var filterViewModel: FilterViewModel
@@ -35,7 +37,22 @@ struct HomepageView: View {
                                         showFilterSearchView.toggle()
                                     }
                                 }
-
+                            if showNoConnectionBanner {
+                                Text("⚠️ No Internet Connection, offers will not be updated")
+                                    .font(.system(size: 14, weight: .medium))
+                                    .padding(.vertical, 10)
+                                    .padding(.horizontal, 16)
+                                    .background(Color.red.opacity(0.8))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(8)
+                                    .frame(maxWidth: .infinity)
+                                    .multilineTextAlignment(.center)
+                                    .transition(.move(edge: .top))
+                                    .padding(.horizontal, 40)
+                            }
+                            
+                        
+                            
                             if offerViewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
                                     .font(.headline)
@@ -55,12 +72,17 @@ struct HomepageView: View {
                                 }
                                 .padding()
                             }
+                            
                         }
                         .safeAreaInset(edge: .bottom) {
-                            Color.clear.frame(height: 80)
-                        }
+                            Color.clear.frame(height: 80)}
+                        
                         .onAppear {
                             fetchUserViewPreferences()
+                            let cache = URLCache.shared
+                            print("Cache actual: \(cache.currentMemoryUsage) bytes en memoria y \(cache.currentDiskUsage) bytes en disco.")
+                            
+                            
                             if filterViewModel.filtersApplied {
                                 offerViewModel.fetchOffersWithFilters()
                             } else {
@@ -74,7 +96,7 @@ struct HomepageView: View {
                         .alert(isPresented: $showConfirmationAlert) {
                             Alert(
                                 title: Text("Shake Detected"),
-                                message: Text("Do you want to clear the filters / refresh the offers?🧹"),
+                                message: Text("Do you want to clear the filters?🧹"),
                                 primaryButton: .destructive(Text("Yes")) {
                                     filterViewModel.clearFilters()
                                     offerViewModel.fetchOffers()
@@ -88,6 +110,12 @@ struct HomepageView: View {
                                 shakeDetector.resetShake()
                             }
                         }
+                        .onReceive(networkMonitor.$isConnected) { isConnected in
+                            withAnimation {
+                                showNoConnectionBanner = !isConnected
+                            }
+                        }
+                        // Manage navigation based on selected offer
                         .navigationDestination(isPresented: Binding(
                             get: { selectedOffer != nil },
                             set: { _ in selectedOffer = nil }
@@ -105,7 +133,7 @@ struct HomepageView: View {
             Text("Versión de iOS no soportada")
         }
     }
-
+    
     // Función para obtener la preferencia del usuario desde Firestore
     func fetchUserViewPreferences() {
         let db = Firestore.firestore()
@@ -113,7 +141,7 @@ struct HomepageView: View {
             print("Error: No hay usuario logueado")
             return
         }
-
+        
         let userViewsRef = db.collection("user_views").document(userEmail)
         userViewsRef.getDocument { document, error in
             if let document = document, document.exists {
@@ -125,21 +153,25 @@ struct HomepageView: View {
             }
         }
     }
-
+    
     func sortedOffers() -> [OfferWithProperty] {
         guard let preference = userRoommatePreference else {
             return offerViewModel.offersWithProperties
         }
-
+        
         return offerViewModel.offersWithProperties.sorted { first, second in
             let firstHasRoommates = first.offer.roommates > 0
             let secondHasRoommates = second.offer.roommates > 0
-
+            
             if preference {
                 return firstHasRoommates && !secondHasRoommates
             } else {
                 return !firstHasRoommates && secondHasRoommates
             }
         }
+    }
+    
+    func refreshOffers() {
+        offerViewModel.fetchOffers()
     }
 }
