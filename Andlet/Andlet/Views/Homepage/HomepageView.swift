@@ -51,16 +51,7 @@ struct HomepageView: View {
                                     .padding(.horizontal, 40)
                             }
                             
-                            else{
-                                
-                                Text("To refresh offers, simply shake your phone😉")
-                                    .font(.custom("LeagueSpartan-Light", size: 16))
-                                    .foregroundColor(Color(hex: "0C356A"))
-                                    .multilineTextAlignment(.center)
-                                    .padding(.horizontal)
-                                    .padding(.top, 3)
-                                
-                            }
+                        
                             
                             if offerViewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
@@ -105,7 +96,7 @@ struct HomepageView: View {
                         .alert(isPresented: $showConfirmationAlert) {
                             Alert(
                                 title: Text("Shake Detected"),
-                                message: Text("Do you want to clear the filters / refresh the offers?🧹"),
+                                message: Text("Do you want to clear the filters?🧹"),
                                 primaryButton: .destructive(Text("Yes")) {
                                     filterViewModel.clearFilters()
                                     offerViewModel.fetchOffers()
