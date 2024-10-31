@@ -105,6 +105,9 @@ struct HomepageRentView: View {
                                 showNoConnectionBanner = !isConnected
                             }
                         }
+                        .onReceive(NotificationCenter.default.publisher(for: .offerSaveCompleted)) { _ in
+                                  refreshOffers()
+                              }
                     }
                 }
             }

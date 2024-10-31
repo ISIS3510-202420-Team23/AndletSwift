@@ -2,11 +2,56 @@ import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
+import NotificationCenter
 
 class PropertyViewModel: ObservableObject {
     @Published var properties: [PropertyModel] = []
     private var db = Firestore.firestore()
     private var storage = Storage.storage()
+    
+    func savePropertyAsync(propertyOfferData: PropertyOfferData, completion: @escaping () -> Void) {
+        DispatchQueue.global(qos: .background).async {
+            self.getNextPropertyID { propertyID in
+                guard let propertyID = propertyID else {
+                    completion()
+                    return
+                }
+
+                propertyOfferData.propertyID = propertyID
+                
+                let photoNames = propertyOfferData.selectedImagesData.enumerated().map { (index, _) in
+                    return "\(propertyOfferData.userId)_\(propertyOfferData.propertyID)_\(index + 1).jpg"
+                }
+                propertyOfferData.photos = photoNames
+                self.postProperty(propertyOfferData: propertyOfferData) { postSuccess in
+                    if postSuccess {
+                        self.postOffer(propertyOfferData: propertyOfferData) { offerSuccess in
+                            if offerSuccess {
+                                self.uploadImages(for: propertyOfferData) { uploadSuccess in
+                                    DispatchQueue.main.async {
+                                        completion() // Notify completion on main thread
+                                    }
+                                }
+                            } else {
+                                DispatchQueue.main.async {
+                                    completion()
+                                }
+                            }
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            completion()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func notifySaveCompletion() {
+        NotificationCenter.default.post(name: .offerSaveCompleted, object: nil)
+    }
+    
 
     // Función para obtener el siguiente ID de propiedad
     func getNextPropertyID(completion: @escaping (Int?) -> Void) {
@@ -268,4 +313,8 @@ class PropertyViewModel: ObservableObject {
             }
         }
 
+}
+
+extension Notification.Name {
+    static let offerSaveCompleted = Notification.Name("offerSaveCompleted")
 }
