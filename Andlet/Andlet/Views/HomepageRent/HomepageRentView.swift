@@ -34,7 +34,7 @@ struct HomepageRentView: View {
                             
                             
                             if showNoConnectionBanner {
-                                Text("⚠️ No Internet Connection,you cannot create an offer or change an offer status if you are offline")
+                                Text("⚠️ No Internet Connection, you cannot create an offer or change an offer status if you are offline")
                                     .font(.system(size: 14, weight: .medium))
                                     .padding(.vertical, 10)
                                     .padding(.horizontal, 16)

@@ -2,8 +2,10 @@ import SwiftUI
 import FirebaseAuth
 
 struct Heading: View {
-    @StateObject var authViewModel = AuthenticationViewModel() // Usamos el view model para obtener la info del usuario desde Firestore
+    @StateObject var authViewModel = AuthenticationViewModel()
     @State private var isProfileViewActive = false
+    @State private var userImage: UIImage?
+    @StateObject private var networkMonitor = NetworkMonitor()
     
     var body: some View {
         HStack {
@@ -21,8 +23,8 @@ struct Heading: View {
             }
             Spacer()
 
-            // Imagen de perfil del usuario desde el authViewModel
-            if let photoURL = authViewModel.currentUser?.photo, !photoURL.isEmpty {
+//             Imagen de perfil del usuario desde el authViewModel
+            if let photoURL = authViewModel.currentUser?.photo, !photoURL.isEmpty, networkMonitor.isConnected {
                 AsyncImage(url: URL(string: photoURL)) { image in
                     image
                         .resizable()
@@ -41,6 +43,7 @@ struct Heading: View {
                             isProfileViewActive = true
                         }
                 }
+            
             } else {
                 // Placeholder si no hay imagen disponible (ícono predeterminado)
                 Image("Icon")
@@ -64,11 +67,32 @@ struct Heading: View {
         .onAppear {
             // Llama a la función de verificación de usuario al cargar la vista
             authViewModel.checkIfUserIsLoggedIn()
+            loadUserImage()
         }
     }
 
     // Función para obtener el primer nombre del usuario
     func getFirstName(fullName: String) -> String {
         return fullName.components(separatedBy: " ").first ?? fullName
+    }
+    
+    private func loadUserImage() {
+            guard networkMonitor.isConnected, let photoURL = authViewModel.currentUser?.photo, !photoURL.isEmpty else {
+                return
+            }
+            
+            downloadAndCacheImage(photoURL)
+        }
+        
+    private func downloadAndCacheImage(_ url: String) {
+        guard let photoURL = URL(string: url) else { return }
+        URLSession.shared.dataTask(with: photoURL) { data, _, error in
+            guard let data = data, let image = UIImage(data: data), error == nil else { return }
+            
+            DispatchQueue.main.async {
+                self.userImage = image
+                ImageCacheManager.shared.saveImageToCache(image, forKey: url)  // Guardar en caché
+            }
+        }.resume()
     }
 }
