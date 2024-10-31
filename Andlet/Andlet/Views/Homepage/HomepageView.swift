@@ -38,7 +38,7 @@ struct HomepageView: View {
                                     }
                                 }
                             if showNoConnectionBanner {
-                                Text("⚠️ No Internet Connection, offers will not be updated")
+                                Text("⚠️ No Internet Connection, offers and availability will not be updated")
                                     .font(.system(size: 14, weight: .medium))
                                     .padding(.vertical, 10)
                                     .padding(.horizontal, 16)

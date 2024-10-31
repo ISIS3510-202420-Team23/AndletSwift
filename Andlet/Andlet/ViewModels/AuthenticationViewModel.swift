@@ -105,7 +105,6 @@ final class AuthenticationViewModel: ObservableObject{
     }
     func fetchOrCreateUser(userEmail: String, name: String, phone: String, photo: String) async {
         let userRef = db.collection("users").document(usersDocumentID)
-        
         let safeEmail = userEmail.replacingOccurrences(of: ".", with: "_")
         
         do{
@@ -123,6 +122,8 @@ final class AuthenticationViewModel: ObservableObject{
                             photo: userData["photo"] as? String ?? ""
                         )
                         self.currentUser = user
+                        UserDefaults.standard.userName = user.name
+                        UserDefaults.standard.userPhotoURL = user.photo
                         print("Fetched existing user: \(user.name)")
                     }
                     else{
@@ -163,6 +164,9 @@ final class AuthenticationViewModel: ObservableObject{
                 typeUser: .notDefined,
                 photo: photo
             )
+            UserDefaults.standard.userName = name
+            UserDefaults.standard.userPhotoURL = photo
+
             
         }
         catch{

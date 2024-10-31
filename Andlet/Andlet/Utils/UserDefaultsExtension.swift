@@ -12,6 +12,9 @@ extension UserDefaults {
         static let roommateViews = "roommateViews"
         static let noRoommateViews = "noRoommateViews"
         static let offlineOfferViews = "offlineOfferViews"
+        static let userName = "userName"
+        static let userPhotoURL = "userPhotoURL"
+        
     }
     
     var roommateViews: Int {
@@ -32,6 +35,16 @@ extension UserDefaults {
                 set(newValue, forKey: Keys.offlineOfferViews)
             }
         }
+    
+    var userName: String {
+            get { string(forKey: Keys.userName) ?? "Guest" }
+            set { set(newValue, forKey: Keys.userName) }
+        }
+        
+    var userPhotoURL: String {
+        get { string(forKey: Keys.userPhotoURL) ?? "" }
+        set { set(newValue, forKey: Keys.userPhotoURL) }
+    }
         
     func incrementOfflineView(for offerId: String) {
         var views = offlineOfferViews
