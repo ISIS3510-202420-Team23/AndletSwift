@@ -82,7 +82,7 @@ struct Step3View: View {
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .frame(width: 120, height: 50)
-                                .background(isSaving ? Color.gray : Color(red: 12/255, green: 53/255, blue: 106/255)) // Cambiar el color si se está guardando
+                                .background(isSaving ? Color.gray : Color(red: 12/255, green: 53/255, blue: 106/255))
                                 .cornerRadius(15)
                                 .onTapGesture {
                                     guard !isSaving else { return } // Evitar múltiples taps si ya está guardando
@@ -92,59 +92,18 @@ struct Step3View: View {
                                         showWarningMessage = false
                                         isSaving = true // Marcar como guardando
 
-                                        viewModel.getNextPropertyID { propertyID in
-                                            guard let propertyID = propertyID else {
-                                                print("Error: No se pudo obtener el siguiente ID de propiedad")
-                                                isSaving = false // Resetear si falla la obtención del ID
-                                                return
-                                            }
-
-                                            propertyOfferData.propertyID = propertyID
-                                            print("Next Property ID: \(propertyID)")
-
-                                            let photoNames = propertyOfferData.selectedImagesData.enumerated().map { (index, _) in
-                                                return "\(propertyOfferData.userId)_\(propertyOfferData.propertyID)_\(index + 1).jpg"
-                                            }
-                                            propertyOfferData.photos = photoNames
-                                            print("Nombres de las fotos determinados: \(photoNames)")
-
-                                            viewModel.postProperty(propertyOfferData: propertyOfferData) { postSuccess in
-                                                if postSuccess {
-                                                    print("Propiedad posteada exitosamente.")
-
-                                                    viewModel.postOffer(propertyOfferData: propertyOfferData) { offerSuccess in
-                                                        if offerSuccess {
-                                                            print("Oferta posteada exitosamente.")
-
-                                                            viewModel.uploadImages(for: propertyOfferData) { uploadSuccess in
-                                                                if uploadSuccess {
-                                                                    print("Fotos subidas con éxito.")
-                                                                    isSaving = false // Liberar el bloqueo del botón
-                                                                    navigateToMainTab = true // Navegar al MainTabLandlordView
-
-                                                                    // Registrar la acción de Save en Firestore
-                                                                    logSaveAction()
-                                                                } else {
-                                                                    print("Error al subir las fotos.")
-                                                                    isSaving = false // Liberar el bloqueo del botón
-                                                                }
-                                                            }
-                                                        } else {
-                                                            print("Error al postear la oferta.")
-                                                            isSaving = false // Liberar el bloqueo del botón
-                                                        }
-                                                    }
-                                                } else {
-                                                    print("Error al postear la propiedad.")
-                                                    isSaving = false // Liberar el bloqueo del botón
-                                                }
-                                            }
+                                        // Start save process in the background and navigate immediately
+                                        viewModel.savePropertyAsync(propertyOfferData: propertyOfferData) {
+                                            isSaving = false // Liberar el bloqueo del botón al terminar
+                                            viewModel.notifySaveCompletion() // Notificar al terminar el guardado
                                         }
+                                        navigateToMainTab = true // Navegar inmediatamente
                                     } else {
                                         showWarningMessage = true
-                                        isSaving = false // Liberar el bloqueo si no se cumple la validación
+                                        isSaving = false // Reset saving state if validation fails
                                     }
 
+                                    // Show warning message if needed
                                     if showWarningMessage {
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                             withAnimation {
@@ -161,23 +120,7 @@ struct Step3View: View {
                     .padding()
                 }
 
-                // Mostrar el indicador de carga cuando isSaving sea true
-                if isSaving {
-                    VStack {
-                        ProgressView("Saving your offer...")
-                            .progressViewStyle(CircularProgressViewStyle(tint: Color(red: 12/255, green: 53/255, blue: 106/255)))
-                            .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
-                            .font(.headline)
-                            .padding()
-                            .background(Color.white)
-                            .cornerRadius(15)
-                            .shadow(radius: 10)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color(red: 197/255, green: 221/255, blue: 255/255))
-                    .transition(.opacity) // Añadir transición de opacidad
-                }
-
+                // Show warning message if date range is invalid
                 if showWarningMessage {
                     VStack {
                         Spacer()
@@ -216,40 +159,8 @@ struct Step3View: View {
                     return
                 }
 
-                propertyOfferData.propertyID = propertyID // Asignar como Int
+                propertyOfferData.propertyID = propertyID
                 print("Next Property ID (onAppear): \(propertyID)")
-            }
-        }
-    }
-    
-    // Nueva función para registrar la acción de Save en Firestore
-    private func logSaveAction() {
-        guard let currentUser = Auth.auth().currentUser, let userEmail = currentUser.email else {
-            print("Error: No se pudo obtener el email del usuario, el usuario no está autenticado.")
-            return
-        }
-
-        // Crear un identificador único para el documento usando el formato solicitado
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd_HH:mm:ss"
-        let formattedDate = dateFormatter.string(from: Date())
-        let documentID = "3_\(userEmail)_\(formattedDate)"  // Identificador que empieza con "3"
-
-        // Crear la estructura del documento
-        let actionData: [String: Any] = [
-            "action": "publish",
-            "app": "swift",
-            "date": Date(),
-            "user_id": userEmail
-        ]
-
-        // Registrar la acción en la colección "user_actions" en Firestore
-        let db = Firestore.firestore()
-        db.collection("user_actions").document(documentID).setData(actionData) { error in
-            if let error = error {
-                print("Error al registrar el evento de save en Firestore: \(error.localizedDescription)")
-            } else {
-                print("Evento de save registrado exitosamente en Firestore con ID: \(documentID)")
             }
         }
     }
