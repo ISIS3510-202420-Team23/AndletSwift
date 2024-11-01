@@ -79,11 +79,6 @@
 		9C528C1D2CAB7EDD007F6A76 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C528C1C2CAB7EDD007F6A76 /* ProfileView.swift */; };
 		9C528C1F2CACE0B5007F6A76 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C528C1E2CACE0B5007F6A76 /* LocationManager.swift */; };
 		A9188B182CBCE144002703D4 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9188B172CBCE144002703D4 /* StringExtensions.swift */; };
-		A924F9782CD40CAF00AE2ECB /* CoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A924F9762CD40CAF00AE2ECB /* CoreData.xcdatamodeld */; };
-		A924F9872CD412C600AE2ECB /* Properties+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A924F9832CD412C600AE2ECB /* Properties+CoreDataClass.swift */; };
-		A924F9882CD412C600AE2ECB /* Properties+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A924F9842CD412C600AE2ECB /* Properties+CoreDataProperties.swift */; };
-		A924F9892CD412C600AE2ECB /* Offers+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A924F9852CD412C600AE2ECB /* Offers+CoreDataClass.swift */; };
-		A924F98A2CD412C600AE2ECB /* Offers+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A924F9862CD412C600AE2ECB /* Offers+CoreDataProperties.swift */; };
 		A968E3CC2C9F92A100EE98F8 /* Step1View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3C82C9F92A100EE98F8 /* Step1View.swift */; };
 		A968E3CE2C9F92A100EE98F8 /* Step3View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3CA2C9F92A100EE98F8 /* Step3View.swift */; };
 		A968E3CF2C9F92A100EE98F8 /* Step2View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3CB2C9F92A100EE98F8 /* Step2View.swift */; };
@@ -193,11 +188,6 @@
 		9C528C1C2CAB7EDD007F6A76 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		9C528C1E2CACE0B5007F6A76 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		A9188B172CBCE144002703D4 /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
-		A924F9772CD40CAF00AE2ECB /* CoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreData.xcdatamodel; sourceTree = "<group>"; };
-		A924F9832CD412C600AE2ECB /* Properties+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Properties+CoreDataClass.swift"; sourceTree = "<group>"; };
-		A924F9842CD412C600AE2ECB /* Properties+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Properties+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		A924F9852CD412C600AE2ECB /* Offers+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Offers+CoreDataClass.swift"; sourceTree = "<group>"; };
-		A924F9862CD412C600AE2ECB /* Offers+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Offers+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		A968E3C82C9F92A100EE98F8 /* Step1View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step1View.swift; sourceTree = "<group>"; };
 		A968E3CA2C9F92A100EE98F8 /* Step3View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step3View.swift; sourceTree = "<group>"; };
 		A968E3CB2C9F92A100EE98F8 /* Step2View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step2View.swift; sourceTree = "<group>"; };
@@ -373,8 +363,6 @@
 		9C1369632C9E30A10000B55C /* Andlet */ = {
 			isa = PBXGroup;
 			children = (
-				A924F9812CD4109A00AE2ECB /* PropertyItem */,
-				A924F9822CD410AC00AE2ECB /* OfferItem */,
 				A9ED6DB22CAC77990066E3EA /* Analytics */,
 				9C1369F02C9E428D0000B55C /* Info.plist */,
 				9C1369D82C9E3F200000B55C /* GoogleService-Info.plist */,
@@ -390,7 +378,6 @@
 				9C13696A2C9E30A20000B55C /* Andlet.entitlements */,
 				9C13696B2C9E30A20000B55C /* Preview Content */,
 				3784CC3D2CC3379A00A0B7E9 /* Cache */,
-				A924F9762CD40CAF00AE2ECB /* CoreData.xcdatamodeld */,
 			);
 			path = Andlet;
 			sourceTree = "<group>";
@@ -517,24 +504,6 @@
 				9C528C1C2CAB7EDD007F6A76 /* ProfileView.swift */,
 			);
 			path = Profile;
-			sourceTree = "<group>";
-		};
-		A924F9812CD4109A00AE2ECB /* PropertyItem */ = {
-			isa = PBXGroup;
-			children = (
-				A924F9832CD412C600AE2ECB /* Properties+CoreDataClass.swift */,
-				A924F9842CD412C600AE2ECB /* Properties+CoreDataProperties.swift */,
-			);
-			path = PropertyItem;
-			sourceTree = "<group>";
-		};
-		A924F9822CD410AC00AE2ECB /* OfferItem */ = {
-			isa = PBXGroup;
-			children = (
-				A924F9852CD412C600AE2ECB /* Offers+CoreDataClass.swift */,
-				A924F9862CD412C600AE2ECB /* Offers+CoreDataProperties.swift */,
-			);
-			path = OfferItem;
 			sourceTree = "<group>";
 		};
 		A968E3C72C9F924C00EE98F8 /* Forms */ = {
@@ -750,10 +719,6 @@
 				9C528C1D2CAB7EDD007F6A76 /* ProfileView.swift in Sources */,
 				A9188B182CBCE144002703D4 /* StringExtensions.swift in Sources */,
 				37C0E2A62C9E59BA00099A90 /* OfferDetailView.swift in Sources */,
-				A924F9872CD412C600AE2ECB /* Properties+CoreDataClass.swift in Sources */,
-				A924F9882CD412C600AE2ECB /* Properties+CoreDataProperties.swift in Sources */,
-				A924F9892CD412C600AE2ECB /* Offers+CoreDataClass.swift in Sources */,
-				A924F98A2CD412C600AE2ECB /* Offers+CoreDataProperties.swift in Sources */,
 				A968E3E32C9F92CC00EE98F8 /* CustomTextField.swift in Sources */,
 				9C1369CB2C9E35BE0000B55C /* CircularArrowButton.swift in Sources */,
 				A9DFF6CF2CA91C7F0063E52C /* PropertyOfferData.swift in Sources */,
@@ -780,7 +745,6 @@
 				9C1369CC2C9E35BE0000B55C /* AuthenticationView.swift in Sources */,
 				A968E3E62C9F92CC00EE98F8 /* CustomInputField.swift in Sources */,
 				A968E3E12C9F92CC00EE98F8 /* HeaderView.swift in Sources */,
-				A924F9782CD40CAF00AE2ECB /* CoreData.xcdatamodeld in Sources */,
 				A968E3E42C9F92CC00EE98F8 /* IconInputFiled.swift in Sources */,
 				A9ED6DB42CAC77AC0066E3EA /* AnalyticsView.swift in Sources */,
 				9C1369CD2C9E35BE0000B55C /* ProfilePickerView.swift in Sources */,
@@ -962,7 +926,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Andlet/Preview Content\"";
-				DEVELOPMENT_TEAM = NSVR4MKML4;
+				DEVELOPMENT_TEAM = 25L8P5DHHR;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -987,7 +951,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = team23.AndletThais;
+				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet.Sofia;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -1006,7 +970,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Andlet/Preview Content\"";
-				DEVELOPMENT_TEAM = NSVR4MKML4;
+				DEVELOPMENT_TEAM = 25L8P5DHHR;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1031,7 +995,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = team23.AndletThais;
+				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet.Sofia;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -1240,20 +1204,6 @@
 			productName = GoogleSignInSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
-
-/* Begin XCVersionGroup section */
-		A924F9762CD40CAF00AE2ECB /* CoreData.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				A924F9772CD40CAF00AE2ECB /* CoreData.xcdatamodel */,
-			);
-			currentVersion = A924F9772CD40CAF00AE2ECB /* CoreData.xcdatamodel */;
-			name = CoreData.xcdatamodeld;
-			path = "/Users/thaistamaio/Library/Mobile Documents/com~apple~CloudDocs/universidad/9) Noveno semestre/Móviles/AndletSwift/Andlet/Andlet/CoreData.xcdatamodeld";
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 9C1369592C9E30A10000B55C /* Project object */;
 }

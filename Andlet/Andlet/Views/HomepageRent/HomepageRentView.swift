@@ -27,6 +27,8 @@ struct HomepageRentView: View {
                         VStack {
                             Heading()
                             
+                            CreateMoreButton()
+                            
                             if showNoConnectionBanner {
                                 Text("⚠️ No Internet Connection, you cannot create an offer or change an offer status if you are offline")
                                     .font(.system(size: 14, weight: .medium))
@@ -39,9 +41,10 @@ struct HomepageRentView: View {
                                     .multilineTextAlignment(.center)
                                     .transition(.move(edge: .top))
                                     .padding(.horizontal, 40)
-                            } else {
-                                CreateMoreButton()
                             }
+                        
+                            
+                        
                             
                             if viewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
