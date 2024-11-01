@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23B74" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="Offers" representedClassName="Offers" syncable="YES">
+        <attribute name="final_date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="initial_date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="is_active" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="num_baths" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="num_beds" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="num_rooms" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="only_andes" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="price_per_month" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="roommates" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <attribute name="user_id" optional="YES" attributeType="String"/>
+        <attribute name="views" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="Properties" representedClassName="Properties" syncable="YES">
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="complex_name" optional="YES" attributeType="String"/>
+        <attribute name="description_property" optional="YES" attributeType="String"/>
+        <attribute name="location" optional="YES" attributeType="String"/>
+        <attribute name="minues_from_campus" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="photo_1" attributeType="Transformable" customClassName="UIImage"/>
+        <attribute name="photo_2" attributeType="Transformable" customClassName="UIImage"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+    </entity>
+</model>

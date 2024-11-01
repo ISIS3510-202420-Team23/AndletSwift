@@ -4,11 +4,14 @@ import FirebaseFirestore
 
 struct Step3View: View {
     @ObservedObject var propertyOfferData: PropertyOfferData
-    @StateObject private var viewModel = PropertyViewModel() // Instancia del ViewModel como @StateObject
+    @StateObject private var viewModel = PropertyViewModel()
+    @StateObject private var networkMonitor = NetworkMonitor()
 
+    @AppStorage("publishedOffline") private var publishedOffline = false // Almacenar estado offline
+    @State private var showNoInternetAlert = false
     @State private var showWarningMessage = false
-    @State private var isSaving = false // Estado para controlar si se está guardando la información
-    @State private var navigateToMainTab = false // Controla la navegación programática
+    @State private var isSaving = false
+    @State private var navigateToMainTab = false
 
     var body: some View {
         NavigationStack {
@@ -85,34 +88,29 @@ struct Step3View: View {
                                 .background(isSaving ? Color.gray : Color(red: 12/255, green: 53/255, blue: 106/255))
                                 .cornerRadius(15)
                                 .onTapGesture {
-                                    guard !isSaving else { return } // Evitar múltiples taps si ya está guardando
+                                    guard !isSaving else { return }
                                     let todayStartOfDay = Calendar.current.startOfDay(for: Date())
 
                                     if propertyOfferData.initialDate >= todayStartOfDay && propertyOfferData.finalDate > propertyOfferData.initialDate {
-                                        showWarningMessage = false
-                                        isSaving = true // Marcar como guardando
+                                        isSaving = true
 
-                                        // Start save process in the background and navigate immediately
-                                        viewModel.savePropertyAsync(propertyOfferData: propertyOfferData) {
-                                            isSaving = false // Liberar el bloqueo del botón al terminar
-                                            viewModel.notifySaveCompletion() // Notificar al terminar el guardado
+                                        if !networkMonitor.isConnected {
+                                            publishedOffline = true // Marcar como publicado sin conexión
+                                            showNoInternetAlert = true
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                                showNoInternetAlert = false
+                                                completeSave()
+                                            }
+                                        } else {
+                                            publishedOffline = false
+                                            completeSave()
                                         }
-                                        navigateToMainTab = true // Navegar inmediatamente
                                     } else {
                                         showWarningMessage = true
-                                        isSaving = false // Reset saving state if validation fails
-                                    }
-
-                                    // Show warning message if needed
-                                    if showWarningMessage {
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                            withAnimation {
-                                                showWarningMessage = false
-                                            }
-                                        }
+                                        isSaving = false
                                     }
                                 }
-                                .disabled(isSaving) // Deshabilitar botón si está guardando
+                                .disabled(isSaving)
                         }
                         .padding(.horizontal, 20)
                         .padding(.top, 10)
@@ -120,7 +118,24 @@ struct Step3View: View {
                     .padding()
                 }
 
-                // Show warning message if date range is invalid
+                if showNoInternetAlert {
+                    ZStack {
+                        Color(hex: "#C5DDFF").ignoresSafeArea()
+                        VStack(spacing: 20) {
+                            Text("⚠️ Your listing will be published once the internet connection is restored")
+                                .font(.body)
+                                .foregroundColor(.black)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .background(Color(hex: "#FFF4CF"))
+                                .cornerRadius(10)
+                                .frame(width: 250)
+                        }
+                    }
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.3), value: showNoInternetAlert)
+                }
+                
                 if showWarningMessage {
                     VStack {
                         Spacer()
@@ -163,5 +178,13 @@ struct Step3View: View {
                 print("Next Property ID (onAppear): \(propertyID)")
             }
         }
+    }
+    
+    private func completeSave() {
+        viewModel.savePropertyAsync(propertyOfferData: propertyOfferData) {
+            isSaving = false
+            viewModel.notifySaveCompletion()
+        }
+        navigateToMainTab = true
     }
 }
