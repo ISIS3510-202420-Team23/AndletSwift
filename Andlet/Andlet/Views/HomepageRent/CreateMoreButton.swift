@@ -23,10 +23,10 @@ struct CreateMoreButton: View {
                     .toolbar(.hidden, for: .tabBar)
                     .ignoresSafeArea(.all)) {
                     Text("+ Create more")
-                        .foregroundStyle(.white)
+                        .foregroundColor(.white)
                         .font(.subheadline)
                         .frame(width: 130, height: 45)
-                        .background(publishedOffline && !isConnected ? Color.gray : Color(hex: "0C356A"))
+                        .background(publishedOffline && !isConnected ? Color.gray : Color(hex: "0C356A")) // Cambia a gris si está desactivado
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
             }
