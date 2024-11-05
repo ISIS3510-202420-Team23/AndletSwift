@@ -3,14 +3,14 @@ import SwiftUI
 struct Step1View: View {
     @ObservedObject var propertyOfferData: PropertyOfferData
     @StateObject private var viewModel = PropertyViewModel()
+    @StateObject private var networkMonitor = NetworkMonitor()
 
     @State private var showImagePicker1 = false
     @State private var showImagePicker2 = false
     @State private var showWarningMessage = false
     @State private var warningMessageText = ""
     @State private var navigateToStep2 = false
-
-    @Environment(\.presentationMode) var presentationMode
+    @AppStorage("initialConnectionStatus") private var initialConnectionStatus: Bool = false // Establece un valor predeterminado
 
     var body: some View {
         NavigationView {
@@ -128,23 +128,13 @@ struct Step1View: View {
 
                         Spacer()
 
-                        if #available(iOS 16.0, *) {
-                            NavigationLink(
-                                value: navigateToStep2,
-                                label: { EmptyView() }
-                            )
-                            .navigationDestination(isPresented: $navigateToStep2) {
-                                Step2View(propertyOfferData: propertyOfferData)
-                                    .navigationBarBackButtonHidden(true)
-                                    .navigationBarHidden(true)
-                            }
-                        } else {
-                            NavigationLink(destination: Step2View(propertyOfferData: propertyOfferData)
+                        NavigationLink(
+                            destination: Step2View(propertyOfferData: propertyOfferData)
                                 .navigationBarBackButtonHidden(true)
                                 .navigationBarHidden(true),
-                                           isActive: $navigateToStep2) {
-                                EmptyView()
-                            }
+                            isActive: $navigateToStep2
+                        ) {
+                            EmptyView()
                         }
 
                         Text("Next")
@@ -154,7 +144,6 @@ struct Step1View: View {
                             .background(Color(red: 12/255, green: 53/255, blue: 106/255))
                             .cornerRadius(15)
                             .onTapGesture {
-                                // Validación inicial sin modificar los campos
                                 if propertyOfferData.placeTitle.isOnlyWhitespace || propertyOfferData.placeAddress.isOnlyWhitespace {
                                     warningMessageText = "Please do not use only spaces in the title or address fields."
                                     showWarningMessage = true
@@ -168,12 +157,15 @@ struct Step1View: View {
                                     warningMessageText = "Please remove any emojis from the text fields."
                                     showWarningMessage = true
                                 } else {
-                                    // Limpia espacios extra antes de navegar al Step 2
                                     propertyOfferData.placeTitle = propertyOfferData.placeTitle.removingExtraSpaces()
                                     propertyOfferData.placeDescription = propertyOfferData.placeDescription.removingExtraSpaces()
                                     propertyOfferData.placeAddress = propertyOfferData.placeAddress.removingExtraSpaces()
                                     showWarningMessage = false
                                     viewModel.assignAuthenticatedUser(to: propertyOfferData)
+                                    
+                                    // Guardar el estado de conexión inicial
+                                    initialConnectionStatus = networkMonitor.isConnected
+                                    
                                     navigateToStep2 = true
                                 }
 
@@ -216,8 +208,7 @@ struct Step1View: View {
                 hideKeyboard()
             }
         }
-        .onAppear {
-            viewModel.assignAuthenticatedUser(to: propertyOfferData)
-        }
     }
 }
+
+

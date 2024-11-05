@@ -7,13 +7,16 @@ struct Step3View: View {
     @StateObject private var viewModel = PropertyViewModel()
     @StateObject private var networkMonitor = NetworkMonitor()
 
-    @AppStorage("publishedOffline") private var publishedOffline = false // Estado de publicación offline
-    @AppStorage("currentOfferCountStorage") private var currentOfferCountStorage = 0 // Contador de ofertas actuales persistente
+    @AppStorage("publishedOffline") private var publishedOffline = false
+    @AppStorage("currentOfferCountStorage") private var currentOfferCountStorage = 0
+    @AppStorage("initialConnectionStatus") private var initialConnectionStatus: Bool = false
     @State private var showNoInternetAlert = false
     @State private var showWarningMessage = false
+    @State private var warningMessageText = ""
     @State private var isSaving = false
     @State private var navigateToMainTab = false
-    @State private var showFirstPropertyWarning = false // Para advertencia de la primera propiedad sin conexión
+    @State private var showFirstPropertyWarning = false
+    @State private var navigateToStep1 = false
 
     var body: some View {
         NavigationStack {
@@ -91,19 +94,33 @@ struct Step3View: View {
                                 .cornerRadius(15)
                                 .onTapGesture {
                                     guard !isSaving else { return }
+                                    
+                                    // Verificar primero si el rango de fechas es válido
                                     let todayStartOfDay = Calendar.current.startOfDay(for: Date())
-
                                     if propertyOfferData.initialDate >= todayStartOfDay && propertyOfferData.finalDate > propertyOfferData.initialDate {
-                                        // Verificar la conexión y si es la primera propiedad
-                                        if !networkMonitor.isConnected {
-                                            if currentOfferCountStorage == 0 {
-                                                // Mostrar advertencia específica para la primera propiedad y redirigir a HomepageRentView
+                                        // Si las fechas son válidas, proceder con la verificación del estado de conexión
+                                        if initialConnectionStatus != networkMonitor.isConnected {
+                                            // Si el estado de conexión ha cambiado, regresar al Step 1
+                                            warningMessageText = "Connection state changed. Returning to Step 1."
+                                            showWarningMessage = true
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                                navigateToStep1 = true
+                                            }
+                                            initialConnectionStatus = networkMonitor.isConnected // Actualizar el estado inicial
+                                        } else {
+                                            // Comportamiento cuando no hay cambio en el estado de conexión
+                                            if networkMonitor.isConnected {
+                                                isSaving = true
+                                                publishedOffline = false
+                                                completeSave()
+                                            } else if currentOfferCountStorage == 0 {
+                                                // Mostrar advertencia específica para la primera propiedad sin conexión y redirigir
                                                 showFirstPropertyWarning = true
                                                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                                     navigateToMainTab = true
                                                 }
                                             } else {
-                                                // Configuración de publicación offline para propiedades adicionales
+                                                // Publicación en modo offline para propiedades adicionales
                                                 publishedOffline = true
                                                 showNoInternetAlert = true
                                                 DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
@@ -111,14 +128,17 @@ struct Step3View: View {
                                                     completeSave()
                                                 }
                                             }
-                                        } else {
-                                            isSaving = true
-                                            publishedOffline = false
-                                            completeSave()
                                         }
                                     } else {
+                                        // Si el rango de fechas no es válido, mostrar advertencia temporal
+                                        warningMessageText = "Please select a valid date range before proceeding"
                                         showWarningMessage = true
                                         isSaving = false
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                            withAnimation {
+                                                showWarningMessage = false
+                                            }
+                                        }
                                     }
                                 }
                                 .disabled(isSaving || (publishedOffline && !networkMonitor.isConnected))
@@ -132,9 +152,9 @@ struct Step3View: View {
                 // Mostrar advertencia para la primera propiedad sin conexión
                 if showFirstPropertyWarning {
                     ZStack {
-                        Color(hex: "#FFC5C5").ignoresSafeArea() // Color de fondo para advertencia
+                        Color(hex: "#FFC5C5").ignoresSafeArea()
                         VStack(spacing: 20) {
-                            Text("⚠️ Internet connection is required to publish your first property.")
+                            Text("⚠️ Internet connection is required to publish your first property")
                                 .font(.body)
                                 .foregroundColor(.black)
                                 .multilineTextAlignment(.center)
@@ -172,7 +192,7 @@ struct Step3View: View {
                         Spacer()
                             .frame(height: 10)
 
-                        Text("Please select a valid date range before proceeding")
+                        Text(warningMessageText)
                             .foregroundColor(.white)
                             .font(.subheadline)
                             .padding()
@@ -189,6 +209,11 @@ struct Step3View: View {
             }
             .navigationDestination(isPresented: $navigateToMainTab) {
                 HomepageRentView()
+                    .navigationBarBackButtonHidden(true)
+                    .navigationBarHidden(true)
+            }
+            .navigationDestination(isPresented: $navigateToStep1) {
+                Step1View(propertyOfferData: propertyOfferData)
                     .navigationBarBackButtonHidden(true)
                     .navigationBarHidden(true)
             }
