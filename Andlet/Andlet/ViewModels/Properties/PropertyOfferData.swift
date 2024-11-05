@@ -76,4 +76,27 @@ class PropertyOfferData: ObservableObject, CustomStringConvertible {
         - Roommates: \(roommates)
         """
     }
+    
+    // Método para reiniciar todos los datos de la propiedad
+    func reset() {
+        placeTitle = ""
+        placeDescription = ""
+        placeAddress = ""
+        photos = []
+        selectedImagesData = []
+        numBaths = 1
+        numBeds = 1
+        numRooms = 1
+        pricePerMonth = 0.0
+        type = .aRoom
+        onlyAndes = false
+        initialDate = Date()
+        finalDate = Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date()
+        minutesFromCampus = 0
+        userId = ""
+        userName = ""
+        userEmail = ""
+        propertyID = 0
+        updateRoommates()
+    }
 }

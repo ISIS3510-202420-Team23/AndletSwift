@@ -7,7 +7,7 @@ struct Step3View: View {
     @StateObject private var viewModel = PropertyViewModel()
     @StateObject private var networkMonitor = NetworkMonitor()
 
-    @AppStorage("publishedOffline") private var publishedOffline = false // Almacenar estado offline
+    @AppStorage("publishedOffline") private var publishedOffline = false // Estado de publicación offline
     @State private var showNoInternetAlert = false
     @State private var showWarningMessage = false
     @State private var isSaving = false
@@ -110,7 +110,7 @@ struct Step3View: View {
                                         isSaving = false
                                     }
                                 }
-                                .disabled(isSaving)
+                                .disabled(isSaving || (publishedOffline && !networkMonitor.isConnected))
                         }
                         .padding(.horizontal, 20)
                         .padding(.top, 10)
@@ -157,7 +157,7 @@ struct Step3View: View {
                 }
             }
             .navigationDestination(isPresented: $navigateToMainTab) {
-                MainTabLandlordView()
+                HomepageRentView()
                     .navigationBarBackButtonHidden(true)
                     .navigationBarHidden(true)
             }
