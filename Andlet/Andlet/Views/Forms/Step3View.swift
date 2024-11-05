@@ -7,11 +7,13 @@ struct Step3View: View {
     @StateObject private var viewModel = PropertyViewModel()
     @StateObject private var networkMonitor = NetworkMonitor()
 
-    @AppStorage("publishedOffline") private var publishedOffline = false // Almacenar estado offline
+    @AppStorage("publishedOffline") private var publishedOffline = false // Estado de publicación offline
+    @AppStorage("currentOfferCountStorage") private var currentOfferCountStorage = 0 // Contador de ofertas actuales persistente
     @State private var showNoInternetAlert = false
     @State private var showWarningMessage = false
     @State private var isSaving = false
     @State private var navigateToMainTab = false
+    @State private var showFirstPropertyWarning = false // Para advertencia de la primera propiedad sin conexión
 
     var body: some View {
         NavigationStack {
@@ -92,16 +94,25 @@ struct Step3View: View {
                                     let todayStartOfDay = Calendar.current.startOfDay(for: Date())
 
                                     if propertyOfferData.initialDate >= todayStartOfDay && propertyOfferData.finalDate > propertyOfferData.initialDate {
-                                        isSaving = true
-
+                                        // Verificar la conexión y si es la primera propiedad
                                         if !networkMonitor.isConnected {
-                                            publishedOffline = true // Marcar como publicado sin conexión
-                                            showNoInternetAlert = true
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                                                showNoInternetAlert = false
-                                                completeSave()
+                                            if currentOfferCountStorage == 0 {
+                                                // Mostrar advertencia específica para la primera propiedad y redirigir a HomepageRentView
+                                                showFirstPropertyWarning = true
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                                    navigateToMainTab = true
+                                                }
+                                            } else {
+                                                // Configuración de publicación offline para propiedades adicionales
+                                                publishedOffline = true
+                                                showNoInternetAlert = true
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                                    showNoInternetAlert = false
+                                                    completeSave()
+                                                }
                                             }
                                         } else {
+                                            isSaving = true
                                             publishedOffline = false
                                             completeSave()
                                         }
@@ -110,7 +121,7 @@ struct Step3View: View {
                                         isSaving = false
                                     }
                                 }
-                                .disabled(isSaving)
+                                .disabled(isSaving || (publishedOffline && !networkMonitor.isConnected))
                         }
                         .padding(.horizontal, 20)
                         .padding(.top, 10)
@@ -118,7 +129,27 @@ struct Step3View: View {
                     .padding()
                 }
 
-                if showNoInternetAlert {
+                // Mostrar advertencia para la primera propiedad sin conexión
+                if showFirstPropertyWarning {
+                    ZStack {
+                        Color(hex: "#FFC5C5").ignoresSafeArea() // Color de fondo para advertencia
+                        VStack(spacing: 20) {
+                            Text("⚠️ Internet connection is required to publish your first property.")
+                                .font(.body)
+                                .foregroundColor(.black)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .background(Color(hex: "#FFF4CF"))
+                                .cornerRadius(10)
+                                .frame(width: 300)
+                        }
+                    }
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.3), value: showFirstPropertyWarning)
+                }
+
+                // Mostrar advertencia para publicación offline en propiedades adicionales
+                if showNoInternetAlert && currentOfferCountStorage > 0 {
                     ZStack {
                         Color(hex: "#C5DDFF").ignoresSafeArea()
                         VStack(spacing: 20) {
@@ -157,7 +188,7 @@ struct Step3View: View {
                 }
             }
             .navigationDestination(isPresented: $navigateToMainTab) {
-                MainTabLandlordView()
+                HomepageRentView()
                     .navigationBarBackButtonHidden(true)
                     .navigationBarHidden(true)
             }

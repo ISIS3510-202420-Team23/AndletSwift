@@ -3,8 +3,10 @@ import FirebaseAuth
 import UIKit
 
 struct HomepageRentView: View {
-    @AppStorage("publishedOffline") private var publishedOffline = false // Indica si se publicó sin conexión
-    @AppStorage("initialOfferCount") private var initialOfferCount = 0 // Cantidad inicial de ofertas en la primera carga
+    @AppStorage("publishedOffline") private var publishedOffline = false // Estado de publicación offline
+    @AppStorage("initialOfferCount") private var initialOfferCount = 0 // Cantidad inicial de ofertas para notificación
+    @AppStorage("currentOfferCountStorage") private var currentOfferCountStorage = 0 // Cantidad de ofertas persistente en el dispositivo
+    @State private var currentOfferCount = 0 // Cantidad actual de ofertas para gestionar el botón en la vista
     @State private var isConnected = false // Indica si la conexión a Internet está activa
     @State private var showSuccessNotification = false // Notificación de éxito
     @State private var showFilterSearchView = false
@@ -14,7 +16,8 @@ struct HomepageRentView: View {
     @StateObject private var viewModel = OfferRentViewModel()
     @StateObject private var shakeDetector = ShakeDetector()
     @StateObject private var networkMonitor = NetworkMonitor()
-    
+    @ObservedObject var propertyOfferData = PropertyOfferData() // Agrega la instancia de PropertyOfferData
+
     let currentUser = Auth.auth().currentUser
 
     var body: some View {
@@ -27,8 +30,9 @@ struct HomepageRentView: View {
                         VStack {
                             Heading()
                             
-                            CreateMoreButton()
-                            
+                            CreateMoreButton(isConnected: isConnected)
+                                .disabled(currentOfferCount == 0 && !isConnected) // Desactiva el botón solo si currentOfferCount es 0 y no hay conexión
+
                             if showNoConnectionBanner {
                                 Text("⚠️ No Internet Connection, you cannot create an offer or change an offer status if you are offline")
                                     .font(.system(size: 14, weight: .medium))
@@ -42,10 +46,7 @@ struct HomepageRentView: View {
                                     .transition(.move(edge: .top))
                                     .padding(.horizontal, 40)
                             }
-                        
-                            
-                        
-                            
+
                             if viewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
                                     .font(.headline)
@@ -65,22 +66,29 @@ struct HomepageRentView: View {
                                         }
                                     }
                                 }
+                                .onAppear {
+                                    // Actualizar currentOfferCount y almacenarlo en currentOfferCountStorage
+                                    currentOfferCount = viewModel.offersWithProperties.count
+                                    currentOfferCountStorage = currentOfferCount // Sincronizar con AppStorage
+                                    print("Cantidad actual de propiedades (currentOfferCount): \(currentOfferCount)")
+                                }
                                 .padding()
                             }
                         }
                         .onAppear {
-                            print("ON APPEAR - EXISTING INITIAL OFFER COUNT: \(initialOfferCount)")
-                            print("CURRENT OFFER COUNT ON APPEAR: \(viewModel.offersWithProperties.count)")
-                            
-                            let cache = URLCache.shared
-                            print("CACHE USAGE - MEMORY: \(cache.currentMemoryUsage) BYTES, DISK: \(cache.currentDiskUsage) BYTES.")
+                            // Configurar initialOfferCount solo si aún no se ha inicializado
+                            if initialOfferCount == 0 {
+                                initialOfferCount = viewModel.offersWithProperties.count
+                            }
+                            // Sincronizar currentOfferCount con el valor persistente en AppStorage
+                            currentOfferCount = currentOfferCountStorage
+                            print("HomepageRentView loaded for user: \(currentUser?.email ?? "UNKNOWN")")
+                            viewModel.fetchOffers(for: "\(currentUser?.email ?? "UNKNOWN")")
                         }
-                        
                         .background(
                             ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)
                                 .frame(width: 0, height: 0)  // Oculto pero activo
                         )
-                        
                         .alert(isPresented: $showConfirmationAlert) {
                             Alert(
                                 title: Text("Shake Detected"),
@@ -91,7 +99,6 @@ struct HomepageRentView: View {
                                 secondaryButton: .cancel(Text("No"))
                             )
                         }
-                        
                         .onReceive(shakeDetector.$didShake) { didShake in
                             if didShake && networkMonitor.isConnected {
                                 showConfirmationAlert = true
@@ -103,13 +110,11 @@ struct HomepageRentView: View {
                                 showNoConnectionBanner = !isConnectedStatus
                                 print("NETWORK CONNECTION STATUS CHANGED - CONNECTED: \(isConnectedStatus)")
                             }
-                            // Actualizar el estado de conexión
                             isConnected = isConnectedStatus
                             
-                            // Solo refrescar ofertas si se restauró la conexión y había publicaciones sin conexión
+                            // Refrescar las ofertas y publicar pendientes si se restauró la conexión y había publicaciones offline
                             if isConnectedStatus && publishedOffline {
-                                print("CONNECTION RESTORED - REFRESHING OFFERS AFTER OFFLINE PUBLISH")
-                                refreshOffers() // Actualizar las ofertas al recuperar conexión
+                                refreshOffers()
                             }
                         }
                         .onReceive(NotificationCenter.default.publisher(for: .offerSaveCompleted)) { _ in
@@ -130,33 +135,30 @@ struct HomepageRentView: View {
                             .cornerRadius(8)
                             .padding()
                             .onAppear {
+                                // Resetear los datos de la propiedad cuando aparece la notificación de éxito
+                                propertyOfferData.reset()
+                                
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                     showSuccessNotification = false
-                                    print("SUCCESS NOTIFICATION DISMISSED")
                                 }
                             }
                     }
                 }
                 .animation(.easeInOut, value: showSuccessNotification)
             )
-            .onAppear {
-                print("HOMEPAGERENTVIEW APPEARED - FETCHING OFFERS FOR \(currentUser?.email ?? "UNKNOWN")")
-                viewModel.fetchOffers(for: "\(currentUser?.email ?? "UNKNOWN")")
-            }
             .onChange(of: viewModel.offersWithProperties) { newOffers in
                 print("OFFER COUNT CHANGED - INITIAL: \(initialOfferCount), NEW COUNT: \(newOffers.count)")
                 
-                // Establecer el valor inicial después de la primera carga de `offersWithProperties`
-                if initialOfferCount == 0 {
-                    initialOfferCount = newOffers.count
-                    print("SETTING INITIAL OFFER COUNT: \(initialOfferCount)")
-                }
+                // Actualizar el contador de ofertas actuales y sincronizarlo con AppStorage
+                currentOfferCount = newOffers.count
+                currentOfferCountStorage = currentOfferCount // Guardar en AppStorage
+                print("Cantidad actual de propiedades (currentOfferCount) actualizada: \(currentOfferCount)")
                 
-                // Mostrar la notificación si el conteo de ofertas ha aumentado y la conexión ha sido restaurada
+                // Lógica de la notificación basada en initialOfferCount
                 if publishedOffline && isConnected && newOffers.count > initialOfferCount {
                     print("NEW PROPERTY ADDED AFTER RECONNECTION - SHOWING SUCCESS NOTIFICATION")
                     showSuccessNotification = true
-                    initialOfferCount = newOffers.count // Actualizar el contador inicial
+                    initialOfferCount = newOffers.count // Actualizar el contador inicial para notificación
                     publishedOffline = false // Resetear publishedOffline solo cuando se detecte un nuevo conteo
                 } else {
                     print("NO NEW PROPERTY ADDED OR CONDITIONS NOT MET (PUBLISHEDOFFLINE: \(publishedOffline), ISCONNECTED: \(isConnected))")
