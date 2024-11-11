@@ -3,19 +3,21 @@ import FirebaseAuth
 import UIKit
 
 struct HomepageRentView: View {
-    @AppStorage("publishedOffline") private var publishedOffline = false // Indica si se publicó sin conexión
-    @AppStorage("initialOfferCount") private var initialOfferCount = 0 // Cantidad inicial de ofertas en la primera carga
-    @State private var isConnected = false // Indica si la conexión a Internet está activa
-    @State private var showSuccessNotification = false // Notificación de éxito
+    @AppStorage("publishedOffline") private var publishedOffline = false
+    @AppStorage("initialOfferCount") private var initialOfferCount = 0
+    @State private var isConnected = false
+    @State private var showSuccessNotification = false
     @State private var showFilterSearchView = false
     @State private var showShakeAlert = false
     @State private var showConfirmationAlert = false
     @State private var showNoConnectionBanner = false
-    @StateObject private var viewModel = OfferRentViewModel()
+    @StateObject private var offerViewModel = OfferRentViewModel()
+    @StateObject private var propertyViewModel = PropertyViewModel()
     @StateObject private var shakeDetector = ShakeDetector()
     @StateObject private var networkMonitor = NetworkMonitor()
-    @ObservedObject var propertyOfferData: PropertyOfferData // ObservedObject para acceder al método reset
-    
+    @ObservedObject var propertyOfferData: PropertyOfferData
+    @State private var isPublishing = false // Cambiar a @State para hacerla mutable
+
     let currentUser = Auth.auth().currentUser
 
     var body: some View {
@@ -27,11 +29,11 @@ struct HomepageRentView: View {
                     ScrollView {
                         VStack {
                             Heading()
-                            
-                            // Solo mostrar el botón si hay conexión a Internet
+
                             if !showNoConnectionBanner {
                                 Button(action: {
                                     propertyOfferData.reset()
+                                    propertyOfferData.resetJSON() // Reiniciar JSON al crear una nueva propiedad
                                     print("RESET PROPERTY DATA ON CREATE MORE CLICK")
                                 }) {
                                     CreateMoreButton()
@@ -51,15 +53,15 @@ struct HomepageRentView: View {
                                     .transition(.move(edge: .top))
                                     .padding(.horizontal, 40)
                             }
-                        
-                            if viewModel.offersWithProperties.isEmpty {
+
+                            if offerViewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
                                     .font(.headline)
                                     .foregroundColor(.gray)
                                     .padding()
                             } else {
                                 LazyVStack(spacing: 32) {
-                                    ForEach(viewModel.offersWithProperties) { offerWithProperty in
+                                    ForEach(offerViewModel.offersWithProperties) { offerWithProperty in
                                         NavigationLink(value: offerWithProperty) {
                                             OfferRentView(offer: offerWithProperty.offer, property: offerWithProperty.property)
                                                 .frame(height: 360)
@@ -75,21 +77,14 @@ struct HomepageRentView: View {
                             }
                         }
                         .onAppear {
-                            propertyOfferData.reset()  // Llamar a reset al refrescar la vista
-                            print("ON APPEAR - RESET PROPERTY DATA")
-                            
-                            print("ON APPEAR - EXISTING INITIAL OFFER COUNT: \(initialOfferCount)")
-                            print("CURRENT OFFER COUNT ON APPEAR: \(viewModel.offersWithProperties.count)")
-                            
-                            let cache = URLCache.shared
-                            print("CACHE USAGE - MEMORY: \(cache.currentMemoryUsage) BYTES, DISK: \(cache.currentDiskUsage) BYTES.")
+                            propertyOfferData.reset()
+                            offerViewModel.fetchOffers(for: "\(currentUser?.email ?? "UNKNOWN")")
+                            checkAndPublishPendingProperty()
                         }
-                        
                         .background(
                             ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)
-                                .frame(width: 0, height: 0)  // Oculto pero activo
+                                .frame(width: 0, height: 0)
                         )
-                        
                         .alert(isPresented: $showConfirmationAlert) {
                             Alert(
                                 title: Text("Shake Detected"),
@@ -100,7 +95,6 @@ struct HomepageRentView: View {
                                 secondaryButton: .cancel(Text("No"))
                             )
                         }
-                        
                         .onReceive(shakeDetector.$didShake) { didShake in
                             if didShake && networkMonitor.isConnected {
                                 showConfirmationAlert = true
@@ -112,17 +106,14 @@ struct HomepageRentView: View {
                                 showNoConnectionBanner = !isConnectedStatus
                                 print("NETWORK CONNECTION STATUS CHANGED - CONNECTED: \(isConnectedStatus)")
                             }
-                            // Actualizar el estado de conexión
                             isConnected = isConnectedStatus
-                            
-                            // Solo refrescar ofertas si se restauró la conexión y había publicaciones sin conexión
+
                             if isConnectedStatus && publishedOffline {
-                                print("CONNECTION RESTORED - REFRESHING OFFERS AFTER OFFLINE PUBLISH")
-                                refreshOffers() // Actualizar las ofertas al recuperar conexión
+                                checkAndPublishPendingProperty()
+                                refreshOffers()
                             }
                         }
                         .onReceive(NotificationCenter.default.publisher(for: .offerSaveCompleted)) { _ in
-                            print("OFFER SAVE COMPLETED NOTIFICATION RECEIVED - REFRESHING OFFERS")
                             refreshOffers()
                         }
                     }
@@ -141,34 +132,17 @@ struct HomepageRentView: View {
                             .onAppear {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                     showSuccessNotification = false
-                                    print("SUCCESS NOTIFICATION DISMISSED")
                                 }
                             }
                     }
                 }
                 .animation(.easeInOut, value: showSuccessNotification)
             )
-            .onAppear {
-                print("HOMEPAGERENTVIEW APPEARED - FETCHING OFFERS FOR \(currentUser?.email ?? "UNKNOWN")")
-                viewModel.fetchOffers(for: "\(currentUser?.email ?? "UNKNOWN")")
-            }
-            .onChange(of: viewModel.offersWithProperties) { newOffers in
-                print("OFFER COUNT CHANGED - INITIAL: \(initialOfferCount), NEW COUNT: \(newOffers.count)")
-                
-                // Establecer el valor inicial después de la primera carga de `offersWithProperties`
-                if initialOfferCount == 0 {
-                    initialOfferCount = newOffers.count
-                    print("SETTING INITIAL OFFER COUNT: \(initialOfferCount)")
-                }
-                
-                // Mostrar la notificación si el conteo de ofertas ha aumentado y la conexión ha sido restaurada
+            .onChange(of: offerViewModel.offersWithProperties) { newOffers in
                 if publishedOffline && isConnected && newOffers.count > initialOfferCount {
-                    print("NEW PROPERTY ADDED AFTER RECONNECTION - SHOWING SUCCESS NOTIFICATION")
                     showSuccessNotification = true
-                    initialOfferCount = newOffers.count // Actualizar el contador inicial
-                    publishedOffline = false // Resetear publishedOffline solo cuando se detecte un nuevo conteo
-                } else {
-                    print("NO NEW PROPERTY ADDED OR CONDITIONS NOT MET (PUBLISHEDOFFLINE: \(publishedOffline), ISCONNECTED: \(isConnected))")
+                    initialOfferCount = newOffers.count
+                    publishedOffline = false
                 }
             }
             .navigationBarHidden(true)
@@ -177,6 +151,66 @@ struct HomepageRentView: View {
     
     func refreshOffers() {
         print("REFRESHING OFFERS FOR LANDLORD...")
-        viewModel.fetchOffers(for: "\(currentUser?.email ?? "UNKNOWN")")
+        offerViewModel.fetchOffers(for: "\(currentUser?.email ?? "UNKNOWN")")
+    }
+
+    private func checkAndPublishPendingProperty() {
+        guard !isPublishing else {
+            print("Publicación ya en proceso. Evitando duplicación.")
+            return
+        }
+        isPublishing = true
+
+        let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("pending_property.json")
+
+        do {
+            let data = try Data(contentsOf: url)
+            let decoder = JSONDecoder()
+            let pendingProperty = try decoder.decode(PropertyOfferData.self, from: data)
+            print("Pending property found, attempting to publish...")
+
+            // Cargar los datos de la propiedad pendiente
+            propertyOfferData.placeTitle = pendingProperty.placeTitle
+            propertyOfferData.placeDescription = pendingProperty.placeDescription
+            propertyOfferData.placeAddress = pendingProperty.placeAddress
+            propertyOfferData.photos = pendingProperty.photos
+            propertyOfferData.numBaths = pendingProperty.numBaths
+            propertyOfferData.numBeds = pendingProperty.numBeds
+            propertyOfferData.numRooms = pendingProperty.numRooms
+            propertyOfferData.pricePerMonth = pendingProperty.pricePerMonth
+            propertyOfferData.type = pendingProperty.type
+            propertyOfferData.onlyAndes = pendingProperty.onlyAndes
+            propertyOfferData.initialDate = pendingProperty.initialDate
+            propertyOfferData.finalDate = pendingProperty.finalDate
+            propertyOfferData.minutesFromCampus = pendingProperty.minutesFromCampus
+            propertyOfferData.userId = pendingProperty.userId
+            propertyOfferData.userName = pendingProperty.userName
+            propertyOfferData.userEmail = pendingProperty.userEmail
+            propertyOfferData.propertyID = pendingProperty.propertyID
+            propertyOfferData.roommates = pendingProperty.roommates
+
+            // Subir imágenes antes de publicar
+            propertyViewModel.uploadImages(for: propertyOfferData) { success in
+                if success {
+                    // Una vez subidas las imágenes, publicar la propiedad
+                    propertyViewModel.savePropertyAsync(propertyOfferData: propertyOfferData) {
+                        propertyOfferData.resetJSON() // Reiniciar JSON tras publicar la propiedad
+                        isPublishing = false // Resetear bandera de publicación
+                        print("Pending property published successfully and JSON reset.")
+
+                        // Refrescar ofertas en segundo plano después de publicar
+                        DispatchQueue.main.async {
+                            refreshOffers()
+                        }
+                    }
+                } else {
+                    print("Error uploading images")
+                    isPublishing = false // Resetear bandera si falla la publicación
+                }
+            }
+        } catch {
+            print("No pending property to publish or error reading JSON: \(error)")
+            isPublishing = false
+        }
     }
 }

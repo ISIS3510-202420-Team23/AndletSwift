@@ -93,17 +93,18 @@ struct Step3View: View {
 
                                     if propertyOfferData.initialDate >= todayStartOfDay && propertyOfferData.finalDate > propertyOfferData.initialDate {
                                         isSaving = true
-
+                                        propertyOfferData.saveToJSON() // Guardar en JSON
+                                        
                                         if !networkMonitor.isConnected {
                                             publishedOffline = true // Marcar como publicado sin conexión
                                             showNoInternetAlert = true
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                                                 showNoInternetAlert = false
-                                                completeSave()
+                                                navigateToMainTab = true // Ir a la pantalla principal sin publicar
                                             }
                                         } else {
                                             publishedOffline = false
-                                            completeSave()
+                                            navigateToMainTab = true // Ir a la pantalla principal directamente
                                         }
                                     } else {
                                         showWarningMessage = true
@@ -178,13 +179,5 @@ struct Step3View: View {
                 print("Next Property ID (onAppear): \(propertyID)")
             }
         }
-    }
-    
-    private func completeSave() {
-        viewModel.savePropertyAsync(propertyOfferData: propertyOfferData) {
-            isSaving = false
-            viewModel.notifySaveCompletion()
-        }
-        navigateToMainTab = true
     }
 }

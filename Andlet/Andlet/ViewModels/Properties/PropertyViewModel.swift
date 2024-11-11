@@ -18,18 +18,13 @@ class PropertyViewModel: ObservableObject {
                 }
 
                 propertyOfferData.propertyID = propertyID
-                
-                let photoNames = propertyOfferData.selectedImagesData.enumerated().map { (index, _) in
-                    return "\(propertyOfferData.userId)_\(propertyOfferData.propertyID)_\(index + 1).jpg"
-                }
-                propertyOfferData.photos = photoNames
-                self.postProperty(propertyOfferData: propertyOfferData) { postSuccess in
-                    if postSuccess {
-                        self.postOffer(propertyOfferData: propertyOfferData) { offerSuccess in
-                            if offerSuccess {
-                                self.uploadImages(for: propertyOfferData) { uploadSuccess in
+                self.uploadImages(for: propertyOfferData) { success in
+                    if success {
+                        self.postProperty(propertyOfferData: propertyOfferData) { postSuccess in
+                            if postSuccess {
+                                self.postOffer(propertyOfferData: propertyOfferData) { offerSuccess in
                                     DispatchQueue.main.async {
-                                        completion() // Notify completion on main thread
+                                        completion()
                                     }
                                 }
                             } else {
@@ -47,13 +42,11 @@ class PropertyViewModel: ObservableObject {
             }
         }
     }
-    
+
     func notifySaveCompletion() {
         NotificationCenter.default.post(name: .offerSaveCompleted, object: nil)
     }
-    
 
-    // Función para obtener el siguiente ID de propiedad
     func getNextPropertyID(completion: @escaping (Int?) -> Void) {
         db.collection("properties").getDocuments { snapshot, error in
             if let error = error {
@@ -91,12 +84,11 @@ class PropertyViewModel: ObservableObject {
                 }
 
                 let nextID = maxID + 1
-                completion(nextID) // Devolver el siguiente ID como número (Int)
+                completion(nextID)
             }
         }
     }
 
-    // Función para obtener el siguiente ID de oferta
     func getNextOfferID(completion: @escaping (Int?) -> Void) {
         db.collection("offers").getDocuments { snapshot, error in
             if let error = error {
@@ -134,7 +126,7 @@ class PropertyViewModel: ObservableObject {
                 }
 
                 let nextID = maxID + 1
-                completion(nextID) // Devolver el siguiente ID como número (Int)
+                completion(nextID)
             }
         }
     }
@@ -172,7 +164,7 @@ class PropertyViewModel: ObservableObject {
             ]
 
             self.db.collection("properties").document(documentID).updateData([
-                "\(propertyOfferData.propertyID)": propertyData // Usar el ID como un número
+                "\(propertyOfferData.propertyID)": propertyData
             ]) { error in
                 if let error = error {
                     print("Error al hacer POST de la nueva propiedad: \(error)")
@@ -224,7 +216,7 @@ class PropertyViewModel: ObservableObject {
                     "num_rooms": propertyOfferData.numRooms,
                     "only_andes": propertyOfferData.onlyAndes,
                     "price_per_month": propertyOfferData.pricePerMonth,
-                    "roommates": propertyOfferData.roommates, // Usar el valor calculado de `roommates`
+                    "roommates": propertyOfferData.roommates,
                     "type": propertyOfferData.type.rawValue,
                     "user_id": propertyOfferData.userId,
                     "views": 0
@@ -245,74 +237,69 @@ class PropertyViewModel: ObservableObject {
         }
     }
 
-    
-    // Agregar esta función a PropertyViewModel si aún no está incluida
     func assignAuthenticatedUser(to propertyOfferData: PropertyOfferData) {
         if let currentUser = Auth.auth().currentUser {
-            propertyOfferData.userId = currentUser.email ?? "" // Asignar el correo electrónico como userId
+            propertyOfferData.userId = currentUser.email ?? ""
         } else {
             print("No se encontró un usuario autenticado.")
         }
     }
     
+    private func updateFirestorePropertyPhotos(propertyOfferData: PropertyOfferData, photoFileNames: [String]) {
+        let documentID = "\(propertyOfferData.propertyID)"
+        let propertyRef = db.collection("properties").document(documentID)
+
+        propertyRef.updateData(["photos": photoFileNames]) { error in
+            if let error = error {
+                print("Error al actualizar las fotos en Firestore: \(error)")
+            } else {
+                print("Fotos actualizadas con éxito en Firestore para la propiedad con ID \(documentID)")
+            }
+        }
+    }
+    
     func uploadImages(for propertyOfferData: PropertyOfferData, completion: @escaping (Bool) -> Void) {
-            guard !propertyOfferData.userId.isEmpty, propertyOfferData.propertyID >= 0 else {
-                print("Error: ID de usuario o ID de propiedad no están definidos.")
-                completion(false)
-                return
-            }
+        guard !propertyOfferData.userId.isEmpty, propertyOfferData.propertyID >= 0 else {
+            print("Error: ID de usuario o ID de propiedad no están definidos.")
+            completion(false)
+            return
+        }
 
-            let storageRef = storage.reference().child("properties")
+        let storageRef = storage.reference().child("properties")
+        let group = DispatchGroup()
+        var uploadedFileNames: [String] = []
 
-            let group = DispatchGroup()
-            var uploadedPhotoURLs: [String] = []
+        for (index, imageData) in propertyOfferData.selectedImagesData.enumerated() {
+            let fileName = "\(propertyOfferData.userId)_\(propertyOfferData.propertyID)_\(index + 1).jpg"
+            let imageRef = storageRef.child(fileName)
 
-            for (index, imageData) in propertyOfferData.selectedImagesData.enumerated() {
-                guard index < 2 else { break } // Limitar a un máximo de dos fotos
+            group.enter()
 
-                let fileName = "\(propertyOfferData.userId)_\(propertyOfferData.propertyID)_\(index + 1).jpg"
-                let imageRef = storageRef.child(fileName)
-
-                group.enter() // Iniciar la tarea asíncrona del grupo
-
-                // Subir la imagen a Firebase Storage
-                imageRef.putData(imageData, metadata: nil) { metadata, error in
-                    if let error = error {
-                        print("Error al subir la imagen \(fileName): \(error)")
-                        group.leave()
-                        return
-                    }
-
-                    // Obtener la URL de descarga de la imagen
-                    imageRef.downloadURL { url, error in
-                        defer { group.leave() } // Asegurarse de liberar el grupo
-
-                        if let error = error {
-                            print("Error al obtener la URL de descarga de la imagen \(fileName): \(error)")
-                            return
-                        }
-
-                        if let url = url {
-                            uploadedPhotoURLs.append(url.absoluteString) // Agregar la URL al array
-                            print("Imagen subida con éxito: \(url.absoluteString)")
-                        }
-                    }
+            imageRef.putData(imageData, metadata: nil) { metadata, error in
+                if let error = error {
+                    print("Error al subir la imagen \(fileName): \(error)")
+                    group.leave()
+                    return
                 }
-            }
 
-            // Notificar cuando todas las imágenes hayan sido subidas
-            group.notify(queue: .main) {
-                if uploadedPhotoURLs.count == propertyOfferData.selectedImagesData.count {
-                    propertyOfferData.photos = uploadedPhotoURLs
-                    print("Nombres de las fotos en PropertyOfferData: \(propertyOfferData.photos)")
-                    completion(true)
-                } else {
-                    print("Error al subir algunas fotos.")
-                    completion(false)
-                }
+                // Guardar solo el nombre del archivo, no la URL
+                uploadedFileNames.append(fileName)
+                print("Imagen subida con éxito: \(fileName)")
+                group.leave()
             }
         }
 
+        group.notify(queue: .main) {
+            if uploadedFileNames.count == propertyOfferData.selectedImagesData.count {
+                propertyOfferData.photos = uploadedFileNames
+                self.updateFirestorePropertyPhotos(propertyOfferData: propertyOfferData, photoFileNames: uploadedFileNames)
+                completion(true)
+            } else {
+                print("Error al subir algunas fotos.")
+                completion(false)
+            }
+        }
+    }
 }
 
 extension Notification.Name {
