@@ -189,22 +189,24 @@ struct HomepageRentView: View {
             propertyOfferData.propertyID = pendingProperty.propertyID
             propertyOfferData.roommates = pendingProperty.roommates
 
+            print("Loaded pending property data into propertyOfferData.")
+            print("Attempting to upload images...")
+
             // Subir imágenes antes de publicar
             propertyViewModel.uploadImages(for: propertyOfferData) { success in
                 if success {
-                    // Una vez subidas las imágenes, publicar la propiedad
+                    print("Images uploaded successfully. Proceeding with property publication.")
                     propertyViewModel.savePropertyAsync(propertyOfferData: propertyOfferData) {
+                        print("Property published successfully.")
                         propertyOfferData.resetJSON() // Reiniciar JSON tras publicar la propiedad
                         isPublishing = false // Resetear bandera de publicación
-                        print("Pending property published successfully and JSON reset.")
-
-                        // Refrescar ofertas en segundo plano después de publicar
+                        print("JSON reset after publishing property.")
                         DispatchQueue.main.async {
                             refreshOffers()
                         }
                     }
                 } else {
-                    print("Error uploading images")
+                    print("Error uploading images. Publication aborted.")
                     isPublishing = false // Resetear bandera si falla la publicación
                 }
             }

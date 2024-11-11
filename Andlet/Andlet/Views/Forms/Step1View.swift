@@ -60,6 +60,7 @@ struct Step1View: View {
                                         },
                                         set: { newImage in
                                             if let newImage = newImage, let data = newImage.jpegData(compressionQuality: 0.8) {
+                                                propertyOfferData.saveImage(data: data, for: "imagen1")
                                                 if propertyOfferData.selectedImagesData.isEmpty {
                                                     propertyOfferData.selectedImagesData.append(data)
                                                 } else {
@@ -81,6 +82,7 @@ struct Step1View: View {
                                         },
                                         set: { newImage in
                                             if let newImage = newImage, let data = newImage.jpegData(compressionQuality: 0.8) {
+                                                propertyOfferData.saveImage(data: data, for: "imagen2")
                                                 if propertyOfferData.selectedImagesData.count > 1 {
                                                     propertyOfferData.selectedImagesData[1] = data
                                                 } else {
@@ -154,7 +156,6 @@ struct Step1View: View {
                             .background(Color(red: 12/255, green: 53/255, blue: 106/255))
                             .cornerRadius(15)
                             .onTapGesture {
-                                // Validación inicial sin modificar los campos
                                 if propertyOfferData.placeTitle.isOnlyWhitespace || propertyOfferData.placeAddress.isOnlyWhitespace {
                                     warningMessageText = "Please do not use only spaces in the title or address fields."
                                     showWarningMessage = true
@@ -168,7 +169,6 @@ struct Step1View: View {
                                     warningMessageText = "Please remove any emojis from the text fields."
                                     showWarningMessage = true
                                 } else {
-                                    // Limpia espacios extra antes de navegar al Step 2
                                     propertyOfferData.placeTitle = propertyOfferData.placeTitle.removingExtraSpaces()
                                     propertyOfferData.placeDescription = propertyOfferData.placeDescription.removingExtraSpaces()
                                     propertyOfferData.placeAddress = propertyOfferData.placeAddress.removingExtraSpaces()

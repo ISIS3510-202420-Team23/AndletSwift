@@ -61,6 +61,33 @@ class PropertyOfferData: ObservableObject, CustomStringConvertible, Codable {
     private func updateRoommates() {
         roommates = numBeds - 1
     }
+    
+    // Método para guardar una imagen localmente
+    func saveImage(data: Data, for imageName: String) {
+        let url = getDocumentsDirectory().appendingPathComponent("\(imageName).jpg")
+        do {
+            try data.write(to: url)
+            print("Imagen \(imageName) guardada en \(url)")
+        } catch {
+            print("Error al guardar la imagen \(imageName): \(error)")
+        }
+    }
+
+    // Método para cargar una imagen desde el almacenamiento local
+    func loadImage(for imageName: String) -> UIImage? {
+        let url = getDocumentsDirectory().appendingPathComponent("\(imageName).jpg")
+        if let data = try? Data(contentsOf: url) {
+            return UIImage(data: data)
+        } else {
+            print("No se encontró la imagen \(imageName) en \(url)")
+            return nil
+        }
+    }
+
+    // Método para obtener el directorio de documentos
+    private func getDocumentsDirectory() -> URL {
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    }
 
     func offerDetails() -> String {
         return """

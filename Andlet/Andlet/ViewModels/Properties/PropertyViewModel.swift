@@ -257,7 +257,7 @@ class PropertyViewModel: ObservableObject {
             }
         }
     }
-    
+
     func uploadImages(for propertyOfferData: PropertyOfferData, completion: @escaping (Bool) -> Void) {
         guard !propertyOfferData.userId.isEmpty, propertyOfferData.propertyID >= 0 else {
             print("Error: ID de usuario o ID de propiedad no están definidos.")
@@ -269,7 +269,12 @@ class PropertyViewModel: ObservableObject {
         let group = DispatchGroup()
         var uploadedFileNames: [String] = []
 
-        for (index, imageData) in propertyOfferData.selectedImagesData.enumerated() {
+        // Obtener imágenes desde almacenamiento local para subirlas a Firebase Storage
+        let localImages = ["imagen1", "imagen2"].compactMap { imageName -> Data? in
+            propertyOfferData.loadImage(for: imageName)?.jpegData(compressionQuality: 0.8)
+        }
+
+        for (index, imageData) in localImages.enumerated() {
             let fileName = "\(propertyOfferData.userId)_\(propertyOfferData.propertyID)_\(index + 1).jpg"
             let imageRef = storageRef.child(fileName)
 
@@ -290,7 +295,7 @@ class PropertyViewModel: ObservableObject {
         }
 
         group.notify(queue: .main) {
-            if uploadedFileNames.count == propertyOfferData.selectedImagesData.count {
+            if uploadedFileNames.count == localImages.count {
                 propertyOfferData.photos = uploadedFileNames
                 self.updateFirestorePropertyPhotos(propertyOfferData: propertyOfferData, photoFileNames: uploadedFileNames)
                 completion(true)
