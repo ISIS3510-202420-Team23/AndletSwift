@@ -16,7 +16,7 @@ struct HomepageRentView: View {
     @StateObject private var shakeDetector = ShakeDetector()
     @StateObject private var networkMonitor = NetworkMonitor()
     @ObservedObject var propertyOfferData: PropertyOfferData
-    @State private var isPublishing = false // Cambiar a @State para hacerla mutable
+    @State private var isPublishing = false
 
     let currentUser = Auth.auth().currentUser
 
@@ -34,6 +34,9 @@ struct HomepageRentView: View {
                                 Button(action: {
                                     propertyOfferData.reset()
                                     propertyOfferData.resetJSON() // Reiniciar JSON al crear una nueva propiedad
+                                    propertyOfferData.deleteLocalImages() // Elimina imágenes locales
+                                    propertyOfferData.selectedImagesData = [] // Vacía la variable selectedImagesData
+                                    propertyOfferData.photos = [] // Asegura que photos esté vacío
                                     print("RESET PROPERTY DATA ON CREATE MORE CLICK")
                                 }) {
                                     CreateMoreButton()
@@ -132,6 +135,8 @@ struct HomepageRentView: View {
                             .onAppear {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                     showSuccessNotification = false
+                                    // Eliminar imágenes locales después de mostrar la notificación
+                                    propertyOfferData.deleteLocalImages()
                                 }
                             }
                     }
@@ -169,7 +174,7 @@ struct HomepageRentView: View {
             let pendingProperty = try decoder.decode(PropertyOfferData.self, from: data)
             print("Pending property found, attempting to publish...")
 
-            // Cargar los datos de la propiedad pendiente
+            // Cargar los datos de la propiedad pendiente en PropertyOfferData
             propertyOfferData.placeTitle = pendingProperty.placeTitle
             propertyOfferData.placeDescription = pendingProperty.placeDescription
             propertyOfferData.placeAddress = pendingProperty.placeAddress
@@ -190,24 +195,25 @@ struct HomepageRentView: View {
             propertyOfferData.roommates = pendingProperty.roommates
 
             print("Loaded pending property data into propertyOfferData.")
-            print("Attempting to upload images...")
-
-            // Subir imágenes antes de publicar
-            propertyViewModel.uploadImages(for: propertyOfferData) { success in
-                if success {
-                    print("Images uploaded successfully. Proceeding with property publication.")
-                    propertyViewModel.savePropertyAsync(propertyOfferData: propertyOfferData) {
-                        print("Property published successfully.")
-                        propertyOfferData.resetJSON() // Reiniciar JSON tras publicar la propiedad
-                        isPublishing = false // Resetear bandera de publicación
-                        print("JSON reset after publishing property.")
-                        DispatchQueue.main.async {
-                            refreshOffers()
-                        }
+            
+            // Paso 1: Publicar propiedad sin imágenes
+            propertyViewModel.savePropertyAsync(propertyOfferData: propertyOfferData) {
+                print("Property details published without images. Now uploading images in background.")
+                
+                // Paso 2: Subir imágenes en segundo plano
+                propertyViewModel.uploadImages(for: propertyOfferData) { uploadSuccess in
+                    if uploadSuccess {
+                        print("Images uploaded successfully. Updating Firestore photos field.")
+                        propertyViewModel.updateFirestorePropertyPhotos(propertyOfferData: propertyOfferData, photoFileNames: propertyOfferData.photos)
+                    } else {
+                        print("Error uploading images.")
                     }
-                } else {
-                    print("Error uploading images. Publication aborted.")
-                    isPublishing = false // Resetear bandera si falla la publicación
+                    // Reiniciar publicación y limpiar JSON tras completar el proceso
+                    propertyOfferData.resetJSON()
+                    isPublishing = false
+                    DispatchQueue.main.async {
+                        refreshOffers()
+                    }
                 }
             }
         } catch {

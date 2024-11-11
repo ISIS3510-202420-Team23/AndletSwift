@@ -16,27 +16,46 @@ class PropertyViewModel: ObservableObject {
                     completion()
                     return
                 }
-
+                
                 propertyOfferData.propertyID = propertyID
-                self.uploadImages(for: propertyOfferData) { success in
-                    if success {
-                        self.postProperty(propertyOfferData: propertyOfferData) { postSuccess in
-                            if postSuccess {
-                                self.postOffer(propertyOfferData: propertyOfferData) { offerSuccess in
-                                    DispatchQueue.main.async {
-                                        completion()
+                
+                // Verificar si hay una o dos imágenes y asignar los nombres correspondientes
+                var photoNames: [String] = []
+                if propertyOfferData.loadImage(for: "imagen1") != nil {
+                    photoNames.append("\(propertyOfferData.userId)_\(propertyID)_1.jpg")
+                }
+                if propertyOfferData.loadImage(for: "imagen2") != nil {
+                    photoNames.append("\(propertyOfferData.userId)_\(propertyID)_2.jpg")
+                }
+                propertyOfferData.photos = photoNames
+                
+                // Paso 1: Crear la propiedad en Firestore sin fotos
+                self.postProperty(propertyOfferData: propertyOfferData) { postPropertySuccess in
+                    if postPropertySuccess {
+                        // Paso 2: Crear la oferta vinculada a esta propiedad
+                        self.postOffer(propertyOfferData: propertyOfferData) { postOfferSuccess in
+                            if postOfferSuccess {
+                                DispatchQueue.main.async {
+                                    completion() // Actualizar vista para mostrar detalles de propiedad y oferta
+                                }
+                                
+                                // Paso 3: Subir las imágenes en segundo plano
+                                self.uploadImages(for: propertyOfferData) { uploadSuccess in
+                                    if uploadSuccess {
+                                        print("Images uploaded successfully. Updating Firestore photos field.")
+                                        self.updateFirestorePropertyPhotos(propertyOfferData: propertyOfferData, photoFileNames: propertyOfferData.photos)
+                                    } else {
+                                        print("Error uploading images.")
                                     }
                                 }
                             } else {
-                                DispatchQueue.main.async {
-                                    completion()
-                                }
+                                print("Error creating offer in Firestore.")
+                                DispatchQueue.main.async { completion() }
                             }
                         }
                     } else {
-                        DispatchQueue.main.async {
-                            completion()
-                        }
+                        print("Error posting property to Firestore.")
+                        DispatchQueue.main.async { completion() }
                     }
                 }
             }
@@ -50,13 +69,13 @@ class PropertyViewModel: ObservableObject {
     func getNextPropertyID(completion: @escaping (Int?) -> Void) {
         db.collection("properties").getDocuments { snapshot, error in
             if let error = error {
-                print("Error al obtener los documentos de la colección 'properties': \(error)")
+                print("Error fetching documents from 'properties': \(error)")
                 completion(nil)
                 return
             }
 
             guard let documents = snapshot?.documents, let document = documents.first else {
-                print("No se encontraron documentos en la colección 'properties'.")
+                print("No documents found in 'properties'.")
                 completion(nil)
                 return
             }
@@ -65,13 +84,13 @@ class PropertyViewModel: ObservableObject {
 
             self.db.collection("properties").document(documentID).getDocument { documentSnapshot, error in
                 if let error = error {
-                    print("Error al obtener el documento con ID '\(documentID)': \(error)")
+                    print("Error fetching document with ID '\(documentID)': \(error)")
                     completion(nil)
                     return
                 }
 
                 guard let documentSnapshot = documentSnapshot, documentSnapshot.exists, let propertiesData = documentSnapshot.data() else {
-                    print("No se encontraron datos en el documento con ID '\(documentID)'.")
+                    print("No data found in document with ID '\(documentID)'.")
                     completion(nil)
                     return
                 }
@@ -83,8 +102,7 @@ class PropertyViewModel: ObservableObject {
                     }
                 }
 
-                let nextID = maxID + 1
-                completion(nextID)
+                completion(maxID + 1)
             }
         }
     }
@@ -92,13 +110,13 @@ class PropertyViewModel: ObservableObject {
     func getNextOfferID(completion: @escaping (Int?) -> Void) {
         db.collection("offers").getDocuments { snapshot, error in
             if let error = error {
-                print("Error al obtener los documentos de la colección 'offers': \(error)")
+                print("Error fetching documents from 'offers': \(error)")
                 completion(nil)
                 return
             }
 
             guard let documents = snapshot?.documents, let document = documents.first else {
-                print("No se encontraron documentos en la colección 'offers'.")
+                print("No documents found in 'offers'.")
                 completion(nil)
                 return
             }
@@ -107,13 +125,13 @@ class PropertyViewModel: ObservableObject {
 
             self.db.collection("offers").document(documentID).getDocument { documentSnapshot, error in
                 if let error = error {
-                    print("Error al obtener el documento con ID '\(documentID)': \(error)")
+                    print("Error fetching document with ID '\(documentID)': \(error)")
                     completion(nil)
                     return
                 }
 
                 guard let documentSnapshot = documentSnapshot, documentSnapshot.exists, let offersData = documentSnapshot.data() else {
-                    print("No se encontraron datos en el documento con ID '\(documentID)'.")
+                    print("No data found in document with ID '\(documentID)'.")
                     completion(nil)
                     return
                 }
@@ -125,28 +143,27 @@ class PropertyViewModel: ObservableObject {
                     }
                 }
 
-                let nextID = maxID + 1
-                completion(nextID)
+                completion(maxID + 1)
             }
         }
     }
 
     func postProperty(propertyOfferData: PropertyOfferData, completion: @escaping (Bool) -> Void) {
         guard propertyOfferData.propertyID >= 0 else {
-            print("Error: El ID de la propiedad no es válido.")
+            print("Error: Invalid property ID.")
             completion(false)
             return
         }
 
         db.collection("properties").getDocuments { snapshot, error in
             if let error = error {
-                print("Error al obtener las propiedades para hacer POST: \(error)")
+                print("Error fetching properties for POST: \(error)")
                 completion(false)
                 return
             }
 
             guard let documents = snapshot?.documents, let document = documents.first else {
-                print("No se encontró ningún documento en la colección 'properties'.")
+                print("No documents found in 'properties'.")
                 completion(false)
                 return
             }
@@ -159,7 +176,7 @@ class PropertyViewModel: ObservableObject {
                 "description": propertyOfferData.placeDescription,
                 "location": [],
                 "minutes_from_campus": propertyOfferData.minutesFromCampus,
-                "photos": propertyOfferData.photos,
+                "photos": propertyOfferData.photos, // Inicializar con los nombres
                 "title": propertyOfferData.placeTitle
             ]
 
@@ -167,10 +184,10 @@ class PropertyViewModel: ObservableObject {
                 "\(propertyOfferData.propertyID)": propertyData
             ]) { error in
                 if let error = error {
-                    print("Error al hacer POST de la nueva propiedad: \(error)")
+                    print("Error posting new property: \(error)")
                     completion(false)
                 } else {
-                    print("Propiedad posteada con éxito en 'properties' con ID \(propertyOfferData.propertyID).")
+                    print("Property posted successfully in 'properties' with ID \(propertyOfferData.propertyID).")
                     completion(true)
                 }
             }
@@ -179,27 +196,27 @@ class PropertyViewModel: ObservableObject {
 
     func postOffer(propertyOfferData: PropertyOfferData, completion: @escaping (Bool) -> Void) {
         guard propertyOfferData.propertyID >= 0 else {
-            print("Error: El ID de la propiedad no es válido.")
+            print("Error: Invalid property ID.")
             completion(false)
             return
         }
 
         getNextOfferID { nextOfferID in
             guard let offerID = nextOfferID, offerID >= 0 else {
-                print("Error al obtener el siguiente ID de oferta.")
+                print("Error fetching next offer ID.")
                 completion(false)
                 return
             }
 
             self.db.collection("offers").getDocuments { snapshot, error in
                 if let error = error {
-                    print("Error al obtener las ofertas para hacer POST: \(error)")
+                    print("Error fetching offers for POST: \(error)")
                     completion(false)
                     return
                 }
 
                 guard let documents = snapshot?.documents, let document = documents.first else {
-                    print("No se encontró ningún documento en la colección 'offers'.")
+                    print("No documents found in 'offers'.")
                     completion(false)
                     return
                 }
@@ -226,10 +243,10 @@ class PropertyViewModel: ObservableObject {
                     "\(offerID)": offerData
                 ]) { error in
                     if let error = error {
-                        print("Error al hacer POST de la oferta: \(error)")
+                        print("Error posting offer: \(error)")
                         completion(false)
                     } else {
-                        print("Oferta posteada con éxito en 'offers' con ID \(offerID).")
+                        print("Offer posted successfully in 'offers' with ID \(offerID).")
                         completion(true)
                     }
                 }
@@ -241,26 +258,26 @@ class PropertyViewModel: ObservableObject {
         if let currentUser = Auth.auth().currentUser {
             propertyOfferData.userId = currentUser.email ?? ""
         } else {
-            print("No se encontró un usuario autenticado.")
+            print("No authenticated user found.")
         }
     }
-    
-    private func updateFirestorePropertyPhotos(propertyOfferData: PropertyOfferData, photoFileNames: [String]) {
+
+    func updateFirestorePropertyPhotos(propertyOfferData: PropertyOfferData, photoFileNames: [String]) {
         let documentID = "\(propertyOfferData.propertyID)"
         let propertyRef = db.collection("properties").document(documentID)
 
         propertyRef.updateData(["photos": photoFileNames]) { error in
             if let error = error {
-                print("Error al actualizar las fotos en Firestore: \(error)")
+                print("Error updating photos in Firestore: \(error)")
             } else {
-                print("Fotos actualizadas con éxito en Firestore para la propiedad con ID \(documentID)")
+                print("Photos updated successfully in Firestore for property ID \(documentID)")
             }
         }
     }
 
     func uploadImages(for propertyOfferData: PropertyOfferData, completion: @escaping (Bool) -> Void) {
         guard !propertyOfferData.userId.isEmpty, propertyOfferData.propertyID >= 0 else {
-            print("Error: ID de usuario o ID de propiedad no están definidos.")
+            print("Error: User ID or Property ID not defined.")
             completion(false)
             return
         }
@@ -269,7 +286,6 @@ class PropertyViewModel: ObservableObject {
         let group = DispatchGroup()
         var uploadedFileNames: [String] = []
 
-        // Obtener imágenes desde almacenamiento local para subirlas a Firebase Storage
         let localImages = ["imagen1", "imagen2"].compactMap { imageName -> Data? in
             propertyOfferData.loadImage(for: imageName)?.jpegData(compressionQuality: 0.8)
         }
@@ -282,14 +298,13 @@ class PropertyViewModel: ObservableObject {
 
             imageRef.putData(imageData, metadata: nil) { metadata, error in
                 if let error = error {
-                    print("Error al subir la imagen \(fileName): \(error)")
+                    print("Error uploading image \(fileName): \(error)")
                     group.leave()
                     return
                 }
 
-                // Guardar solo el nombre del archivo, no la URL
                 uploadedFileNames.append(fileName)
-                print("Imagen subida con éxito: \(fileName)")
+                print("Image uploaded successfully: \(fileName)")
                 group.leave()
             }
         }
@@ -300,7 +315,7 @@ class PropertyViewModel: ObservableObject {
                 self.updateFirestorePropertyPhotos(propertyOfferData: propertyOfferData, photoFileNames: uploadedFileNames)
                 completion(true)
             } else {
-                print("Error al subir algunas fotos.")
+                print("Error uploading some images.")
                 completion(false)
             }
         }

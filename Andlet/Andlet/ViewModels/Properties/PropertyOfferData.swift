@@ -62,6 +62,20 @@ class PropertyOfferData: ObservableObject, CustomStringConvertible, Codable {
         roommates = numBeds - 1
     }
     
+    func deleteLocalImages() {
+        let imageNames = ["imagen1", "imagen2"]
+        for imageName in imageNames {
+            let url = getDocumentsDirectory().appendingPathComponent("\(imageName).jpg")
+            do {
+                try FileManager.default.removeItem(at: url)
+                print("Imagen \(imageName) eliminada del almacenamiento local.")
+            } catch {
+                print("Error al eliminar la imagen \(imageName): \(error)")
+            }
+        }
+        selectedImagesData = []  // Limpia los datos en selectedImagesData
+    }
+    
     // Método para guardar una imagen localmente
     func saveImage(data: Data, for imageName: String) {
         let url = getDocumentsDirectory().appendingPathComponent("\(imageName).jpg")
