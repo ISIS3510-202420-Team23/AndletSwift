@@ -34,9 +34,8 @@ struct HomepageRentView: View {
                                 Button(action: {
                                     propertyOfferData.reset()
                                     propertyOfferData.resetJSON() // Reiniciar JSON al crear una nueva propiedad
-                                    propertyOfferData.deleteLocalImages() // Elimina imágenes locales
-                                    propertyOfferData.selectedImagesData = [] // Vacía la variable selectedImagesData
-                                    propertyOfferData.photos = [] // Asegura que photos esté vacío
+                                    propertyOfferData.deleteLocalImages()
+                                    propertyOfferData.clearDocumentsDirectory() // Vacía el directorio de documentos
                                     print("RESET PROPERTY DATA ON CREATE MORE CLICK")
                                 }) {
                                     CreateMoreButton()
@@ -135,8 +134,8 @@ struct HomepageRentView: View {
                             .onAppear {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                     showSuccessNotification = false
-                                    // Eliminar imágenes locales después de mostrar la notificación
                                     propertyOfferData.deleteLocalImages()
+                                    propertyOfferData.clearDocumentsDirectory()
                                 }
                             }
                     }

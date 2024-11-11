@@ -305,6 +305,13 @@ class PropertyViewModel: ObservableObject {
 
                 uploadedFileNames.append(fileName)
                 print("Image uploaded successfully: \(fileName)")
+
+                // Eliminar el archivo local después de la subida
+                if index == 0 {
+                    propertyOfferData.deleteSpecificImage("imagen1")
+                } else if index == 1 {
+                    propertyOfferData.deleteSpecificImage("imagen2")
+                }
                 group.leave()
             }
         }
@@ -320,6 +327,7 @@ class PropertyViewModel: ObservableObject {
             }
         }
     }
+
 }
 
 extension Notification.Name {

@@ -63,7 +63,9 @@ class PropertyOfferData: ObservableObject, CustomStringConvertible, Codable {
     }
     
     func deleteLocalImages() {
+        // Lista de nombres de archivos de imágenes a eliminar
         let imageNames = ["imagen1", "imagen2"]
+        
         for imageName in imageNames {
             let url = getDocumentsDirectory().appendingPathComponent("\(imageName).jpg")
             do {
@@ -73,7 +75,34 @@ class PropertyOfferData: ObservableObject, CustomStringConvertible, Codable {
                 print("Error al eliminar la imagen \(imageName): \(error)")
             }
         }
-        selectedImagesData = []  // Limpia los datos en selectedImagesData
+        // Vacía el array de imágenes después de eliminar los archivos
+        selectedImagesData = []
+    }
+    
+    func clearDocumentsDirectory() {
+        let fileManager = FileManager.default
+        let documentsURL = getDocumentsDirectory()
+        
+        do {
+            let fileURLs = try fileManager.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil, options: [])
+            for fileURL in fileURLs {
+                try fileManager.removeItem(at: fileURL)
+                print("Archivo eliminado: \(fileURL)")
+            }
+            print("Todos los archivos en el directorio de documentos fueron eliminados.")
+        } catch {
+            print("Error al intentar eliminar archivos en el directorio de documentos: \(error)")
+        }
+    }
+    
+    func deleteSpecificImage(_ imageName: String) {
+        let url = getDocumentsDirectory().appendingPathComponent("\(imageName).jpg")
+        do {
+            try FileManager.default.removeItem(at: url)
+            print("Imagen \(imageName) eliminada del almacenamiento local.")
+        } catch {
+            print("Error al eliminar la imagen \(imageName): \(error)")
+        }
     }
     
     // Método para guardar una imagen localmente
