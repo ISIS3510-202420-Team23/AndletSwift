@@ -6,7 +6,7 @@ struct MainTabLandlordView: View {
     var body: some View {
         TabView {
             // Pasamos la instancia de propertyOfferData a HomepageRentView
-            HomepageRentView(propertyOfferData: propertyOfferData)
+            HomepageRentView()
                 .tabItem {
                     Label("Explore", systemImage: "location.fill")
                         .foregroundStyle(Color(hex: "0C356A"))

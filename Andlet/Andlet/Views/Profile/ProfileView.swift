@@ -1,16 +1,10 @@
-//
-//  ProfileView.swift
-//  Andlet
-//
-//  Created by Daniel Arango Cruz on 30/09/24.
-//
-
 import SwiftUI
 
 struct ProfileView: View {
     @ObservedObject var authViewModel: AuthenticationViewModel
     var userImageURL: String?  // URL for the user's image
     @State private var isUserSignedOut = false  // Trigger for navigation
+    @State private var showPendingAlert = false  // Estado para mostrar alerta de propiedad pendiente
 
     var body: some View {
         NavigationStack {
@@ -55,7 +49,7 @@ struct ProfileView: View {
 
                 // Sign Out Button
                 Button(action: {
-                    signOutUser()  // Sign out the user
+                    checkPendingPropertyBeforeSignOut()  // Comprobar propiedad pendiente antes de intentar cerrar sesión
                 }) {
                     Text("Sign Out")
                         .foregroundColor(.white)
@@ -78,6 +72,24 @@ struct ProfileView: View {
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
             .padding()
+            // Mostrar la alerta si hay una propiedad pendiente
+            .alert(isPresented: $showPendingAlert) {
+                Alert(
+                    title: Text("Pending Property"),
+                    message: Text("You have a property pending to be published. Please connect to the internet to complete the upload before signing out."),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
+        }
+    }
+
+    // Verificar si hay una propiedad pendiente antes de cerrar sesión
+    private func checkPendingPropertyBeforeSignOut() {
+        if let pendingProperty = PropertyOfferData().loadFromJSON() {  // Comprobar si hay datos sin publicar
+            print("Pending property found: \(pendingProperty)")
+            showPendingAlert = true  // Mostrar alerta para impedir el cierre de sesión
+        } else {
+            signOutUser()  // Procede con el cierre de sesión si no hay pendientes
         }
     }
 

@@ -15,7 +15,7 @@ struct HomepageRentView: View {
     @StateObject private var propertyViewModel = PropertyViewModel()
     @StateObject private var shakeDetector = ShakeDetector()
     @StateObject private var networkMonitor = NetworkMonitor()
-    @ObservedObject var propertyOfferData: PropertyOfferData
+    @State private var propertyOfferData = PropertyOfferData()  // Instancia inicial
     @State private var isPublishing = false
 
     let currentUser = Auth.auth().currentUser
@@ -33,9 +33,8 @@ struct HomepageRentView: View {
                             if !showNoConnectionBanner {
                                 Button(action: {
                                     propertyOfferData.reset()
-                                    propertyOfferData.resetJSON() // Reiniciar JSON al crear una nueva propiedad
-                                    propertyOfferData.deleteLocalImages()
-                                    propertyOfferData.clearDocumentsDirectory() // Vacía el directorio de documentos
+                                    propertyOfferData = PropertyOfferData() // Nueva instancia para limpiar todos los campos
+                                    propertyOfferData.reset()
                                     print("RESET PROPERTY DATA ON CREATE MORE CLICK")
                                 }) {
                                     CreateMoreButton()
@@ -79,7 +78,7 @@ struct HomepageRentView: View {
                             }
                         }
                         .onAppear {
-                            propertyOfferData.reset()
+                            propertyOfferData = PropertyOfferData() // Asegura que los datos estén frescos al cargar la vista
                             offerViewModel.fetchOffers(for: "\(currentUser?.email ?? "UNKNOWN")")
                             checkAndPublishPendingProperty()
                         }
@@ -173,7 +172,7 @@ struct HomepageRentView: View {
             let pendingProperty = try decoder.decode(PropertyOfferData.self, from: data)
             print("Pending property found, attempting to publish...")
 
-            // Cargar los datos de la propiedad pendiente en PropertyOfferData
+            // Load pending property data into PropertyOfferData
             propertyOfferData.placeTitle = pendingProperty.placeTitle
             propertyOfferData.placeDescription = pendingProperty.placeDescription
             propertyOfferData.placeAddress = pendingProperty.placeAddress
@@ -195,11 +194,11 @@ struct HomepageRentView: View {
 
             print("Loaded pending property data into propertyOfferData.")
             
-            // Paso 1: Publicar propiedad sin imágenes
+            // Step 1: Publish property details without images
             propertyViewModel.savePropertyAsync(propertyOfferData: propertyOfferData) {
                 print("Property details published without images. Now uploading images in background.")
                 
-                // Paso 2: Subir imágenes en segundo plano
+                // Step 2: Upload images in the background
                 propertyViewModel.uploadImages(for: propertyOfferData) { uploadSuccess in
                     if uploadSuccess {
                         print("Images uploaded successfully. Updating Firestore photos field.")
@@ -207,7 +206,7 @@ struct HomepageRentView: View {
                     } else {
                         print("Error uploading images.")
                     }
-                    // Reiniciar publicación y limpiar JSON tras completar el proceso
+                    // Reset JSON and mark publishing as finished
                     propertyOfferData.resetJSON()
                     isPublishing = false
                     DispatchQueue.main.async {
