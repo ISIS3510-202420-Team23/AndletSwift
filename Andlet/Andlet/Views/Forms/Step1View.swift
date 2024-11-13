@@ -50,6 +50,7 @@ struct Step1View: View {
                         HStack {
                             Spacer()
                             HStack(spacing: 20) {
+                                // ImagePicker for first image
                                 ImagePickerView(
                                     selectedImage: Binding<UIImage?>(
                                         get: {
@@ -60,6 +61,7 @@ struct Step1View: View {
                                         },
                                         set: { newImage in
                                             if let newImage = newImage, let data = newImage.jpegData(compressionQuality: 0.8) {
+                                                propertyOfferData.saveImage(data: data, for: "imagen1")
                                                 if propertyOfferData.selectedImagesData.isEmpty {
                                                     propertyOfferData.selectedImagesData.append(data)
                                                 } else {
@@ -71,6 +73,7 @@ struct Step1View: View {
                                     showImagePicker: $showImagePicker1
                                 )
 
+                                // ImagePicker for second image
                                 ImagePickerView(
                                     selectedImage: Binding<UIImage?>(
                                         get: {
@@ -81,10 +84,16 @@ struct Step1View: View {
                                         },
                                         set: { newImage in
                                             if let newImage = newImage, let data = newImage.jpegData(compressionQuality: 0.8) {
+                                                propertyOfferData.saveImage(data: data, for: "imagen2")
                                                 if propertyOfferData.selectedImagesData.count > 1 {
                                                     propertyOfferData.selectedImagesData[1] = data
                                                 } else {
                                                     propertyOfferData.selectedImagesData.append(data)
+                                                }
+                                            } else {
+                                                // Remove the second image if not selected
+                                                if propertyOfferData.selectedImagesData.count > 1 {
+                                                    propertyOfferData.selectedImagesData.remove(at: 1)
                                                 }
                                             }
                                         }
@@ -154,7 +163,7 @@ struct Step1View: View {
                             .background(Color(red: 12/255, green: 53/255, blue: 106/255))
                             .cornerRadius(15)
                             .onTapGesture {
-                                // Validación inicial sin modificar los campos
+                                // Validate required fields
                                 if propertyOfferData.placeTitle.isOnlyWhitespace || propertyOfferData.placeAddress.isOnlyWhitespace {
                                     warningMessageText = "Please do not use only spaces in the title or address fields."
                                     showWarningMessage = true
@@ -168,15 +177,21 @@ struct Step1View: View {
                                     warningMessageText = "Please remove any emojis from the text fields."
                                     showWarningMessage = true
                                 } else {
-                                    // Limpia espacios extra antes de navegar al Step 2
                                     propertyOfferData.placeTitle = propertyOfferData.placeTitle.removingExtraSpaces()
                                     propertyOfferData.placeDescription = propertyOfferData.placeDescription.removingExtraSpaces()
                                     propertyOfferData.placeAddress = propertyOfferData.placeAddress.removingExtraSpaces()
+
+                                    // Clear second image if not selected
+                                    if propertyOfferData.selectedImagesData.count > 1 && propertyOfferData.selectedImagesData[1] == nil {
+                                        propertyOfferData.selectedImagesData.remove(at: 1)
+                                    }
+
                                     showWarningMessage = false
                                     viewModel.assignAuthenticatedUser(to: propertyOfferData)
                                     navigateToStep2 = true
                                 }
 
+                                // Hide warning message after 2 seconds
                                 if showWarningMessage {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                         withAnimation {

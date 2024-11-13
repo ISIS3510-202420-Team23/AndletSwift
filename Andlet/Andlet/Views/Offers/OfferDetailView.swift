@@ -170,6 +170,7 @@ struct OfferDetailView: View {
                                 showContactDetails.toggle()
                             }
                             logContactAction()  // Llamada a la función para registrar el evento en Firestore
+                            logContactActionLandlord()
                         } label: {
                             Text("Contact")
                                 .foregroundStyle(.white)
@@ -269,6 +270,40 @@ struct OfferDetailView: View {
             }
         }
     }
+    
+    // Nueva función para registrar la acción de contacto en Firestore, incluyendo el ID del landlord
+    private func logContactActionLandlord() {
+        guard let currentUser = Auth.auth().currentUser, let userEmail = currentUser.email else {
+            print("Error: No se pudo obtener el email del usuario, el usuario no está autenticado.")
+            return
+        }
+
+        // Crear un identificador único para el documento usando el formato solicitado
+        let dateFormatter = DateFormatter()
+        let landlordId = offer.userId
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH:mm:ss"
+        let formattedDate = dateFormatter.string(from: Date())
+        let documentID = "4_\(landlordId)_\(formattedDate)"  // Identificador que empieza con "4" para la nueva acción
+
+        // Crear la estructura del documento con el ID del landlord
+        let actionData: [String: Any] = [
+            "action": "landlordContacted",
+            "app": "swift",
+            "date": Date(),
+            "user_id": landlordId
+        ]
+
+        // Registrar la acción en la colección "user_actions" en Firestore
+        let db = Firestore.firestore()
+        db.collection("user_actions").document(documentID).setData(actionData) { error in
+            if let error = error {
+                print("Error al registrar el evento de contacto en Firestore: \(error.localizedDescription)")
+            } else {
+                print("Evento de contacto con ID de landlord registrado exitosamente en Firestore con ID: \(documentID)")
+            }
+        }
+    }
+
     
     func updateUserViewCount() {
         let db = Firestore.firestore()
