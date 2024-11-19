@@ -148,7 +148,7 @@ struct AuthenticationView: View {
             .navigationBarHidden(true)
             .alert(isPresented: Binding(get: { errorMessage != nil }, set: { _ in errorMessage = nil })) {
                 Alert(
-                    title: Text("Authentication Error"),
+                    title: Text(connectivityChecker.isConnected ? "Authentication Error" : "Connection Error"),
                     message: Text(errorMessage ?? "Unknown error"),
                     dismissButton: .default(Text("OK"))
                 )
