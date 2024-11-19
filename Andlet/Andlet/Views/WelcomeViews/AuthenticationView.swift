@@ -1,6 +1,32 @@
 import SwiftUI
 import GoogleSignIn
 import GoogleSignInSwift
+import Network
+
+class ConnectivityChecker: ObservableObject {
+    @Published var isConnected: Bool = true
+    private var monitor: NWPathMonitor
+    private let queue = DispatchQueue(label: "NetworkMonitor")
+
+    init() {
+        self.monitor = NWPathMonitor()
+        self.startMonitoring()
+    }
+
+    deinit {
+        monitor.cancel()
+    }
+
+    private func startMonitoring() {
+        monitor.pathUpdateHandler = { [weak self] path in
+            DispatchQueue.main.async {
+                self?.isConnected = path.status == .satisfied
+            }
+        }
+        monitor.start(queue: queue)
+    }
+}
+
 
 @MainActor
 struct AuthenticationView: View {
@@ -9,6 +35,7 @@ struct AuthenticationView: View {
     @State private var isLoading: Bool = false
     @State private var destination: NavigationDestination?  // Manage navigation state
     @State private var errorMessage: String? = nil  // To display errors
+    @StateObject private var connectivityChecker: ConnectivityChecker = ConnectivityChecker()
 
     // Enum to manage different navigation destinations
     enum NavigationDestination: Hashable {
@@ -53,7 +80,7 @@ struct AuthenticationView: View {
                     }
 
                     // Google Sign-In Button
-                    Button(action: signInWithGoogle) {
+                    Button(action: checkConnectivityBeforeSignIn) {
                         HStack {
                             Image("GoogleIcon")
                                 .resizable()
@@ -86,7 +113,7 @@ struct AuthenticationView: View {
                     }
 
                     // Log in with Google Button
-                    Button(action: signInWithGoogle) {
+                    Button(action: checkConnectivityBeforeSignIn) {
                         HStack {
                             Image("GoogleIcon")
                                 .resizable()
@@ -121,7 +148,7 @@ struct AuthenticationView: View {
             .navigationBarHidden(true)
             .alert(isPresented: Binding(get: { errorMessage != nil }, set: { _ in errorMessage = nil })) {
                 Alert(
-                    title: Text("Authentication Error"),
+                    title: Text(connectivityChecker.isConnected ? "Authentication Error" : "Connection Error"),
                     message: Text(errorMessage ?? "Unknown error"),
                     dismissButton: .default(Text("OK"))
                 )
@@ -150,6 +177,13 @@ struct AuthenticationView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(red: 197/255, green: 221/255, blue: 255/255))
             .transition(.opacity)
+        }
+    }
+    private func checkConnectivityBeforeSignIn() {
+        if connectivityChecker.isConnected {
+            signInWithGoogle()
+        } else {
+            errorMessage = "No internet connection. Please connect to the internet and try again."
         }
     }
 
