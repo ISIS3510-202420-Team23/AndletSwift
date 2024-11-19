@@ -5,6 +5,7 @@ struct ProfileView: View {
     var userImageURL: String?  // URL for the user's image
     @State private var isUserSignedOut = false  // Trigger for navigation
     @State private var showPendingAlert = false  // Estado para mostrar alerta de propiedad pendiente
+    @StateObject private var networkMonitor = NetworkMonitor()
 
     var body: some View {
         NavigationStack {
@@ -12,7 +13,7 @@ struct ProfileView: View {
                 Spacer()
 
                 // Load the user's image (from URL or default image)
-                if let userImageURL = userImageURL, userImageURL != "", let url = URL(string: userImageURL) {
+                if let userImageURL = authViewModel.currentUser?.photo, !userImageURL.isEmpty, networkMonitor.isConnected, let url = URL(string: userImageURL) {
                     AsyncImage(url: url) { phase in
                         switch phase {
                         case .success(let image):
@@ -39,7 +40,7 @@ struct ProfileView: View {
                     }
                     .padding(.bottom, 40)
                 } else {
-                    Image(systemName: "person.circle.fill")
+                    Image("Icon")
                         .resizable()
                         .frame(width: 150, height: 150)
                         .clipShape(Circle())
