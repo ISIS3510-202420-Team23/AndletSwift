@@ -34,13 +34,16 @@ struct NotificationView: View {
                         .lineLimit(1)
 
                     Text(message) // Mensaje
-                        .font(.custom("LeagueSpartan-Light", size: 14))
+                        .font(.custom("LeagueSpartan-Light", size: 16))
                         .foregroundColor(.black)
                         .lineLimit(2)
 
-                    Text(date) // Fecha
-                        .font(.custom("LeagueSpartan-Thin", size: 12))
-                        .foregroundColor(.gray)
+                    HStack {
+                            Spacer() // Empuja la fecha hacia la derecha
+                            Text(date)
+                                .font(.custom("LeagueSpartan-Thin", size: 12))
+                                .foregroundColor(.gray)
+                        }
                 }
                 Spacer()
             }
@@ -95,4 +98,3 @@ struct Notifications2View: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-
