@@ -91,6 +91,10 @@ struct NotificationsRentView: View {
                     .receive(on: DispatchQueue.main)
                     .sink { isConnected in
                         self.showNoConnectionBanner = !isConnected
+                        if !isConnected {
+                                        
+                                        notificationViewModel.loadNotificationsFromLocal()
+                                    }
                     }
                     .store(in: &notificationViewModel.cancellables)
                 

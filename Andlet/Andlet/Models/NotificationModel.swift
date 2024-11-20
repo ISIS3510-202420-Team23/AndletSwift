@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct NotificationModel: Identifiable, Hashable {
+struct NotificationModel: Identifiable, Hashable, Codable {
     let id: String
     let propertyTitle: String
     let savesCount: Int

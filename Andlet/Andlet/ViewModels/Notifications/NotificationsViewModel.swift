@@ -14,9 +14,11 @@ class NotificationViewModel: ObservableObject {
     private var db = Firestore.firestore()
     private var timer: Timer?
     var cancellables = Set<AnyCancellable>()
+    private let notificationsKey = "savedNotifications"
+
     
     /// Iniciar temporizador para evaluar y generar notificaciones automáticamente
-    func startEvaluatingNotifications(for userId: String, interval: TimeInterval = 5) {
+    func startEvaluatingNotifications(for userId: String, interval: TimeInterval = 3600) {
         // Detener cualquier temporizador existente
         stopTimer()
         
@@ -37,11 +39,13 @@ class NotificationViewModel: ObservableObject {
         db.collection("offers").getDocuments { snapshot, error in
             if let error = error {
                 print("Error al obtener las ofertas: \(error)")
+                self.loadNotificationsFromLocal()
                 return
             }
             
             guard let documents = snapshot?.documents else {
                 print("No se encontraron documentos en 'offers'")
+                self.loadNotificationsFromLocal()
                 return
             }
             
@@ -50,7 +54,7 @@ class NotificationViewModel: ObservableObject {
             for document in documents {
                 let data = document.data()
                 
-                // Iterar sobre las claves dentro del documento (por ejemplo, "1", "2", etc.)
+            
                 for (key, value) in data {
                     if let offerData = value as? [String: Any],
                        let offerUserId = offerData["user_id"] as? String, offerUserId == userId {
@@ -60,7 +64,6 @@ class NotificationViewModel: ObservableObject {
                 }
             }
             
-            // Buscar saves por cada publicación del usuario
             self.fetchSaves(for: userOffers, timeInterval: timeInterval)
         }
     }
@@ -116,6 +119,7 @@ class NotificationViewModel: ObservableObject {
                             // Actualizar las notificaciones en el hilo principal
                             DispatchQueue.main.async {
                                 self.notifications = tempNotifications
+                                self.saveNotificationsToLocal() 
                                 print("Notificaciones actualizadas: \(self.notifications)")
                             }
                         } else {
@@ -161,5 +165,37 @@ class NotificationViewModel: ObservableObject {
             userId: userId,
             views: views
         )
+    }
+}
+
+
+extension NotificationViewModel {
+    
+    /// Guardar notificaciones en UserDefaults
+    func saveNotificationsToLocal() {
+        do {
+            let encoder = JSONEncoder()
+            let data = try encoder.encode(notifications)
+            UserDefaults.standard.set(data, forKey: notificationsKey)
+            print("Notificaciones guardadas localmente.")
+        } catch {
+            print("Error al guardar notificaciones localmente: \(error)")
+        }
+    }
+    
+    /// Cargar notificaciones desde UserDefaults
+    func loadNotificationsFromLocal() {
+        guard let data = UserDefaults.standard.data(forKey: notificationsKey) else {
+            print("No hay notificaciones guardadas localmente.")
+            return
+        }
+        
+        do {
+            let decoder = JSONDecoder()
+            notifications = try decoder.decode([NotificationModel].self, from: data)
+            print("Notificaciones cargadas desde almacenamiento local: \(notifications)")
+        } catch {
+            print("Error al cargar notificaciones localmente: \(error)")
+        }
     }
 }
