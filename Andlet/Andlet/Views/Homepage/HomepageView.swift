@@ -14,13 +14,13 @@ struct HomepageView: View {
     @StateObject private var filterViewModel: FilterViewModel
     @StateObject private var shakeDetector = ShakeDetector()
     @State private var selectedOffer: OfferWithProperty?  // Add a state to track selected offer
-    
+
     init() {
         let filterVM = FilterViewModel()  // Inicia FilterViewModel con AppStorage
         _filterViewModel = StateObject(wrappedValue: filterVM)
         _offerViewModel = StateObject(wrappedValue: OfferViewModel(filterViewModel: filterVM))
     }
-    
+
     var body: some View {
         if #available(iOS 16.0, *) {
             NavigationStack {
@@ -50,9 +50,7 @@ struct HomepageView: View {
                                     .transition(.move(edge: .top))
                                     .padding(.horizontal, 40)
                             }
-                            
-                            
-                            
+
                             if offerViewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
                                     .font(.headline)
@@ -72,18 +70,16 @@ struct HomepageView: View {
                                 }
                                 .padding()
                             }
-                            
                         }
                         .safeAreaInset(edge: .bottom) {
-                            Color.clear.frame(height: 80)}
-                        
+                            Color.clear.frame(height: 80)
+                        }
                         .onAppear {
                             logPeakAction()
                             fetchUserViewPreferences()
                             let cache = URLCache.shared
                             print("Cache actual: \(cache.currentMemoryUsage) bytes en memoria y \(cache.currentDiskUsage) bytes en disco.")
-                            
-                            
+
                             if filterViewModel.filtersApplied {
                                 offerViewModel.fetchOffersWithFilters()
                             } else {
@@ -117,9 +113,9 @@ struct HomepageView: View {
                             }
                             if isConnected {
                                 offerViewModel.syncOfflineViews()
+                                logConnectionAction() // Registrar acción de conexión
                             }
                         }
-                        // Manage navigation based on selected offer
                         .navigationDestination(isPresented: Binding(
                             get: { selectedOffer != nil },
                             set: { _ in selectedOffer = nil }
@@ -137,53 +133,48 @@ struct HomepageView: View {
             Text("Versión de iOS no soportada")
         }
     }
-    
-    func fetchUserViewPreferences() {
+
+    private func fetchUserViewPreferences() {
         let db = Firestore.firestore()
         guard let userEmail = Auth.auth().currentUser?.email else {
             print("Error: No hay usuario logueado")
             return
         }
-        
+
         let userViewsRef = db.collection("user_views").document(userEmail)
         userViewsRef.getDocument { document, error in
             if let document = document, document.exists {
                 let roommateViews = document.data()?["roommates_views"] as? Int ?? 0
                 let noRoommateViews = document.data()?["no_roommates_views"] as? Int ?? 0
-                
-                // Guardamos en UserDefaults
+
                 UserDefaults.standard.roommateViews = roommateViews
                 UserDefaults.standard.noRoommateViews = noRoommateViews
-                
+
                 userRoommatePreference = roommateViews > noRoommateViews
             } else {
                 print("No se encontró el documento de preferencias de usuario")
             }
         }
     }
-    
-    // Función para registrar la acción "peak" en Firestore
+
     private func logPeakAction() {
         guard let currentUser = Auth.auth().currentUser, let userEmail = currentUser.email else {
             print("Error: No se pudo obtener el email del usuario, el usuario no está autenticado.")
             return
         }
-        
-        // Crear un identificador único para el documento usando el formato solicitado
+
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd_HH:mm:ss"
         let formattedDate = dateFormatter.string(from: Date())
-        let documentID = "5_\(userEmail)_\(formattedDate)"  // Identificador que empieza con "5"
-        
-        // Crear la estructura del documento
+        let documentID = "5_\(userEmail)_\(formattedDate)"
+
         let actionData: [String: Any] = [
             "action": "peak",
             "app": "swift",
             "date": Date(),
             "user_id": userEmail
         ]
-        
-        // Registrar la acción en la colección "user_actions" en Firestore
+
         let db = Firestore.firestore()
         db.collection("user_actions").document(documentID).setData(actionData) { error in
             if let error = error {
@@ -193,33 +184,53 @@ struct HomepageView: View {
             }
         }
     }
-    
-    func sortedOffers() -> [OfferWithProperty] {
-        // Comprobamos si hay conexión
+
+    private func logConnectionAction() {
+        guard let currentUser = Auth.auth().currentUser, let userEmail = currentUser.email else {
+            print("Error: No se pudo obtener el email del usuario, el usuario no está autenticado.")
+            return
+        }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH:mm:ss"
+        let formattedDate = dateFormatter.string(from: Date())
+        let documentID = "6_\(userEmail)_\(formattedDate)"
+
+        let actionData: [String: Any] = [
+            "action": "connected",
+            "app": "swift",
+            "date": Date(),
+            "user_id": userEmail
+        ]
+
+        let db = Firestore.firestore()
+        db.collection("user_actions").document(documentID).setData(actionData) { error in
+            if let error = error {
+                print("Error al registrar el evento 'connected' en Firestore: \(error.localizedDescription)")
+            } else {
+                print("Evento 'connected' registrado exitosamente en Firestore con ID: \(documentID)")
+            }
+        }
+    }
+
+    private func sortedOffers() -> [OfferWithProperty] {
         let isConnected = networkMonitor.isConnected
-        
-        // Usar la preferencia desde Firestore o UserDefaults
         let preference: Bool
         if isConnected, let userPreference = userRoommatePreference {
             preference = userPreference
         } else {
             preference = UserDefaults.standard.roommateViews > UserDefaults.standard.noRoommateViews
         }
-        
+
         return offerViewModel.offersWithProperties.sorted { first, second in
             let firstHasRoommates = first.offer.roommates > 0
             let secondHasRoommates = second.offer.roommates > 0
-            
+
             if preference {
                 return firstHasRoommates && !secondHasRoommates
             } else {
                 return !firstHasRoommates && secondHasRoommates
             }
         }
-    }
-    
-    
-    func refreshOffers() {
-        offerViewModel.fetchOffers()
     }
 }

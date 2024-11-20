@@ -1,5 +1,6 @@
 import SwiftUI
 import FirebaseAuth
+import FirebaseFirestore
 import UIKit
 
 struct HomepageRentView: View {
@@ -109,9 +110,12 @@ struct HomepageRentView: View {
                             }
                             isConnected = isConnectedStatus
 
-                            if isConnectedStatus && publishedOffline {
-                                checkAndPublishPendingProperty()
-                                refreshOffers()
+                            if isConnectedStatus {
+                                logConnectionAction() // Registrar acción de conexión
+                                if publishedOffline {
+                                    checkAndPublishPendingProperty()
+                                    refreshOffers()
+                                }
                             }
                         }
                         .onReceive(NotificationCenter.default.publisher(for: .offerSaveCompleted)) { _ in
@@ -155,6 +159,62 @@ struct HomepageRentView: View {
     func refreshOffers() {
         print("REFRESHING OFFERS FOR LANDLORD...")
         offerViewModel.fetchOffers(for: "\(currentUser?.email ?? "UNKNOWN")")
+    }
+    
+    private func logConnectionAction() {
+        guard let currentUser = Auth.auth().currentUser, let userEmail = currentUser.email else {
+            print("Error: No se pudo obtener el email del usuario, el usuario no está autenticado.")
+            return
+        }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH:mm:ss"
+        let formattedDate = dateFormatter.string(from: Date())
+        let documentID = "6_\(userEmail)_\(formattedDate)"
+
+        let actionData: [String: Any] = [
+            "action": "connected",
+            "app": "swift",
+            "date": Date(),
+            "user_id": userEmail
+        ]
+
+        let db = Firestore.firestore()
+        db.collection("user_actions").document(documentID).setData(actionData) { error in
+            if let error = error {
+                print("Error al registrar el evento 'connected' en Firestore: \(error.localizedDescription)")
+            } else {
+                print("Evento 'connected' registrado exitosamente en Firestore con ID: \(documentID)")
+            }
+        }
+    }
+    
+    private func logLostConnectionAction() {
+        guard let currentUser = Auth.auth().currentUser, let userEmail = currentUser.email else {
+            print("Error: No se pudo obtener el email del usuario, el usuario no está autenticado.")
+            return
+        }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH:mm:ss"
+        let formattedDate = dateFormatter.string(from: Date())
+        let documentID = "7_\(userEmail)_\(formattedDate)"
+
+        let actionData: [String: Any] = [
+            "action": "not_connected",
+            "app": "swift",
+            "date": Date(),
+            "user_id": userEmail
+        ]
+
+        let db = Firestore.firestore()
+        db.collection("user_actions").document(documentID).setData(actionData) { error in
+            if let error = error {
+                print("Error al registrar el evento 'connected' en Firestore: \(error.localizedDescription)")
+            } else {
+                print("Evento 'connected' registrado exitosamente en Firestore con ID: \(documentID)")
+            }
+        }
     }
 
     private func checkAndPublishPendingProperty() {
