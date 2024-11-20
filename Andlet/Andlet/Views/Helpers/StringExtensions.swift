@@ -2,7 +2,7 @@ import Foundation
 
 extension String {
     var isOnlyWhitespace: Bool {
-        return self.trimmingCharacters(in: .whitespaces).isEmpty
+        return self.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     var containsEmoji: Bool {
@@ -10,8 +10,10 @@ extension String {
     }
     
     func removingExtraSpaces() -> String {
-        return self.trimmingCharacters(in: .whitespaces)
-                   .components(separatedBy: .whitespaces)
+        // Reemplazar saltos de línea con un espacio, luego eliminar espacios adicionales
+        return self.replacingOccurrences(of: "\n", with: " ")
+                   .trimmingCharacters(in: .whitespacesAndNewlines)
+                   .components(separatedBy: .whitespacesAndNewlines)
                    .filter { !$0.isEmpty }
                    .joined(separator: " ")
     }
