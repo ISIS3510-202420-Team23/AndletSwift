@@ -198,4 +198,47 @@ extension NotificationViewModel {
             print("Error al cargar notificaciones localmente: \(error)")
         }
     }
+    
+    @MainActor
+    public func fetchNotificationsAsync(for userId: String, timeInterval: TimeInterval = 604800) async {
+        do {
+            let userOffers = try await fetchOffers(for: userId)
+            fetchSaves(for: userOffers, timeInterval: timeInterval)
+        } catch {
+            print("Error al recargar notificaciones: \(error)")
+            loadNotificationsFromLocal()
+        }
+    }
+
+    private func fetchOffers(for userId: String) async throws -> [OfferModel] {
+        return try await withCheckedThrowingContinuation { continuation in
+            db.collection("offers").getDocuments { snapshot, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+
+                guard let documents = snapshot?.documents else {
+                    continuation.resume(returning: [])
+                    return
+                }
+
+                var userOffers: [OfferModel] = []
+                for document in documents {
+                    let data = document.data()
+                    for (key, value) in data {
+                        if let offerData = value as? [String: Any],
+                           let offerUserId = offerData["user_id"] as? String,
+                           offerUserId == userId {
+                            let offer = self.mapOfferDataToModel(key: key, data: offerData)
+                            userOffers.append(offer)
+                        }
+                    }
+                }
+
+                continuation.resume(returning: userOffers)
+            }
+        }
+    }
+
 }
