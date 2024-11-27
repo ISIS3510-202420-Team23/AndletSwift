@@ -12,6 +12,9 @@ struct OfferDetailView: View {
     
     @StateObject private var viewModel = OfferDetailViewModel()
     
+    @State private var isSaved: Bool = false
+    @StateObject private var saveManager = OfferSaveManager()
+    
     var body: some View {
         if #available(iOS 16.0, *) {
             ScrollView {
@@ -38,6 +41,21 @@ struct OfferDetailView: View {
                             .padding(32)
                             .padding(.top, 30)
                     }
+                    
+                    Button(action: {
+                        toggleSave()
+                    }) {
+                        Image(systemName:  isSaved ? "bookmark.fill" : "bookmark")
+                            .foregroundColor(.white)
+                            .background(Circle().fill(Color(hex: "0C356A")).frame(width: 40, height: 40))
+                            .padding(32)
+                            .padding(.top, 30)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .topTrailing)
+                }
+                .onAppear {
+                    checkIfSaved()
+                    
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {
@@ -217,6 +235,37 @@ struct OfferDetailView: View {
                 }
             }
 
+        }
+    }
+    private func toggleSave() {
+        if isSaved {
+            saveManager.unsaveOffer(offerId: offer.idProperty) { error in
+                if let error = error {
+                    print("Error unsaving offer: \(error.localizedDescription)")
+                } else {
+                    isSaved = false
+                }
+            }
+        } else {
+            saveManager.saveOffer(offerId: offer.idProperty) { error in
+                if let error = error {
+                    print("Error saving offer: \(error.localizedDescription)")
+                } else {
+                    isSaved = true
+                }
+            }
+        }
+    }
+
+    private func checkIfSaved() {
+        guard let userEmail = Auth.auth().currentUser?.email else { return }
+        let db = Firestore.firestore()
+
+        db.collection("user_saved").document(userEmail).getDocument { document, error in
+            guard let document = document, document.exists else { return }
+            let savedOffers = document.data()?.keys
+            print ("Saved offers: \(savedOffers?.description ?? "")")
+            isSaved = (savedOffers != nil) && savedOffers!.contains(offer.idProperty)
         }
     }
     

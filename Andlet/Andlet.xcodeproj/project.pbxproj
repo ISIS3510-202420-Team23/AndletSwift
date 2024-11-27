@@ -83,6 +83,7 @@
 		9C528C1A2CAB56FB007F6A76 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C528C192CAB56FB007F6A76 /* Launch Screen.storyboard */; };
 		9C528C1D2CAB7EDD007F6A76 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C528C1C2CAB7EDD007F6A76 /* ProfileView.swift */; };
 		9C528C1F2CACE0B5007F6A76 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C528C1E2CACE0B5007F6A76 /* LocationManager.swift */; };
+		9C65D6592CF6D5D700A7D66E /* OfferSaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C65D6582CF6D5D700A7D66E /* OfferSaveManager.swift */; };
 		A9188B182CBCE144002703D4 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9188B172CBCE144002703D4 /* StringExtensions.swift */; };
 		A968E3CC2C9F92A100EE98F8 /* Step1View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3C82C9F92A100EE98F8 /* Step1View.swift */; };
 		A968E3CE2C9F92A100EE98F8 /* Step3View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3CA2C9F92A100EE98F8 /* Step3View.swift */; };
@@ -197,6 +198,7 @@
 		9C528C192CAB56FB007F6A76 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		9C528C1C2CAB7EDD007F6A76 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		9C528C1E2CACE0B5007F6A76 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		9C65D6582CF6D5D700A7D66E /* OfferSaveManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferSaveManager.swift; sourceTree = "<group>"; };
 		A9188B172CBCE144002703D4 /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		A968E3C82C9F92A100EE98F8 /* Step1View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step1View.swift; sourceTree = "<group>"; };
 		A968E3CA2C9F92A100EE98F8 /* Step3View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step3View.swift; sourceTree = "<group>"; };
@@ -521,6 +523,7 @@
 		9C1369D32C9E3B170000B55C /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				9C65D6582CF6D5D700A7D66E /* OfferSaveManager.swift */,
 				3784CC4C2CD1057A00A0B7E9 /* UserDefaultsExtension.swift */,
 				3784CC472CC4B08C00A0B7E9 /* NetworkMonitor.swift */,
 				9C1369D42C9E3B3D0000B55C /* ColorExtensions.swift */,
@@ -787,6 +790,7 @@
 				3781A9C12CA3D479000E0B86 /* OfferViewModel.swift in Sources */,
 				A9DFF6D42CAA85210063E52C /* FilterSearchOptions.swift in Sources */,
 				9C1369EB2C9E42140000B55C /* AuthenticationResultModel.swift in Sources */,
+				9C65D6592CF6D5D700A7D66E /* OfferSaveManager.swift in Sources */,
 				3784CC4A2CC4B7B100A0B7E9 /* OfferCacheManager.swift in Sources */,
 				9C1369CF2C9E35BE0000B55C /* WelcomePageView.swift in Sources */,
 				3781A9B62CA3A7F9000E0B86 /* UserModel.swift in Sources */,
@@ -962,7 +966,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Andlet/Preview Content\"";
-				DEVELOPMENT_TEAM = 25L8P5DHHR;
+				DEVELOPMENT_TEAM = 62CHFB9B3W;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -987,7 +991,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet.Sofia;
+				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet.daniel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -1006,7 +1010,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Andlet/Preview Content\"";
-				DEVELOPMENT_TEAM = 25L8P5DHHR;
+				DEVELOPMENT_TEAM = 62CHFB9B3W;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1031,7 +1035,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet.Sofia;
+				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet.daniel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
