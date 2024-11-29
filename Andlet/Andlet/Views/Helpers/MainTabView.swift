@@ -21,6 +21,12 @@ struct MainTabView: View {
                         )
                     .foregroundStyle(Color(hex: "0C356A"))
                 }
+            SavedOffersView()
+                .tabItem {
+                    Label("Saved", systemImage: "bookmark.fill"
+                    )
+                    .foregroundStyle(Color(hex: "0C356A"))
+                }
             
         }
         .navigationBarBackButtonHidden(true)

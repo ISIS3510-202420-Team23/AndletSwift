@@ -2,13 +2,20 @@ import SwiftUI
 import FirebaseFirestore
 import FirebaseAuth
 
+enum TabOrigin {
+    case explore
+    case saved
+}
+
 struct OfferDetailView: View {
     
     @State private var showContactDetails = false
-    @State private var navigateBackToMainTab = false  // New state to manage navigation back
+    @State private var navigateBackToSavedTab = false
+    @State private var navigateBackToExploreTab = false// New state to manage navigation back
     
     let offer: OfferModel
     let property: PropertyModel
+    let tabOrigin: TabOrigin
     
     @StateObject private var viewModel = OfferDetailViewModel()
     
@@ -24,12 +31,23 @@ struct OfferDetailView: View {
                         .tabViewStyle(.page)
                     
                     // Button to navigate back to MainTabView
-                    NavigationLink(destination: MainTabView(), isActive: $navigateBackToMainTab) {
+                    NavigationLink(destination: MainTabView(), isActive: $navigateBackToExploreTab) {
+                        EmptyView() // Invisible NavigationLink
+                    }
+                    NavigationLink(destination: SavedOffersView(), isActive: $navigateBackToSavedTab) {
                         EmptyView() // Invisible NavigationLink
                     }
                     
                     Button {
-                        navigateBackToMainTab = true  // Trigger navigation to MainTabView
+                        if tabOrigin == .explore {
+                            navigateBackToExploreTab = true
+                            navigateBackToSavedTab = false
+                        }
+                        else {
+                            navigateBackToSavedTab = true
+                            navigateBackToExploreTab = false
+                            
+                        }
                     } label: {
                         Image(systemName: "chevron.left")
                             .foregroundStyle(Color(hex: "FFF4CF"))

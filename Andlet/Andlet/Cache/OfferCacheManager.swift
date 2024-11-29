@@ -14,15 +14,15 @@ class OfferCacheManager {
     
 // Cache para las ofertas
     private let offerCache = NSCache<NSString, NSArray>()  // Usamos NSCache para cachear ofertas
-    private let offerCacheKey = "cachedOffers" as NSString  // Clave para el cache
-    private let userDefaultsKey = "lastOffersCache"
+//    private let offerCacheKey = "cachedOffers" as NSString  // Clave para el cache
+//    private let userDefaultsKey = "lastOffersCache"
     
     init() {
         offerCache.countLimit = 10  // Limitar a un máximo de 10 elementos en el cache
     }
     
     /// Función para guardar ofertas en caché (máximo 10)
-    func saveOffersToCache(_ offers: [OfferWithProperty]) {
+    func saveOffersToCache(_ offers: [OfferWithProperty], userDefaultsKey: String, offerCacheKey: NSString) {
         let offersArray = Array(offers.prefix(10))  // Limitar a un máximo de 10 ofertas
         offerCache.setObject(offersArray as NSArray, forKey: offerCacheKey)
         print("🔴Ofertas guardadas en caché correctamente: \(offersArray.count) ofertas.")
@@ -33,7 +33,7 @@ class OfferCacheManager {
     }
     
     // Función para obtener las ofertas desde el caché
-    func loadOffersFromCache() -> [OfferWithProperty] {
+    func loadOffersFromCache(userDefaultsKey: String, offerCacheKey: NSString) -> [OfferWithProperty] {
         if let cachedOffers = offerCache.object(forKey: offerCacheKey) as? [OfferWithProperty] {
             return cachedOffers
         }
@@ -49,7 +49,7 @@ class OfferCacheManager {
     }
     
     // Función para limpiar el caché (opcional)
-    func clearCache() {
+    func clearCache(userDefaultsKey: String, offerCacheKey: NSString) {
         offerCache.removeObject(forKey: offerCacheKey)
         UserDefaults.standard.removeObject(forKey: userDefaultsKey)
         print("🔴Cache de ofertas limpiado.")

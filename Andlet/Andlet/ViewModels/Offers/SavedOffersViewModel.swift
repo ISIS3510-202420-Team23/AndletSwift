@@ -103,12 +103,12 @@ class SavedOffersViewModel: ObservableObject {
                 
                 group.notify(queue: .main) {
                     self.savedOffers = tempOffersWithProperties
-                    OfferCacheManager.shared.saveOffersToCache(tempOffersWithProperties)  // Cacheamos las ofertas principales
+                    OfferCacheManager.shared.saveOffersToCache(tempOffersWithProperties, userDefaultsKey: "lastSavedOffersCache", offerCacheKey: "SavedcachedOffers" as NSString)  // Cacheamos las ofertas principales
                 }
             }
         } else {
             // Sin conexión, cargar siempre desde caché
-            savedOffers = OfferCacheManager.shared.loadOffersFromCache()
+            savedOffers = OfferCacheManager.shared.loadOffersFromCache(userDefaultsKey: "lastSavedOffersCache", offerCacheKey: "SavedcachedOffers" as NSString)
         }
     }
 
@@ -292,7 +292,7 @@ class SavedOffersViewModel: ObservableObject {
             }
         } else {
             // Offline: Filter cached offers
-            let cachedOffers = OfferCacheManager.shared.loadOffersFromCache()
+            let cachedOffers = OfferCacheManager.shared.loadOffersFromCache(userDefaultsKey: "lastSavedOffersCache", offerCacheKey: "SavedcachedOffers" as NSString)
 
             for offerWithProperty in cachedOffers {
                 let offer = offerWithProperty.offer

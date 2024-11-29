@@ -1,15 +1,21 @@
+//
+//  SavedOffersView.swift
+//  Andlet
+//
+//  Created by Daniel Arango Cruz on 27/11/24.
+//
+
 import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
-import UIKit
 
-struct HomepageView: View {
+struct SavedOffersView: View {
     @State private var showFilterSearchView = false
     @State private var showShakeAlert = false
     @State private var showConfirmationAlert = false
     @State private var showNoConnectionBanner = false
     @StateObject private var networkMonitor = NetworkMonitor()
-    @StateObject private var offerViewModel: OfferViewModel
+    @StateObject private var offerViewModel: SavedOffersViewModel
     @State private var userRoommatePreference: Bool? = nil
     @StateObject private var filterViewModel: FilterViewModel
     @StateObject private var shakeDetector = ShakeDetector()
@@ -18,25 +24,30 @@ struct HomepageView: View {
     init() {
         let filterVM = FilterViewModel()  // Inicia FilterViewModel con AppStorage
         _filterViewModel = StateObject(wrappedValue: filterVM)
-        _offerViewModel = StateObject(wrappedValue: OfferViewModel(filterViewModel: filterVM))
+        _offerViewModel = StateObject(wrappedValue: SavedOffersViewModel(filterViewModel: filterVM))
     }
-    
     var body: some View {
         if #available(iOS 16.0, *) {
             NavigationStack {
                 if showFilterSearchView {
-                    FilterSearchView(show: $showFilterSearchView, filterViewModel: filterViewModel, offerViewModel: offerViewModel)
+                    FilterSearchSavedView(show: $showFilterSearchView, filterViewModel: filterViewModel, offerViewModel: offerViewModel)
                 } else {
                     ScrollView {
                         VStack {
                             Spacer()
                             Heading()
-                            SearchAndFilterBar(filterViewModel: filterViewModel, offerViewModel: offerViewModel)
+                            SearchAndFilterSavedBar(filterViewModel: filterViewModel, offerViewModel: offerViewModel)
                                 .onTapGesture {
                                     withAnimation(.snappy) {
                                         showFilterSearchView.toggle()
                                     }
                                 }
+                            Text("Your saved places")
+                                        .font(.custom("LeagueSpartan-SemiBold", size: 22))
+                                        .foregroundColor(Color(hex: "0C356A"))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .padding(.horizontal, 20) // Adjust padding as needed
+                                        .padding(.top, 10)
                             if showNoConnectionBanner {
                                 Text("⚠️ No Internet Connection, offers and availability will not be updated")
                                     .font(.system(size: 14, weight: .medium))
@@ -53,7 +64,7 @@ struct HomepageView: View {
                             
                             
                             
-                            if offerViewModel.offersWithProperties.isEmpty {
+                            if offerViewModel.savedOffers.isEmpty {
                                 Text("No offers available")
                                     .font(.headline)
                                     .foregroundColor(.gray)
@@ -87,7 +98,7 @@ struct HomepageView: View {
                             if filterViewModel.filtersApplied {
                                 offerViewModel.fetchOffersWithFilters()
                             } else {
-                                offerViewModel.fetchOffers()
+                                offerViewModel.fetchSavedOffers()
                             }
                         }
                         .background(
@@ -100,7 +111,7 @@ struct HomepageView: View {
                                 message: Text("Do you want to clear the filters?🧹"),
                                 primaryButton: .destructive(Text("Yes")) {
                                     filterViewModel.clearFilters()
-                                    offerViewModel.fetchOffers()
+                                    offerViewModel.fetchSavedOffers()
                                 },
                                 secondaryButton: .cancel(Text("No"))
                             )
@@ -125,7 +136,7 @@ struct HomepageView: View {
                             set: { _ in selectedOffer = nil }
                         )) {
                             if let offerWithProperty = selectedOffer {
-                                OfferDetailView(offer: offerWithProperty.offer, property: offerWithProperty.property, tabOrigin: .explore)
+                                OfferDetailView(offer: offerWithProperty.offer, property: offerWithProperty.property, tabOrigin: .saved)
                                     .navigationBarBackButtonHidden()
                             }
                         }
@@ -137,7 +148,6 @@ struct HomepageView: View {
             Text("Versión de iOS no soportada")
         }
     }
-    
     func fetchUserViewPreferences() {
         let db = Firestore.firestore()
         guard let userEmail = Auth.auth().currentUser?.email else {
@@ -206,7 +216,7 @@ struct HomepageView: View {
             preference = UserDefaults.standard.roommateViews > UserDefaults.standard.noRoommateViews
         }
         
-        return offerViewModel.offersWithProperties.sorted { first, second in
+        return offerViewModel.savedOffers.sorted { first, second in
             let firstHasRoommates = first.offer.roommates > 0
             let secondHasRoommates = second.offer.roommates > 0
             
@@ -216,10 +226,12 @@ struct HomepageView: View {
                 return !firstHasRoommates && secondHasRoommates
             }
         }
+        
+        
     }
     
     
     func refreshOffers() {
-        offerViewModel.fetchOffers()
+        offerViewModel.fetchSavedOffers()
     }
 }
