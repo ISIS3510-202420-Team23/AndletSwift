@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct HeaderView: View {
+    let primaryColor = Color(red: 12 / 255, green: 53 / 255, blue: 106 / 255)
     var step: String
     var title: String
 
@@ -8,7 +9,7 @@ struct HeaderView: View {
         VStack(alignment: .leading) {
             Text(step)
                 .font(.custom("LeagueSpartan-Medium", size: 25))
-                .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                .foregroundColor(primaryColor)
                 .padding(.bottom, 2)
 
             // Título con las palabras ajustándose en una nueva línea si no caben completas
@@ -26,7 +27,7 @@ struct HeaderView: View {
     func attributedTitle(for title: String) -> AttributedString {
         var attributedString = AttributedString(title)
         let highlightedWords: [String] = ["List", "about", "preferences"]
-        let defaultColor = Color(red: 12/255, green: 53/255, blue: 106/255) // Azul predeterminado
+        let defaultColor = primaryColor
         
         // Aplicar color predeterminado (azul) a todo el texto
         attributedString.foregroundColor = defaultColor

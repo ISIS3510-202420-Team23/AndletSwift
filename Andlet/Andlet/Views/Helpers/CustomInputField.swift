@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct CustomInputField: View {
+    let primaryColor = Color(red: 12 / 255, green: 53 / 255, blue: 106 / 255)
     var title: String
     var placeholder: String
     @Binding var text: String
@@ -12,38 +13,37 @@ struct CustomInputField: View {
         VStack(alignment: .leading) {
             // Título del campo
             Text(title)
-                .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                .foregroundColor(primaryColor)
                 .font(.custom("Montserrat-Light", size: 20))
 
             ZStack(alignment: .topLeading) {
-                // TextEditor para todos los inputs
                 TextEditor(text: $text)
                     .padding()
                     .frame(height: height)
-                    .background(Color.white)
-                    .cornerRadius(cornerRadius)
-                    .overlay(RoundedRectangle(cornerRadius: cornerRadius).stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2))
-                    .onChange(of: text) { _, newValue in // Utiliza la nueva sintaxis con dos parámetros
+                    .cornerRadius(cornerRadius) // Combina el fondo y el borde
+                    .overlay(
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .stroke(primaryColor, lineWidth: 2)
+                    )
+                    .onChange(of: text) { _, newValue in
                         if newValue.count > maxCharacters {
                             text = String(newValue.prefix(maxCharacters))
                         }
                     }
 
-                // Placeholder simulado
                 if text.isEmpty {
                     Text(placeholder)
-                        .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                        .foregroundColor(primaryColor)
                         .padding(.horizontal, 15)
                         .padding(.vertical, 12)
                         .font(.custom("Montserrat-ExtraLightItalic", size: 12))
-                        .allowsHitTesting(false) // Evita que el placeholder interfiera con la interacción del usuario
                 }
             }
 
             // Contador de caracteres
             Text("\(text.count)/\(maxCharacters)")
                 .font(.footnote)
-                .foregroundColor(text.count > maxCharacters ? .red : Color(red: 12/255, green: 53/255, blue: 106/255))
+                .foregroundColor(text.count > maxCharacters ? .red : primaryColor)
                 .padding(.bottom, 5)
         }
     }

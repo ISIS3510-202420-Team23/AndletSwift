@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct LocationInputField: View {
+    let primaryColor = Color(red: 12 / 255, green: 53 / 255, blue: 106 / 255)
     var title: String
     var placeholder: String
     @Binding var text: String
@@ -12,7 +13,7 @@ struct LocationInputField: View {
         VStack(alignment: .leading) {
             // Título del campo
             Text(title)
-                .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                .foregroundColor(primaryColor)
                 .font(.custom("Montserrat-Light", size: 20))
 
             ZStack(alignment: .leading) {
@@ -20,13 +21,13 @@ struct LocationInputField: View {
                 HStack {
                     // Ícono de ubicación dentro del cuadro de texto
                     Image(systemName: "mappin.and.ellipse")
-                        .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                        .foregroundColor(primaryColor)
                         .padding(.leading, 10)
                     
                     TextField(placeholder, text: $text)
                         .padding(.vertical, 12) // Ajusta el padding del texto
                         .font(.custom("Montserrat-SemiBold", size: 12)) // Cambia la fuente del placeholder
-                        .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255)) // Color para el texto
+                        .foregroundColor(primaryColor) // Color para el texto
                         .onChange(of: text) { oldValue, newValue in // Cambia a la sintaxis con dos parámetros
                             if newValue.count > maxCharacters {
                                 text = String(newValue.prefix(maxCharacters))
@@ -38,7 +39,7 @@ struct LocationInputField: View {
                 .frame(height: height)
                 .background(Color.white)
                 .cornerRadius(cornerRadius)
-                .overlay(RoundedRectangle(cornerRadius: cornerRadius).stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2))
+                .overlay(RoundedRectangle(cornerRadius: cornerRadius).stroke(primaryColor, lineWidth: 2))
             }
         }
     }

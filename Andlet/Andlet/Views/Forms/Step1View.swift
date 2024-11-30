@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct Step1View: View {
+    let primaryColor = Color(red: 12 / 255, green: 53 / 255, blue: 106 / 255)
     @ObservedObject var propertyOfferData: PropertyOfferData
     @StateObject private var viewModel = PropertyViewModel()
 
@@ -44,7 +45,7 @@ struct Step1View: View {
                         )
 
                         Text("Add some photos")
-                            .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                            .foregroundColor(primaryColor)
                             .font(.custom("Montserrat-Light", size: 20))
 
                         HStack {
@@ -125,12 +126,12 @@ struct Step1View: View {
                             .navigationBarHidden(true)) {
                             Text("Back")
                                 .font(.headline)
-                                .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                                .foregroundColor(primaryColor)
                                 .frame(width: 120, height: 50)
                                 .background(Color.white)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 15)
-                                        .stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2)
+                                        .stroke(primaryColor, lineWidth: 2)
                                 )
                                 .cornerRadius(15)
                         }
@@ -160,7 +161,7 @@ struct Step1View: View {
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(width: 120, height: 50)
-                            .background(Color(red: 12/255, green: 53/255, blue: 106/255))
+                            .background(primaryColor)
                             .cornerRadius(15)
                             .onTapGesture {
                                 // Validate required fields

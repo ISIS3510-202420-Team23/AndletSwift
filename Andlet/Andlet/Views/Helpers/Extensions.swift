@@ -26,3 +26,9 @@ struct RoundedCorner: Shape {
         return Path(path.cgPath)
     }
 }
+
+extension Color {
+    static let customDarkGray = Color(red: 60 / 255, green: 60 / 255, blue: 60 / 255)
+    static let greyDivider = Color(red: 151 / 255, green: 151 / 255, blue: 151 / 255)
+    static let showGrey = Color(red: 73 / 255, green: 69 / 255, blue: 79 / 255)
+}
