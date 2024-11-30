@@ -8,8 +8,12 @@ struct MainTabLandlordView: View {
             // Pasamos la instancia de propertyOfferData a HomepageRentView
             HomepageRentView()
                 .tabItem {
-                    Label("Explore", systemImage: "location.fill")
+                    Label("Listings", systemImage: "house.fill")
                         .foregroundStyle(Color(hex: "0C356A"))
+                }
+            NotificationsRentView() // Vista que redirige a las notificaciones
+                            .tabItem {
+                                Label("Notifications", systemImage: "bell.fill")
                 }
         }
         .accentColor(Color(hex: "0C356A"))
