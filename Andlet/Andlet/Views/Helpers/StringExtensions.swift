@@ -15,4 +15,9 @@ extension String {
                    .filter { !$0.isEmpty }
                    .joined(separator: " ")
     }
+    
+    /// Elimina emojis del texto
+    func removingEmojis() -> String {
+        return self.unicodeScalars.filter { !$0.properties.isEmojiPresentation }.map(String.init).joined()
+    }
 }

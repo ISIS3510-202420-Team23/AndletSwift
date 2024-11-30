@@ -93,6 +93,8 @@
 		A968E3E52C9F92CC00EE98F8 /* IncrementDecrementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3D92C9F92CC00EE98F8 /* IncrementDecrementView.swift */; };
 		A968E3E62C9F92CC00EE98F8 /* CustomInputField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3DA2C9F92CC00EE98F8 /* CustomInputField.swift */; };
 		A968E3E72C9F92CC00EE98F8 /* SelectableOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3DB2C9F92CC00EE98F8 /* SelectableOptionsView.swift */; };
+		A982B6CA2CFA907200224285 /* CustomBugInputField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A982B6C92CFA907200224285 /* CustomBugInputField.swift */; };
+		A982B6CD2CFA90C300224285 /* BugViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A982B6CC2CFA90C300224285 /* BugViewModel.swift */; };
 		A9DFF6C62CA8F4820063E52C /* MinutesFromCampus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFF6C52CA8F4820063E52C /* MinutesFromCampus.swift */; };
 		A9DFF6CA2CA90B380063E52C /* PriceField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFF6C92CA90B380063E52C /* PriceField.swift */; };
 		A9DFF6CD2CA9193E0063E52C /* PropertyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFF6CC2CA9193E0063E52C /* PropertyViewModel.swift */; };
@@ -202,6 +204,8 @@
 		A968E3D92C9F92CC00EE98F8 /* IncrementDecrementView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IncrementDecrementView.swift; sourceTree = "<group>"; };
 		A968E3DA2C9F92CC00EE98F8 /* CustomInputField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomInputField.swift; sourceTree = "<group>"; };
 		A968E3DB2C9F92CC00EE98F8 /* SelectableOptionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectableOptionsView.swift; sourceTree = "<group>"; };
+		A982B6C92CFA907200224285 /* CustomBugInputField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBugInputField.swift; sourceTree = "<group>"; };
+		A982B6CC2CFA90C300224285 /* BugViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BugViewModel.swift; sourceTree = "<group>"; };
 		A9DFF6C52CA8F4820063E52C /* MinutesFromCampus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinutesFromCampus.swift; sourceTree = "<group>"; };
 		A9DFF6C92CA90B380063E52C /* PriceField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceField.swift; sourceTree = "<group>"; };
 		A9DFF6CC2CA9193E0063E52C /* PropertyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyViewModel.swift; sourceTree = "<group>"; };
@@ -300,6 +304,7 @@
 				A9DFF6C92CA90B380063E52C /* PriceField.swift */,
 				A9ED6DB02CAC52700066E3EA /* Extensions.swift */,
 				A9188B172CBCE144002703D4 /* StringExtensions.swift */,
+				A982B6C92CFA907200224285 /* CustomBugInputField.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -438,6 +443,7 @@
 		9C1369912C9E31800000B55C /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				A982B6CB2CFA90B500224285 /* Bug */,
 				37ECCB0F2CA7D580007BBE02 /* UserRelated */,
 				A9DFF6D02CAA83EA0063E52C /* Filters */,
 				A9DFF6CB2CA9192E0063E52C /* Properties */,
@@ -514,6 +520,14 @@
 				A968E3CA2C9F92A100EE98F8 /* Step3View.swift */,
 			);
 			path = Forms;
+			sourceTree = "<group>";
+		};
+		A982B6CB2CFA90B500224285 /* Bug */ = {
+			isa = PBXGroup;
+			children = (
+				A982B6CC2CFA90C300224285 /* BugViewModel.swift */,
+			);
+			path = Bug;
 			sourceTree = "<group>";
 		};
 		A9DFF6CB2CA9192E0063E52C /* Properties */ = {
@@ -757,6 +771,7 @@
 				9C1369CF2C9E35BE0000B55C /* WelcomePageView.swift in Sources */,
 				3781A9B62CA3A7F9000E0B86 /* UserModel.swift in Sources */,
 				9C1369652C9E30A10000B55C /* AndletApp.swift in Sources */,
+				A982B6CA2CFA907200224285 /* CustomBugInputField.swift in Sources */,
 				A9DFF6C62CA8F4820063E52C /* MinutesFromCampus.swift in Sources */,
 				A9DFF6CA2CA90B380063E52C /* PriceField.swift in Sources */,
 				A968E3E52C9F92CC00EE98F8 /* IncrementDecrementView.swift in Sources */,
@@ -764,6 +779,7 @@
 				9C1369D02C9E35BE0000B55C /* CustomIndicatorView.swift in Sources */,
 				37C0E29E2C9E598000099A90 /* CreateMoreButton.swift in Sources */,
 				37A512E52CACD46300B62788 /* UserActions.swift in Sources */,
+				A982B6CD2CFA90C300224285 /* BugViewModel.swift in Sources */,
 				37C0E29F2C9E598000099A90 /* HomepageRentView.swift in Sources */,
 				3781D2642CA64C5400C43924 /* OfferRentViewModel.swift in Sources */,
 				A968E3E02C9F92CC00EE98F8 /* DateRangePickerView.swift in Sources */,
@@ -926,7 +942,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Andlet/Preview Content\"";
-				DEVELOPMENT_TEAM = 25L8P5DHHR;
+				DEVELOPMENT_TEAM = NSVR4MKML4;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -951,7 +967,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet.Sofia;
+				PRODUCT_BUNDLE_IDENTIFIER = team23.AndletThais;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -970,7 +986,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Andlet/Preview Content\"";
-				DEVELOPMENT_TEAM = 25L8P5DHHR;
+				DEVELOPMENT_TEAM = NSVR4MKML4;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -995,7 +1011,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = team23.Andlet.Sofia;
+				PRODUCT_BUNDLE_IDENTIFIER = team23.AndletThais;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
