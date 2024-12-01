@@ -20,8 +20,10 @@ struct SavedOffersView: View {
     @StateObject private var filterViewModel: FilterViewModel
     @StateObject private var shakeDetector = ShakeDetector()
     @State private var selectedOffer: OfferWithProperty?  // Add a state to track selected offer
+    @Binding var selectedTab: MainTabView.Tab
     
-    init() {
+    init(selectedTab: Binding<MainTabView.Tab>) {
+        _selectedTab = selectedTab
         let filterVM = FilterViewModel()  // Inicia FilterViewModel con AppStorage
         _filterViewModel = StateObject(wrappedValue: filterVM)
         _offerViewModel = StateObject(wrappedValue: SavedOffersViewModel(filterViewModel: filterVM))
@@ -136,7 +138,7 @@ struct SavedOffersView: View {
                             set: { _ in selectedOffer = nil }
                         )) {
                             if let offerWithProperty = selectedOffer {
-                                OfferDetailView(offer: offerWithProperty.offer, property: offerWithProperty.property, tabOrigin: .saved)
+                                OfferDetailView(selectedTab: $selectedTab, offer: offerWithProperty.offer, property: offerWithProperty.property, tabOrigin: .saved)
                                     .navigationBarBackButtonHidden()
                             }
                         }
