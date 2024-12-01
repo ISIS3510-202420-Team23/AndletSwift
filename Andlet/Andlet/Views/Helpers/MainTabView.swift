@@ -12,11 +12,14 @@ import SwiftUI
 struct MainTabView: View {
     @StateObject private var shakeDetector = ShakeDetector()  // Instancia de ShakeDetector
     @State private var showShakeAlert = false
-    @State private var selectedTab: Tab = .explore
+    @State private var selectedTab: Tab
     
     enum Tab {
         case explore
         case saved
+    }
+    init(initialTab: Tab = .explore){
+        _selectedTab = State(initialValue: initialTab)
     }
   
     var body: some View {

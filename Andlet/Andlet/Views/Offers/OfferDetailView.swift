@@ -37,9 +37,9 @@ struct OfferDetailView: View {
                     NavigationLink(destination: MainTabView(), isActive: $navigateBackToExploreTab) {
                         EmptyView() // Invisible NavigationLink
                     }
-//                    NavigationLink(destination: SavedOffersView(), isActive: $navigateBackToSavedTab) {
-//                        EmptyView() // Invisible NavigationLink
-//                    }
+                    NavigationLink(destination: MainTabView(initialTab: .saved), isActive: $navigateBackToSavedTab) {
+                        EmptyView() // Invisible NavigationLink
+                    }
                     
                     Button {
 //                        if tabOrigin == .explore {
@@ -54,10 +54,12 @@ struct OfferDetailView: View {
                         switch tabOrigin {
                         case .explore:
                             selectedTab = .explore
+                            navigateBackToExploreTab = true
                         case .saved:
                             selectedTab = .saved
+                            navigateBackToSavedTab = true
                         }
-                        navigateBackToExploreTab = true
+                        
                         print("Selected tabview to \(selectedTab)")
                     } label: {
                         Image(systemName: "chevron.left")
