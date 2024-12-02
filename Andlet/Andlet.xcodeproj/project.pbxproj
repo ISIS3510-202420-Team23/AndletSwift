@@ -83,6 +83,11 @@
 		9C528C1A2CAB56FB007F6A76 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C528C192CAB56FB007F6A76 /* Launch Screen.storyboard */; };
 		9C528C1D2CAB7EDD007F6A76 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C528C1C2CAB7EDD007F6A76 /* ProfileView.swift */; };
 		9C528C1F2CACE0B5007F6A76 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C528C1E2CACE0B5007F6A76 /* LocationManager.swift */; };
+		9C65D6592CF6D5D700A7D66E /* OfferSaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C65D6582CF6D5D700A7D66E /* OfferSaveManager.swift */; };
+		9C65D65C2CF7E83D00A7D66E /* SavedOffersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C65D65B2CF7E82C00A7D66E /* SavedOffersViewModel.swift */; };
+		9C65D65F2CF8072B00A7D66E /* SavedOffersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C65D65E2CF8072B00A7D66E /* SavedOffersView.swift */; };
+		9C65D6612CF80E4600A7D66E /* FilterSearchSavedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C65D6602CF80E4600A7D66E /* FilterSearchSavedView.swift */; };
+		9C65D6632CF80F1F00A7D66E /* SearchAndFilterSavedBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C65D6622CF80F1F00A7D66E /* SearchAndFilterSavedBar.swift */; };
 		A9188B182CBCE144002703D4 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9188B172CBCE144002703D4 /* StringExtensions.swift */; };
 		A968E3CC2C9F92A100EE98F8 /* Step1View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3C82C9F92A100EE98F8 /* Step1View.swift */; };
 		A968E3CE2C9F92A100EE98F8 /* Step3View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A968E3CA2C9F92A100EE98F8 /* Step3View.swift */; };
@@ -199,6 +204,11 @@
 		9C528C192CAB56FB007F6A76 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		9C528C1C2CAB7EDD007F6A76 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		9C528C1E2CACE0B5007F6A76 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		9C65D6582CF6D5D700A7D66E /* OfferSaveManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferSaveManager.swift; sourceTree = "<group>"; };
+		9C65D65B2CF7E82C00A7D66E /* SavedOffersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedOffersViewModel.swift; sourceTree = "<group>"; };
+		9C65D65E2CF8072B00A7D66E /* SavedOffersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedOffersView.swift; sourceTree = "<group>"; };
+		9C65D6602CF80E4600A7D66E /* FilterSearchSavedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSearchSavedView.swift; sourceTree = "<group>"; };
+		9C65D6622CF80F1F00A7D66E /* SearchAndFilterSavedBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchAndFilterSavedBar.swift; sourceTree = "<group>"; };
 		A9188B172CBCE144002703D4 /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		A968E3C82C9F92A100EE98F8 /* Step1View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step1View.swift; sourceTree = "<group>"; };
 		A968E3CA2C9F92A100EE98F8 /* Step3View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Step3View.swift; sourceTree = "<group>"; };
@@ -264,6 +274,7 @@
 		3781D25E2CA4F55600C43924 /* Offers */ = {
 			isa = PBXGroup;
 			children = (
+				9C65D65B2CF7E82C00A7D66E /* SavedOffersViewModel.swift */,
 				3781D2652CA650CC00C43924 /* OfferWithProperty.swift */,
 				3781D2632CA64C4B00C43924 /* OfferRentViewModel.swift */,
 				3781D2612CA530A300C43924 /* OfferDetailViewModel.swift */,
@@ -303,6 +314,7 @@
 			isa = PBXGroup;
 			children = (
 				37C0E28B2C9E58F500099A90 /* FiltersSearchView.swift */,
+				9C65D6602CF80E4600A7D66E /* FilterSearchSavedView.swift */,
 			);
 			path = Filters;
 			sourceTree = "<group>";
@@ -332,6 +344,7 @@
 				A9DFF6C92CA90B380063E52C /* PriceField.swift */,
 				A9ED6DB02CAC52700066E3EA /* Extensions.swift */,
 				A9188B172CBCE144002703D4 /* StringExtensions.swift */,
+				9C65D6622CF80F1F00A7D66E /* SearchAndFilterSavedBar.swift */,
 				A982B6C92CFA907200224285 /* CustomBugInputField.swift */,
 			);
 			path = Helpers;
@@ -360,6 +373,7 @@
 				37C0E2A12C9E59BA00099A90 /* OfferDetailView.swift */,
 				37C0E2A22C9E59BA00099A90 /* OfferRentView.swift */,
 				37C0E2A32C9E59BA00099A90 /* OfferView.swift */,
+				9C65D65E2CF8072B00A7D66E /* SavedOffersView.swift */,
 			);
 			path = Offers;
 			sourceTree = "<group>";
@@ -527,6 +541,7 @@
 		9C1369D32C9E3B170000B55C /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				9C65D6582CF6D5D700A7D66E /* OfferSaveManager.swift */,
 				3784CC4C2CD1057A00A0B7E9 /* UserDefaultsExtension.swift */,
 				3784CC472CC4B08C00A0B7E9 /* NetworkMonitor.swift */,
 				9C1369D42C9E3B3D0000B55C /* ColorExtensions.swift */,
@@ -791,6 +806,7 @@
 				37C0E28F2C9E591F00099A90 /* Heading.swift in Sources */,
 				9C1369CC2C9E35BE0000B55C /* AuthenticationView.swift in Sources */,
 				A968E3E62C9F92CC00EE98F8 /* CustomInputField.swift in Sources */,
+				9C65D6612CF80E4600A7D66E /* FilterSearchSavedView.swift in Sources */,
 				A968E3E12C9F92CC00EE98F8 /* HeaderView.swift in Sources */,
 				A968E3E42C9F92CC00EE98F8 /* IconInputFiled.swift in Sources */,
 				A9ED6DB42CAC77AC0066E3EA /* AnalyticsView.swift in Sources */,
@@ -801,12 +817,15 @@
 				3781A9C12CA3D479000E0B86 /* OfferViewModel.swift in Sources */,
 				A9DFF6D42CAA85210063E52C /* FilterSearchOptions.swift in Sources */,
 				9C1369EB2C9E42140000B55C /* AuthenticationResultModel.swift in Sources */,
+				9C65D65C2CF7E83D00A7D66E /* SavedOffersViewModel.swift in Sources */,
+				9C65D6592CF6D5D700A7D66E /* OfferSaveManager.swift in Sources */,
 				3784CC4A2CC4B7B100A0B7E9 /* OfferCacheManager.swift in Sources */,
 				9C1369CF2C9E35BE0000B55C /* WelcomePageView.swift in Sources */,
 				3781A9B62CA3A7F9000E0B86 /* UserModel.swift in Sources */,
 				9C1369652C9E30A10000B55C /* AndletApp.swift in Sources */,
 				A982B6CA2CFA907200224285 /* CustomBugInputField.swift in Sources */,
 				A9DFF6C62CA8F4820063E52C /* MinutesFromCampus.swift in Sources */,
+				9C65D6632CF80F1F00A7D66E /* SearchAndFilterSavedBar.swift in Sources */,
 				A9DFF6CA2CA90B380063E52C /* PriceField.swift in Sources */,
 				A968E3E52C9F92CC00EE98F8 /* IncrementDecrementView.swift in Sources */,
 				37A512E72CACD8F500B62788 /* CheckDaysSinceLastContact.swift in Sources */,
@@ -815,6 +834,7 @@
 				37A512E52CACD46300B62788 /* UserActions.swift in Sources */,
 				A982B6CD2CFA90C300224285 /* BugViewModel.swift in Sources */,
 				37C0E29F2C9E598000099A90 /* HomepageRentView.swift in Sources */,
+				9C65D65F2CF8072B00A7D66E /* SavedOffersView.swift in Sources */,
 				3781D2642CA64C5400C43924 /* OfferRentViewModel.swift in Sources */,
 				3783CD922CEC2CDD00048952 /* NotificationsRentView.swift in Sources */,
 				3783CD982CED599700048952 /* NotificationModel.swift in Sources */,

@@ -2,15 +2,28 @@ import SwiftUI
 import FirebaseFirestore
 import FirebaseAuth
 
+enum TabOrigin {
+    case explore
+    case saved
+}
+
 struct OfferDetailView: View {
     
     @State private var showContactDetails = false
-    @State private var navigateBackToMainTab = false  // New state to manage navigation back
+    @State private var navigateBackToSavedTab = false
+    @State private var navigateBackToExploreTab = false// New state to manage navigation back
+    @Binding var selectedTab: MainTabView.Tab
     
     let offer: OfferModel
     let property: PropertyModel
+    let tabOrigin: TabOrigin
     
     @StateObject private var viewModel = OfferDetailViewModel()
+    
+    @State private var isSaved: Bool = false
+    @StateObject private var saveManager = OfferSaveManager()
+    @StateObject private var networkMonitor = NetworkMonitor()
+    @State private var showNoConnectionAlert: Bool = false
     
     var body: some View {
         if #available(iOS 16.0, *) {
@@ -20,13 +33,34 @@ struct OfferDetailView: View {
                         .frame(height: 370)
                         .tabViewStyle(.page)
                     
-                    // Button to navigate back to MainTabView
-                    NavigationLink(destination: MainTabView(), isActive: $navigateBackToMainTab) {
+//                    // Button to navigate back to MainTabView
+                    NavigationLink(destination: MainTabView(), isActive: $navigateBackToExploreTab) {
+                        EmptyView() // Invisible NavigationLink
+                    }
+                    NavigationLink(destination: MainTabView(initialTab: .saved), isActive: $navigateBackToSavedTab) {
                         EmptyView() // Invisible NavigationLink
                     }
                     
                     Button {
-                        navigateBackToMainTab = true  // Trigger navigation to MainTabView
+//                        if tabOrigin == .explore {
+//                            navigateBackToExploreTab = true
+//                            navigateBackToSavedTab = false
+//                        }
+//                        else {
+//                            navigateBackToSavedTab = true
+//                            navigateBackToExploreTab = false
+//                            
+//                        }
+                        switch tabOrigin {
+                        case .explore:
+                            selectedTab = .explore
+                            navigateBackToExploreTab = true
+                        case .saved:
+                            selectedTab = .saved
+                            navigateBackToSavedTab = true
+                        }
+                        
+                        print("Selected tabview to \(selectedTab)")
                     } label: {
                         Image(systemName: "chevron.left")
                             .foregroundStyle(Color(hex: "FFF4CF"))
@@ -38,6 +72,30 @@ struct OfferDetailView: View {
                             .padding(32)
                             .padding(.top, 30)
                     }
+                    
+                    Button(action: {
+                        if networkMonitor.isConnected {
+                            toggleSave()
+                        }
+                        else{
+                            showNoConnectionAlert = true
+                        }
+                    }) {
+                        Image(systemName:  isSaved ? "bookmark.fill" : "bookmark")
+                            .foregroundColor(.white)
+                            .background(Circle().fill(Color(hex: "0C356A")).frame(width: 40, height: 40))
+                            .padding(32)
+                            .padding(.top, 30)
+                            .animation(.easeInOut, value: isSaved)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .topTrailing)
+                }
+                .onAppear {
+                    checkIfSaved()
+                    
+                }
+                .alert(isPresented: $showNoConnectionAlert) {
+                    Alert(title: Text("No Internet Connection"), message: Text("Please check your internet connection and try again."), dismissButton: .default(Text("OK")))
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {
@@ -217,6 +275,45 @@ struct OfferDetailView: View {
                 }
             }
 
+        }
+    }
+    private func toggleSave() {
+        // Provide immediate feedback
+        isSaved.toggle()
+
+        if isSaved {
+            saveManager.saveOffer(offerId: offer.idProperty) { error in
+                if let error = error {
+                    print("Error saving offer: \(error.localizedDescription)")
+                    // Revert the change if the save operation fails
+                    DispatchQueue.main.async {
+                        isSaved = false
+                    }
+                }
+            }
+        } else {
+            saveManager.unsaveOffer(offerId: offer.idProperty) { error in
+                if let error = error {
+                    print("Error unsaving offer: \(error.localizedDescription)")
+                    // Revert the change if the unsave operation fails
+                    DispatchQueue.main.async {
+                        isSaved = true
+                    }
+                }
+            }
+        }
+    }
+
+
+    private func checkIfSaved() {
+        guard let userEmail = Auth.auth().currentUser?.email else { return }
+        let db = Firestore.firestore()
+
+        db.collection("user_saved").document(userEmail).getDocument { document, error in
+            guard let document = document, document.exists else { return }
+            let savedOffers = document.data()?.keys
+            print ("Saved offers: \(savedOffers?.description ?? "")")
+            isSaved = (savedOffers != nil) && savedOffers!.contains(offer.idProperty)
         }
     }
     
