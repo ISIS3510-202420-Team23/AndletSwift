@@ -3,10 +3,10 @@ import FirebaseAuth
 import FirebaseFirestore
 
 struct Step3View: View {
+    let primaryColor = Color(red: 12 / 255, green: 53 / 255, blue: 106 / 255)
     @ObservedObject var propertyOfferData: PropertyOfferData
     @StateObject private var viewModel = PropertyViewModel()
     @StateObject private var networkMonitor = NetworkMonitor()
-
     @AppStorage("publishedOffline") private var publishedOffline = false // Almacenar estado offline
     @State private var showNoInternetAlert = false
     @State private var showWarningMessage = false
@@ -55,7 +55,7 @@ struct Step3View: View {
 
                         Text("Perfect! You’re all set.\nFinish up\nand publish :)")
                             .font(.custom("Montserrat-Regular", size: 20))
-                            .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                            .foregroundColor(primaryColor)
                             .multilineTextAlignment(.leading)
                             .padding(.top, 30)
                             .padding(.leading, 20)
@@ -69,12 +69,12 @@ struct Step3View: View {
                                 .navigationBarHidden(true)) {
                                     Text("Back")
                                         .font(.headline)
-                                        .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                                        .foregroundColor(primaryColor)
                                         .frame(width: 120, height: 50)
                                         .background(Color.white)
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 15)
-                                                .stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2)
+                                                .stroke(primaryColor, lineWidth: 2)
                                         )
                                         .cornerRadius(15)
                             }
@@ -85,7 +85,7 @@ struct Step3View: View {
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .frame(width: 120, height: 50)
-                                .background(isSaving ? Color.gray : Color(red: 12/255, green: 53/255, blue: 106/255))
+                                .background(isSaving ? Color.gray : primaryColor)
                                 .cornerRadius(15)
                                 .onTapGesture {
                                     guard !isSaving else { return }
@@ -150,7 +150,7 @@ struct Step3View: View {
                             .cornerRadius(10)
                             .shadow(radius: 10)
                             .transition(.move(edge: .top))
-                            .animation(.easeInOut(duration: 0.5), value: showWarningMessage)
+                            .animation(.easeInOut(duration: 0.3), value: showWarningMessage)
                             .offset(y: showWarningMessage ? 0 : -100)
                             .zIndex(1)
                     }

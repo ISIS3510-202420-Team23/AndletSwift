@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct Step2View: View {
+    let primaryColor = Color(red: 12 / 255, green: 53 / 255, blue: 106 / 255)
     @ObservedObject var propertyOfferData: PropertyOfferData
-
     @State private var showWarningMessage = false
     @State private var warningMessageText = "" // Mensaje de advertencia
     @State private var navigateToStep3 = false
@@ -34,7 +34,7 @@ struct Step2View: View {
 
                         Text("Let’s be more specific...")
                             .font(.custom("Montserrat-Light", size: 20))
-                            .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                            .foregroundColor(primaryColor)
                             .padding(.top, 5)
 
                         VStack(spacing: 15) {
@@ -74,12 +74,12 @@ struct Step2View: View {
                             .navigationBarHidden(true)) {
                             Text("Back")
                                 .font(.headline)
-                                .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                                .foregroundColor(primaryColor)
                                 .frame(width: 120, height: 50)
                                 .background(Color.white)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 15)
-                                        .stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2)
+                                        .stroke(primaryColor, lineWidth: 2)
                                 )
                                 .cornerRadius(15)
                         }
@@ -96,7 +96,7 @@ struct Step2View: View {
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(width: 120, height: 50)
-                            .background(Color(red: 12/255, green: 53/255, blue: 106/255))
+                            .background(primaryColor)
                             .cornerRadius(15)
                             .onTapGesture {
                                 if propertyOfferData.type.rawValue.isEmpty || propertyOfferData.pricePerMonth <= 0.0 {

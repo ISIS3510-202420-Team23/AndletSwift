@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct IconInputField: View {
+    let primaryColor = Color(red: 12 / 255, green: 53 / 255, blue: 106 / 255)
     var title: String
     var placeholder: String
     @Binding var text: String
@@ -13,7 +14,7 @@ struct IconInputField: View {
         VStack(alignment: .leading) {
             // Título del campo
             Text(title)
-                .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                .foregroundColor(primaryColor)
                 .font(.custom("Montserrat-Light", size: 20))
 
             ZStack(alignment: .leading) {
@@ -21,13 +22,13 @@ struct IconInputField: View {
                 HStack {
                     // Ícono pasado por parámetro
                     Image(systemName: iconName)
-                        .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                        .foregroundColor(primaryColor)
                         .padding(.leading, 10)
 
                     TextField(placeholder, text: $text)
                         .padding(.vertical, 12)
                         .font(.custom("Montserrat-SemiBold", size: 12))
-                        .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                        .foregroundColor(primaryColor)
                         .onChange(of: text) { oldValue, newValue in
                             if newValue.count > maxCharacters {
                                 text = String(newValue.prefix(maxCharacters))
@@ -39,7 +40,7 @@ struct IconInputField: View {
                 .frame(height: height)
                 .background(Color.white)
                 .cornerRadius(cornerRadius)
-                .overlay(RoundedRectangle(cornerRadius: cornerRadius).stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2))
+                .overlay(RoundedRectangle(cornerRadius: cornerRadius).stroke(primaryColor, lineWidth: 2))
             }
         }
         .padding(.bottom, 60)

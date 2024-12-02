@@ -57,7 +57,7 @@ struct HeaderNotificationsView: View {
             }
             
             // Navegación a la vista del perfil
-            NavigationLink(destination: ProfileView(authViewModel: authViewModel, userImageURL: authViewModel.currentUser?.photo), isActive: $isProfileViewActive) {
+            NavigationLink(destination: ProfileView(authViewModel: authViewModel), isActive: $isProfileViewActive) {
                 EmptyView()
             }
         }

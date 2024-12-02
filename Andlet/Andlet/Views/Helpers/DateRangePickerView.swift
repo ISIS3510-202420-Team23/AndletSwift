@@ -1,10 +1,13 @@
 import SwiftUI
 
 struct DateRangePickerView: View {
+    let primaryColor = Color(red: 12 / 255, green: 53 / 255, blue: 106 / 255)
     @Binding var startDate: Date // Fecha inicial
     @Binding var endDate: Date // Fecha final
     @State private var showStartDatePicker = false
     @State private var showEndDatePicker = false
+    let secondaryColor = Color(red: 255/255, green: 244/255, blue: 207/255)
+
 
     // Formateador de fecha
     let dateFormatter: DateFormatter = {
@@ -18,24 +21,26 @@ struct DateRangePickerView: View {
             // Texto superior centrado
             Text("For how long will be available?")
                 .font(.custom("Montserrat-Light", size: 18))
-                .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                .foregroundColor(primaryColor)
                 .padding(.bottom, 10)
             
             // HStack centrada con los botones alargados y el guion
             HStack {
                 // Botón para seleccionar fecha inicial
                 Button(action: {
-                    showStartDatePicker.toggle() // Mostrar el calendario para fecha inicial
+                    showStartDatePicker.toggle()
                 }) {
-                    Text(dateFormatter.string(from: startDate)) // Mostrar la fecha en el botón
-                        .frame(width: 140, height: 40) // Tamaño del botón
-                        .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255)) // Color del texto
-                        .background(Color(red: 255/255, green: 244/255, blue: 207/255)) // Fondo amarillo
-                        .cornerRadius(30)
-                        .overlay(
+                    Text(dateFormatter.string(from: startDate))
+                        .frame(width: 140, height: 40)
+                        .background(
                             RoundedRectangle(cornerRadius: 30)
-                                .stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2) // Borde azul
+                                .fill(secondaryColor)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 30)
+                                        .stroke(primaryColor, lineWidth: 2)
+                                )
                         )
+                        .foregroundColor(primaryColor)
                 }
                 .sheet(isPresented: $showStartDatePicker) {
                     // Desplegar un DatePicker en una hoja modal
@@ -52,7 +57,7 @@ struct DateRangePickerView: View {
                 // Guion entre las fechas
                 Text("--")
                     .font(.custom("Montserrat-Light", size: 30))
-                    .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                    .foregroundColor(primaryColor)
                     .padding(.horizontal, 10)
                 
                 // Botón para seleccionar fecha final
@@ -61,12 +66,12 @@ struct DateRangePickerView: View {
                 }) {
                     Text(dateFormatter.string(from: endDate)) // Mostrar la fecha en el botón
                         .frame(width: 140, height: 40) // Tamaño del botón
-                        .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255)) // Color del texto
-                        .background(Color(red: 255/255, green: 244/255, blue: 207/255)) // Fondo amarillo
+                        .foregroundColor(primaryColor) // Color del texto
+                        .background(secondaryColor) // Fondo amarillo
                         .cornerRadius(30)
                         .overlay(
                             RoundedRectangle(cornerRadius: 30)
-                                .stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2) // Borde azul
+                                .stroke(primaryColor, lineWidth: 2) // Borde azul
                         )
                 }
                 .sheet(isPresented: $showEndDatePicker) {

@@ -7,13 +7,15 @@ struct SelectableOptionsView: View {
     var title: String // Título que se mostrará arriba de los botones
     var additionalText: String = "" // Texto adicional que puede aparecer al lado del primer botón
     var buttonWidth: CGFloat = 150 // Ancho fijo para los botones
+    let primaryColor = Color(red: 12/255, green: 53/255, blue: 106/255)
+    let secondaryColor = Color(red: 197/255, green: 221/255, blue: 255/255)
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             // Título en la parte superior, ajustado para hacer salto de línea cuando sea necesario
             Text(title)
                 .font(.custom("Montserrat-Light", size: 20))
-                .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                .foregroundColor(primaryColor)
                 .fixedSize(horizontal: false, vertical: true) // Permite que el texto haga salto de línea
             
             // Botones de selección alineados a la izquierda y con tamaño fijo
@@ -22,24 +24,29 @@ struct SelectableOptionsView: View {
                     HStack {
                         // Botón
                         Button(action: {
-                            selectedOption = options[index] // Guarda la opción seleccionada en el Binding
+                            selectedOption = options[index]
                         }) {
-                            Text(displayOptions[index]) // Mostrar el texto amigable al usuario
-                                .frame(width: buttonWidth, height: 40) // Tamaño fijo para los botones
-                                .background(
-                                    selectedOption == options[index]
-                                    ? Color(red: 12/255, green: 53/255, blue: 106/255) // Fondo azul oscuro cuando está seleccionado
-                                    : Color(red: 197/255, green: 221/255, blue: 255/255) // Fondo #C5DDFF cuando no está seleccionado
-                                )
+                            Text(displayOptions[index])
                                 .foregroundColor(
                                     selectedOption == options[index]
-                                    ? Color.white // Texto blanco cuando está seleccionado
-                                    : Color(red: 12/255, green: 53/255, blue: 106/255) // Texto azul oscuro cuando no está seleccionado
+                                    ? .white // Blanco si está seleccionado
+                                    : primaryColor // Primario si no está seleccionado
                                 )
-                                .cornerRadius(20)
-                                .overlay(
+                                .frame(width: buttonWidth, height: 40)
+                                .background(
                                     RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2) // Borde azul oscuro siempre
+                                        .strokeBorder(
+                                            primaryColor,
+                                            lineWidth: 2
+                                        )
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .fill(
+                                                    selectedOption == options[index]
+                                                    ? primaryColor
+                                                    : secondaryColor
+                                                )
+                                        )
                                 )
                         }
 
@@ -47,7 +54,7 @@ struct SelectableOptionsView: View {
                         if index == 0 && !additionalText.isEmpty {
                             Text(additionalText)
                                 .font(.custom("Montserrat-Light", size: 12))
-                                .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                                .foregroundColor(primaryColor)
                                 .padding(.leading, 10) // Espaciado entre el botón y el texto
                                 .fixedSize(horizontal: false, vertical: true) // Permite que el texto haga salto de línea
                         }

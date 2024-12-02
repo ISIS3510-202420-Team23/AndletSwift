@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct IncrementDecrementView: View {
+    let primaryColor = Color(red: 12 / 255, green: 53 / 255, blue: 106 / 255)
     var title: String
     @Binding var count: Int
     var maxCount: Int // Limite máximo
@@ -9,7 +10,7 @@ struct IncrementDecrementView: View {
         HStack {
             Text(title)
                 .font(.custom("Montserrat-ExtraBold", size: 12))
-                .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                .foregroundColor(primaryColor)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             Spacer()
@@ -21,12 +22,14 @@ struct IncrementDecrementView: View {
                     }
                 }) {
                     Image(systemName: "minus")
-                        .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
                         .frame(width: 30, height: 30)
-                        .background(Color.white)
-                        .clipShape(Circle())
-                        .overlay(
-                            Circle().stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2)
+                        .foregroundColor(primaryColor)
+                        .background(
+                            Circle()
+                                .fill(Color.white)
+                                .overlay(
+                                    Circle().stroke(primaryColor, lineWidth: 2)
+                                )
                         )
                 }
 
@@ -40,12 +43,12 @@ struct IncrementDecrementView: View {
                     }
                 }) {
                     Image(systemName: "plus")
-                        .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                        .foregroundColor(primaryColor)
                         .frame(width: 30, height: 30)
                         .background(Color.white)
                         .clipShape(Circle())
                         .overlay(
-                            Circle().stroke(Color(red: 12/255, green: 53/255, blue: 106/255), lineWidth: 2)
+                            Circle().stroke(primaryColor, lineWidth: 2)
                         )
                 }
             }

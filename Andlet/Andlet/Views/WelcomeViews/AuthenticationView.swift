@@ -31,6 +31,7 @@ class ConnectivityChecker: ObservableObject {
 @MainActor
 struct AuthenticationView: View {
     var pages: [Page]
+    let primaryColor = Color(red: 12 / 255, green: 53 / 255, blue: 106 / 255)
     @ObservedObject var authViewModel: AuthenticationViewModel
     @State private var isLoading: Bool = false
     @State private var destination: NavigationDestination?  // Manage navigation state
@@ -156,8 +157,8 @@ struct AuthenticationView: View {
         } else {
             VStack {
                 ProgressView("Authenticating...")
-                    .progressViewStyle(CircularProgressViewStyle(tint: Color(red: 12/255, green: 53/255, blue: 106/255)))
-                    .foregroundColor(Color(red: 12/255, green: 53/255, blue: 106/255))
+                    .progressViewStyle(CircularProgressViewStyle(tint: primaryColor))
+                    .foregroundColor(primaryColor)
                     .font(.headline)
                     .padding()
                     .background(Color.white)

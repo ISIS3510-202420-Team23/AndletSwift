@@ -15,32 +15,36 @@ struct HomepageRentView: View {
     @StateObject private var propertyViewModel = PropertyViewModel()
     @StateObject private var shakeDetector = ShakeDetector()
     @StateObject private var networkMonitor = NetworkMonitor()
-    @State private var propertyOfferData = PropertyOfferData()  // Instancia inicial
+    @State private var propertyOfferData = PropertyOfferData()
     @State private var isPublishing = false
 
-    let currentUser = Auth.auth().currentUser
+    // Propiedad computada para obtener el usuario actual
+    private var currentUser: User? {
+        return Auth.auth().currentUser
+    }
 
     var body: some View {
         if #available(iOS 16.0, *) {
             NavigationStack {
                 if showFilterSearchView {
-                    // FilterSearchView(show: $showFilterSearchView)
+                    // Aquí iría la vista del filtro de búsqueda si se habilita
                 } else {
                     ScrollView {
                         VStack {
                             Heading()
 
+                            // Botón para crear más ofertas
                             if !showNoConnectionBanner {
                                 Button(action: {
                                     propertyOfferData.reset()
-                                    propertyOfferData = PropertyOfferData() // Nueva instancia para limpiar todos los campos
-                                    propertyOfferData.reset()
+                                    propertyOfferData = PropertyOfferData() // Restablece los datos de la propiedad
                                     print("RESET PROPERTY DATA ON CREATE MORE CLICK")
                                 }) {
                                     CreateMoreButton()
                                 }
                             }
 
+                            // Banner de conexión
                             if showNoConnectionBanner {
                                 Text("⚠️ No Internet Connection, you cannot create an offer or change an offer status if you are offline")
                                     .font(.system(size: 14, weight: .medium))
@@ -51,16 +55,18 @@ struct HomepageRentView: View {
                                     .cornerRadius(8)
                                     .frame(maxWidth: .infinity)
                                     .multilineTextAlignment(.center)
-                                    .transition(.move(edge: .top))
+                                    .transition(.opacity) // Transición simple para mejor rendimiento
                                     .padding(.horizontal, 40)
                             }
 
+                            // Mensaje si no hay ofertas disponibles
                             if offerViewModel.offersWithProperties.isEmpty {
                                 Text("No offers available")
                                     .font(.headline)
                                     .foregroundColor(.gray)
                                     .padding()
                             } else {
+                                // Lista de ofertas
                                 LazyVStack(spacing: 32) {
                                     ForEach(offerViewModel.offersWithProperties) { offerWithProperty in
                                         NavigationLink(value: offerWithProperty) {
@@ -68,19 +74,13 @@ struct HomepageRentView: View {
                                                 .frame(height: 360)
                                                 .clipShape(RoundedRectangle(cornerRadius: 30))
                                         }
-                                        .onAppear {
-                                            print("OFERTA: \(offerWithProperty.offer)")
-                                            print("PROPIEDAD: \(offerWithProperty.property)")
-                                        }
                                     }
                                 }
                                 .padding()
                             }
                         }
                         .onAppear {
-                            propertyOfferData = PropertyOfferData() // Asegura que los datos estén frescos al cargar la vista
-                            offerViewModel.fetchOffers(for: "\(currentUser?.email ?? "UNKNOWN")")
-                            checkAndPublishPendingProperty()
+                            initializeView()
                         }
                         .background(
                             ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)
@@ -103,16 +103,7 @@ struct HomepageRentView: View {
                             }
                         }
                         .onReceive(networkMonitor.$isConnected) { isConnectedStatus in
-                            withAnimation {
-                                showNoConnectionBanner = !isConnectedStatus
-                                print("NETWORK CONNECTION STATUS CHANGED - CONNECTED: \(isConnectedStatus)")
-                            }
-                            isConnected = isConnectedStatus
-
-                            if isConnectedStatus && publishedOffline {
-                                checkAndPublishPendingProperty()
-                                refreshOffers()
-                            }
+                            handleNetworkStatusChange(isConnectedStatus: isConnectedStatus)
                         }
                         .onReceive(NotificationCenter.default.publisher(for: .offerSaveCompleted)) { _ in
                             refreshOffers()
@@ -151,10 +142,20 @@ struct HomepageRentView: View {
             .navigationBarHidden(true)
         }
     }
-    
-    func refreshOffers() {
+
+    // MARK: - Métodos
+
+    private func refreshOffers() {
+        guard let userEmail = currentUser?.email else { return }
         print("REFRESHING OFFERS FOR LANDLORD...")
-        offerViewModel.fetchOffers(for: "\(currentUser?.email ?? "UNKNOWN")")
+        offerViewModel.fetchOffers(for: userEmail)
+    }
+
+    private func initializeView() {
+        propertyOfferData = PropertyOfferData()
+        guard let userEmail = currentUser?.email else { return }
+        offerViewModel.fetchOffers(for: userEmail)
+        checkAndPublishPendingProperty()
     }
 
     private func checkAndPublishPendingProperty() {
@@ -172,7 +173,7 @@ struct HomepageRentView: View {
             let pendingProperty = try decoder.decode(PropertyOfferData.self, from: data)
             print("Pending property found, attempting to publish...")
 
-            // Load pending property data into PropertyOfferData
+            // Asignar los datos de la propiedad pendiente
             propertyOfferData.placeTitle = pendingProperty.placeTitle
             propertyOfferData.placeDescription = pendingProperty.placeDescription
             propertyOfferData.placeAddress = pendingProperty.placeAddress
@@ -192,21 +193,12 @@ struct HomepageRentView: View {
             propertyOfferData.propertyID = pendingProperty.propertyID
             propertyOfferData.roommates = pendingProperty.roommates
 
-            print("Loaded pending property data into propertyOfferData.")
-            
-            // Step 1: Publish property details without images
+            // Publicar detalles de la propiedad
             propertyViewModel.savePropertyAsync(propertyOfferData: propertyOfferData) {
-                print("Property details published without images. Now uploading images in background.")
-                
-                // Step 2: Upload images in the background
                 propertyViewModel.uploadImages(for: propertyOfferData) { uploadSuccess in
                     if uploadSuccess {
-                        print("Images uploaded successfully. Updating Firestore photos field.")
                         propertyViewModel.updateFirestorePropertyPhotos(propertyOfferData: propertyOfferData, photoFileNames: propertyOfferData.photos)
-                    } else {
-                        print("Error uploading images.")
                     }
-                    // Reset JSON and mark publishing as finished
                     propertyOfferData.resetJSON()
                     isPublishing = false
                     DispatchQueue.main.async {
@@ -217,6 +209,19 @@ struct HomepageRentView: View {
         } catch {
             print("No pending property to publish or error reading JSON: \(error)")
             isPublishing = false
+        }
+    }
+
+    private func handleNetworkStatusChange(isConnectedStatus: Bool) {
+        withAnimation {
+            showNoConnectionBanner = !isConnectedStatus
+            print("NETWORK CONNECTION STATUS CHANGED - CONNECTED: \(isConnectedStatus)")
+        }
+        isConnected = isConnectedStatus
+
+        if isConnectedStatus && publishedOffline {
+            checkAndPublishPendingProperty()
+            refreshOffers()
         }
     }
 }
