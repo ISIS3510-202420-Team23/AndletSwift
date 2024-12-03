@@ -71,7 +71,7 @@ class OfferSaveManager: ObservableObject {
                             print("Error updating property_saved_by document: \(error.localizedDescription)")
                             completion(error)
                         } else {
-                            print("Successfully removed userEmail from property_saved_by.")
+//                            print("Successfully removed userEmail from property_saved_by.")
                             completion(nil)
                         }
                     }

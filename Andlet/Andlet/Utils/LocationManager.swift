@@ -89,9 +89,9 @@ class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
             // Check if the user is already within the geofence region
             let distance = currentLocation.distance(from: universityLocation)
             if distance <= 1000 {
-                print("User is already within the university geofence")
+//                print("User is already within the university geofence")
                 sendNotification()  // Trigger notification manually
-                print("Stop updating")
+//                print("Stop updating")
 //                locationManager.stopUpdatingLocation()
                 
             }

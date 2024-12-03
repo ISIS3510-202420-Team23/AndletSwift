@@ -81,6 +81,7 @@ struct HomepageRentView: View {
                             propertyOfferData = PropertyOfferData() // Asegura que los datos estén frescos al cargar la vista
                             offerViewModel.fetchOffers(for: "\(currentUser?.email ?? "UNKNOWN")")
                             checkAndPublishPendingProperty()
+                            
                         }
                         .background(
                             ShakeHandlingControllerRepresentable(shakeDetector: shakeDetector)

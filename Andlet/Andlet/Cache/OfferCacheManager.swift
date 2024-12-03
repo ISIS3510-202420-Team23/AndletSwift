@@ -25,10 +25,10 @@ class OfferCacheManager {
     func saveOffersToCache(_ offers: [OfferWithProperty], userDefaultsKey: String, offerCacheKey: NSString) {
         let offersArray = Array(offers.prefix(10))  // Limitar a un máximo de 10 ofertas
         offerCache.setObject(offersArray as NSArray, forKey: offerCacheKey)
-        print("🔴Ofertas guardadas en caché correctamente: \(offersArray.count) ofertas.")
+//        print("🔴Ofertas guardadas en caché correctamente: \(offersArray.count) ofertas.")
         if let data = try? JSONEncoder().encode(offersArray) {
                     UserDefaults.standard.set(data, forKey: userDefaultsKey)
-                    print("Ofertas guardadas en UserDefaults como respaldo.")
+//                    print("Ofertas guardadas en UserDefaults como respaldo.")
                 }
     }
     
@@ -40,11 +40,11 @@ class OfferCacheManager {
         
         if let data = UserDefaults.standard.data(forKey: userDefaultsKey),
            let offersArray = try? JSONDecoder().decode([OfferWithProperty].self, from: data) {
-            print("Ofertas cargadas desde UserDefaults.")
+//            print("Ofertas cargadas desde UserDefaults.")
             return offersArray
         }
         
-        print("No hay ofertas guardadas en caché.")
+//        print("No hay ofertas guardadas en caché.")
         return []
     }
     
@@ -52,6 +52,6 @@ class OfferCacheManager {
     func clearCache(userDefaultsKey: String, offerCacheKey: NSString) {
         offerCache.removeObject(forKey: offerCacheKey)
         UserDefaults.standard.removeObject(forKey: userDefaultsKey)
-        print("🔴Cache de ofertas limpiado.")
+//        print("🔴Cache de ofertas limpiado.")
     }
 }

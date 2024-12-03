@@ -12,7 +12,7 @@ struct OfferDetailView: View {
     @State private var showContactDetails = false
     @State private var navigateBackToSavedTab = false
     @State private var navigateBackToExploreTab = false// New state to manage navigation back
-    @Binding var selectedTab: MainTabView.Tab
+    
     
     let offer: OfferModel
     let property: PropertyModel
@@ -42,25 +42,25 @@ struct OfferDetailView: View {
                     }
                     
                     Button {
-//                        if tabOrigin == .explore {
-//                            navigateBackToExploreTab = true
-//                            navigateBackToSavedTab = false
-//                        }
-//                        else {
-//                            navigateBackToSavedTab = true
-//                            navigateBackToExploreTab = false
-//                            
-//                        }
-                        switch tabOrigin {
-                        case .explore:
-                            selectedTab = .explore
+                        if tabOrigin == .explore {
                             navigateBackToExploreTab = true
-                        case .saved:
-                            selectedTab = .saved
-                            navigateBackToSavedTab = true
+                            navigateBackToSavedTab = false
                         }
+                        else {
+                            navigateBackToSavedTab = true
+                            navigateBackToExploreTab = false
+                            
+                        }
+//                        switch tabOrigin {
+//                        case .explore:
+//                            selectedTab = .explore
+//                            navigateBackToExploreTab = true
+//                        case .saved:
+//                            selectedTab = .saved
+//                            navigateBackToSavedTab = true
+//                        }
                         
-                        print("Selected tabview to \(selectedTab)")
+                
                     } label: {
                         Image(systemName: "chevron.left")
                             .foregroundStyle(Color(hex: "FFF4CF"))
