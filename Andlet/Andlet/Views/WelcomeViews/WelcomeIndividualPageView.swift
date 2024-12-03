@@ -62,7 +62,7 @@ struct WelcomeIndividualPageView: View {
         }
         .onAppear {
             authViewModel.checkIfUserIsLoggedIn()
-            print("Entre al welcome individual")
+//            print("Entre al welcome individual")
         }
     }
 
@@ -72,7 +72,7 @@ struct WelcomeIndividualPageView: View {
             if let user = authViewModel.currentUser {
                 switch user.typeUser {
                 case .student:
-                    print("Navigating to student home")
+//                    print("Navigating to student home")
                     destination = .studentHome  // Set the destination to student home
                 case .landlord:
                     destination = .landlordHome  // Set the destination to landlord home

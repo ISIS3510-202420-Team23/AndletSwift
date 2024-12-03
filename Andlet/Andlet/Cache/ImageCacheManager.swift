@@ -43,7 +43,7 @@ class ImageCacheManager {
         if let cachedImage = cache.object(forKey: key as NSString) {
             // Imagen encontrada en memoria
             completion(cachedImage)
-            print("Imagen obtenida desde caché de memoria: \(key)")
+//            print("Imagen obtenida desde caché de memoria: \(key)")
             return
         }
 
@@ -52,7 +52,7 @@ class ImageCacheManager {
         if let imageFromDisk = UIImage(contentsOfFile: fileURL.path) {
             cache.setObject(imageFromDisk, forKey: key as NSString)  // Guardar en caché de memoria
             completion(imageFromDisk)
-            print("Imagen obtenida desde caché de disco: \(key)")
+//            print("Imagen obtenida desde caché de disco: \(key)")
             return
         }
 

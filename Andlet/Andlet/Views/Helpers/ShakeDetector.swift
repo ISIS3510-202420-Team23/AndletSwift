@@ -10,7 +10,7 @@ class ShakeDetector: ObservableObject {
     func deviceShook() {
         DispatchQueue.main.async {
             self.didShake = true
-            print("Shake detectado")
+//            print("Shake detectado")
         }
     }
 
