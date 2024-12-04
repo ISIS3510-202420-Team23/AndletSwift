@@ -10,18 +10,15 @@ struct SavedOffersView: View {
     @ObservedObject private var networkMonitor = NetworkMonitor()
     @ObservedObject private var offerViewModel: SavedOffersViewModel
     @State private var userRoommatePreference: Bool? = nil
-    @ObservedObject private var filterViewModel: FilterViewModel
     @StateObject private var shakeDetector = ShakeDetector()
     @State private var selectedOffer: OfferWithProperty?
     @State private var isInitialized = false
     
     public init(
         offerViewModel: SavedOffersViewModel,
-        filterViewModel: FilterViewModel,
         showNoConectionBanner: Binding<Bool>
     ) {
         self.offerViewModel = offerViewModel
-        self.filterViewModel = filterViewModel
         self._showNoConnectionBanner = showNoConectionBanner
     }
   
@@ -98,7 +95,6 @@ struct SavedOffersView: View {
                                 title: Text("Shake Detected"),
                                 message: Text("Do you want to clear the filters?🧹"),
                                 primaryButton: .destructive(Text("Yes")) {
-                                    filterViewModel.clearFilters()
                                     offerViewModel.fetchSavedOffers()
                                 },
                                 secondaryButton: .cancel(Text("No"))
