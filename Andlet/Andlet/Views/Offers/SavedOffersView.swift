@@ -28,26 +28,19 @@ struct SavedOffersView: View {
     var body: some View {
         if #available(iOS 16.0, *) {
             NavigationStack {
-                if showFilterSearchView {
-                    FilterSearchSavedView(
-                        show: $showFilterSearchView,
-                        filterViewModel: filterViewModel,
-                        offerViewModel: offerViewModel
-                    )
-                } else {
                     ScrollView {
                         VStack {
                             Spacer()
                             Heading()
-                            SearchAndFilterSavedBar(
-                                filterViewModel: filterViewModel,
-                                offerViewModel: offerViewModel
-                            )
-                            .onTapGesture {
-                                withAnimation(.snappy) {
-                                    showFilterSearchView.toggle()
-                                }
-                            }
+//                            SearchAndFilterSavedBar(
+//                                filterViewModel: filterViewModel,
+//                                offerViewModel: offerViewModel
+//                            )
+//                            .onTapGesture {
+//                                withAnimation(.snappy) {
+//                                    showFilterSearchView.toggle()
+//                                }
+//                            }
                             
                             Text("Your saved places")
                                 .font(.custom("LeagueSpartan-SemiBold", size: 22))
@@ -149,8 +142,7 @@ struct SavedOffersView: View {
                         }
                     }
                 }
-            }
-            .navigationBarBackButtonHidden(true)
+                .navigationBarBackButtonHidden(true)
         } else {
             Text("Version not supported")
         }
@@ -158,14 +150,10 @@ struct SavedOffersView: View {
 
     // MARK: - Initialization
     func initializeData() async {
-        fetchUserViewPreferences() // No asíncrono, corre inmediatamente.
-
+//        fetchUserViewPreferences() // No asíncrono, corre inmediatamente.
         // Manejo de fetch de ofertas
-        if filterViewModel.filtersApplied {
-            offerViewModel.fetchOffersWithFilters()
-        } else {
-            offerViewModel.fetchSavedOffers()
-        }
+        offerViewModel.fetchSavedOffers()
+        
     }
 
     func fetchUserViewPreferences() {
