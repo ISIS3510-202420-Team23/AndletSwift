@@ -10,44 +10,34 @@ struct SavedOffersView: View {
     @ObservedObject private var networkMonitor = NetworkMonitor()
     @ObservedObject private var offerViewModel: SavedOffersViewModel
     @State private var userRoommatePreference: Bool? = nil
-    @ObservedObject private var filterViewModel: FilterViewModel
     @StateObject private var shakeDetector = ShakeDetector()
     @State private var selectedOffer: OfferWithProperty?
     @State private var isInitialized = false
     
     public init(
         offerViewModel: SavedOffersViewModel,
-        filterViewModel: FilterViewModel,
         showNoConectionBanner: Binding<Bool>
     ) {
         self.offerViewModel = offerViewModel
-        self.filterViewModel = filterViewModel
         self._showNoConnectionBanner = showNoConectionBanner
     }
   
     var body: some View {
         if #available(iOS 16.0, *) {
             NavigationStack {
-                if showFilterSearchView {
-                    FilterSearchSavedView(
-                        show: $showFilterSearchView,
-                        filterViewModel: filterViewModel,
-                        offerViewModel: offerViewModel
-                    )
-                } else {
                     ScrollView {
                         VStack {
                             Spacer()
                             Heading()
-                            SearchAndFilterSavedBar(
-                                filterViewModel: filterViewModel,
-                                offerViewModel: offerViewModel
-                            )
-                            .onTapGesture {
-                                withAnimation(.snappy) {
-                                    showFilterSearchView.toggle()
-                                }
-                            }
+//                            SearchAndFilterSavedBar(
+//                                filterViewModel: filterViewModel,
+//                                offerViewModel: offerViewModel
+//                            )
+//                            .onTapGesture {
+//                                withAnimation(.snappy) {
+//                                    showFilterSearchView.toggle()
+//                                }
+//                            }
                             
                             Text("Your saved places")
                                 .font(.custom("LeagueSpartan-SemiBold", size: 22))
@@ -105,7 +95,6 @@ struct SavedOffersView: View {
                                 title: Text("Shake Detected"),
                                 message: Text("Do you want to clear the filters?🧹"),
                                 primaryButton: .destructive(Text("Yes")) {
-                                    filterViewModel.clearFilters()
                                     offerViewModel.fetchSavedOffers()
                                 },
                                 secondaryButton: .cancel(Text("No"))
@@ -149,8 +138,7 @@ struct SavedOffersView: View {
                         }
                     }
                 }
-            }
-            .navigationBarBackButtonHidden(true)
+                .navigationBarBackButtonHidden(true)
         } else {
             Text("Version not supported")
         }
@@ -158,14 +146,10 @@ struct SavedOffersView: View {
 
     // MARK: - Initialization
     func initializeData() async {
-        fetchUserViewPreferences() // No asíncrono, corre inmediatamente.
-
+//        fetchUserViewPreferences() // No asíncrono, corre inmediatamente.
         // Manejo de fetch de ofertas
-        if filterViewModel.filtersApplied {
-            offerViewModel.fetchOffersWithFilters()
-        } else {
-            offerViewModel.fetchSavedOffers()
-        }
+        offerViewModel.fetchSavedOffers()
+        
     }
 
     func fetchUserViewPreferences() {

@@ -43,7 +43,7 @@ struct MainTabView: View {
                     .foregroundStyle(Color(hex: "0C356A"))
                 }
                 .tag(Tab.explore)
-            SavedOffersView(offerViewModel: offerSavedViewModel, filterViewModel: filterViewModel, showNoConectionBanner: $showNoConnectionBanner)
+            SavedOffersView(offerViewModel: offerSavedViewModel, showNoConectionBanner: $showNoConnectionBanner)
                 .tabItem {
                     Label("Saved", systemImage: "bookmark.fill"
                     )
